@@ -1,4 +1,4 @@
-# sd-project-api
+# Software Design Class Project API
 
 Basic API for software design class project
 
