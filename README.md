@@ -6,7 +6,7 @@ Basic API for software design class project
 
 - Node.js v16 or later
 - npm v8 or later
-- .env file in the root directory with the `MONGO_URI` for your database, and optionally a `PORT` for the API to attach to (default: 3000)
+- `.env` file in the root directory with the `MONGO_URI` for your database, and optionally a `PORT` for the API to attach to (default: 3000)
 
 ### Executing
 
