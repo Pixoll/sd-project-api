@@ -15,6 +15,7 @@
     "tsBuildInfoFile": ".tsbuildinfo",
     "noImplicitOverride": true,
     "noImplicitAny": true,
+    "removeComments": true,
   },
   "include": [
     "./src/**/*",
