@@ -11,14 +11,19 @@ export const methods = {
             return;
         }
 
+        const search = {
+            ...rut && { rut: parseInt(rut) },
+            ...email && { email },
+            ...phone && { phone: parseInt(phone) },
+        };
+        const validationResult = validateStructure(search, User.Model, true);
+        if (validationResult !== true) {
+            sendError(response, HTTPCode.BadRequest, validationResult);
+            return;
+        }
+
         try {
-            const user = await User.Model.findOne({
-                $or: [
-                    { _id: parseInt(rut ?? "0") },
-                    { email },
-                    { phone: parseInt(phone ?? "0") },
-                ],
-            });
+            const user = await User.Model.findOne(replaceKey(search, "rut", "_id"));
             if (!user) {
                 sendError(response, HTTPCode.NotFound, "User does not exist.");
                 return;
