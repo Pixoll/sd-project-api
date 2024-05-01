@@ -1,6 +1,6 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 
-type MethodHandler = (request: Request, response: Response, next: NextFunction) => Promise<void> | void;
+type MethodHandler = (request: Request, response: Response) => Promise<void> | void;
 
 /**
  * https://learn.microsoft.com/en-us/javascript/api/@azure/keyvault-certificates/requireatleastone

@@ -1,8 +1,7 @@
 import { Methods, sendOk } from "./base";
 
 export const methods = {
-    get(_, response, next): void {
+    get(_, response): void {
         sendOk(response);
-        next();
     },
 } satisfies Methods;

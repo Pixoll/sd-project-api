@@ -13,11 +13,10 @@ import { omit, replaceKey } from "../util";
 import { User, validateStructure } from "../db";
 
 export const methods = {
-    async get(request, response, next): Promise<void> {
+    async get(request, response): Promise<void> {
         const { rut, email, phone } = request.query as Record<string, string | undefined>;
         if ((+!!rut) + (+!!email) + (+!!phone) !== 1) {
             sendBadRequest(response, "Expected only one of either rut, email or phone in query.");
-            next();
             return;
         }
 
@@ -31,7 +30,6 @@ export const methods = {
             });
             if (!user) {
                 sendNotFound(response, "User does not exist.");
-                next();
                 return;
             }
 
@@ -40,21 +38,17 @@ export const methods = {
             console.error(error);
             sendServerError(response, "Unexpected error while trying to get user.");
         }
-
-        next();
     },
 
-    async post(request, response, next): Promise<void> {
+    async post(request, response): Promise<void> {
         if (request.headers["content-type"] !== "application/json") {
             sendBadRequest(response, "Content-Type header must be 'application/json'.");
-            next();
             return;
         }
 
         const validationResult = validateStructure(request.body, User.Model);
         if (validationResult !== true) {
             sendBadRequest(response, validationResult);
-            next();
             return;
         }
 
@@ -65,27 +59,23 @@ export const methods = {
             const existingRut = await User.Model.findOne({ _id: rut });
             if (existingRut) {
                 sendConflict(response, "Usuario con ese RUT ya existe.");
-                next();
                 return;
             }
 
             const existingEmail = await User.Model.findOne({ email });
             if (existingEmail) {
                 sendConflict(response, "Usuario con ese email ya existe.");
-                next();
                 return;
             }
 
             const existingPhone = await User.Model.findOne({ phone });
             if (existingPhone) {
                 sendConflict(response, "Usuario con ese número de teléfono ya existe.");
-                next();
                 return;
             }
         } catch (error) {
             console.error(error);
             sendServerError(response, "Unexpected error while trying to find existing user.");
-            next();
             return;
         }
 
@@ -100,15 +90,12 @@ export const methods = {
             console.error(error);
             sendServerError(response, "Unexpected error while trying to add new user.");
         }
-
-        next();
     },
 
-    async delete(request, response, next): Promise<void> {
+    async delete(request, response): Promise<void> {
         const { rut } = request.query as Record<string, string | undefined>;
         if (!rut) {
             sendBadRequest(response, "Expected RUT query parameter.");
-            next();
             return;
         }
 
@@ -116,7 +103,6 @@ export const methods = {
             const user = await User.Model.findOne({ _id: parseInt(rut ?? "0") });
             if (!user) {
                 sendNotFound(response, "User does not exist.");
-                next();
                 return;
             }
 
@@ -126,8 +112,6 @@ export const methods = {
             console.error(error);
             sendServerError(response, "Unexpected error while trying to delete the user.");
         }
-
-        next();
     },
 } satisfies Methods;
 
