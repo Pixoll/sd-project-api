@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
-type EndpointHandler = (request: Request, response: Response) => Promise<void> | void;
+type MethodHandler = (request: Request, response: Response, next: NextFunction) => Promise<void> | void;
 
 /**
  * https://learn.microsoft.com/en-us/javascript/api/@azure/keyvault-certificates/requireatleastone
@@ -10,11 +10,11 @@ type RequireAtLeastOne<T extends object> = {
 }[keyof T];
 
 export type Methods = RequireAtLeastOne<{
-    get: EndpointHandler;
-    post: EndpointHandler;
-    put: EndpointHandler;
-    delete: EndpointHandler;
-    patch: EndpointHandler;
+    get: MethodHandler;
+    post: MethodHandler;
+    put: MethodHandler;
+    delete: MethodHandler;
+    patch: MethodHandler;
 }>;
 
 export function sendOk<D>(response: Response, data?: D): void {
