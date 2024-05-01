@@ -73,7 +73,7 @@ function validateStructure(object, model) {
                     matchesExpected = false;
                 break;
             case Number:
-                if (typeof value !== "number")
+                if (typeof value !== "number" || isNaN(value))
                     matchesExpected = false;
                 break;
             case Date:

@@ -57,7 +57,7 @@ export function validateStructure(object: object, model: AnyModel): true | strin
                 if (typeof value !== "string") matchesExpected = false;
                 break;
             case Number:
-                if (typeof value !== "number") matchesExpected = false;
+                if (typeof value !== "number" || isNaN(value)) matchesExpected = false;
                 break;
             case Date:
                 if (!(value instanceof Date) && (typeof value !== "string" || isNaN(Date.parse(value)))) {
