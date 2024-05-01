@@ -17,34 +17,28 @@ export type Methods = RequireAtLeastOne<{
     patch: MethodHandler;
 }>;
 
-export function sendOk<D>(response: Response, data?: D): void {
-    response.status(200).send(data);
+export enum HTTPCode {
+    Ok = 200,
+    Created = 201,
+    NoContent = 204,
+    BadRequest = 400,
+    NotFound = 404,
+    Conflict = 409,
+    ServerError = 500,
+}
+
+export function sendOk(response: Response, data?: unknown): void {
+    response.status(HTTPCode.Ok).send(data);
 }
 
 export function sendCreated(response: Response): void {
-    response.status(201).send();
+    response.status(HTTPCode.Created).send();
 }
 
 export function sendNoContent(response: Response): void {
-    response.status(204).send();
+    response.status(HTTPCode.NoContent).send();
 }
 
-function sendError(response: Response, code: number, message: string): void {
+export function sendError(response: Response, code: HTTPCode, message: string): void {
     response.status(code).send({ status: code, message });
-}
-
-export function sendBadRequest(response: Response, message: string): void {
-    sendError(response, 400, message);
-}
-
-export function sendNotFound(response: Response, message: string): void {
-    sendError(response, 404, message);
-}
-
-export function sendConflict(response: Response, message: string): void {
-    sendError(response, 409, message);
-}
-
-export function sendServerError(response: Response, message: string): void {
-    sendError(response, 500, message);
 }

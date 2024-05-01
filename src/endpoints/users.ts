@@ -1,14 +1,5 @@
 import { createHash } from "crypto";
-import {
-    Methods,
-    sendBadRequest,
-    sendConflict,
-    sendCreated,
-    sendNoContent,
-    sendNotFound,
-    sendOk,
-    sendServerError,
-} from "./base";
+import { HTTPCode, Methods, sendOk, sendCreated, sendNoContent, sendError } from "./base";
 import { User, validateStructure } from "../db";
 import { omit, replaceKey } from "../util";
 
@@ -16,7 +7,7 @@ export const methods = {
     async get(request, response): Promise<void> {
         const { rut, email, phone } = request.query as Record<string, string | undefined>;
         if ((+!!rut) + (+!!email) + (+!!phone) !== 1) {
-            sendBadRequest(response, "Expected only one of either rut, email or phone in query.");
+            sendError(response, HTTPCode.BadRequest, "Expected only one of either rut, email or phone in query.");
             return;
         }
 
@@ -29,26 +20,26 @@ export const methods = {
                 ],
             });
             if (!user) {
-                sendNotFound(response, "User does not exist.");
+                sendError(response, HTTPCode.NotFound, "User does not exist.");
                 return;
             }
 
             sendOk(response, omit(User.toJSON(user), ["password"]));
         } catch (error) {
             console.error(error);
-            sendServerError(response, "Unexpected error while trying to get user.");
+            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to get user.");
         }
     },
 
     async post(request, response): Promise<void> {
         if (request.headers["content-type"] !== "application/json") {
-            sendBadRequest(response, "Content-Type header must be 'application/json'.");
+            sendError(response, HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
             return;
         }
 
         const validationResult = validateStructure(request.body, User.Model);
         if (validationResult !== true) {
-            sendBadRequest(response, validationResult);
+            sendError(response, HTTPCode.BadRequest, validationResult);
             return;
         }
 
@@ -58,24 +49,24 @@ export const methods = {
         try {
             const existingRut = await User.Model.findOne({ _id: rut });
             if (existingRut) {
-                sendConflict(response, "User with specified RUT already exists.");
+                sendError(response, HTTPCode.Conflict, "User with specified RUT already exists.");
                 return;
             }
 
             const existingEmail = await User.Model.findOne({ email });
             if (existingEmail) {
-                sendConflict(response, "User with specified email already exists.");
+                sendError(response, HTTPCode.Conflict, "User with specified email already exists.");
                 return;
             }
 
             const existingPhone = await User.Model.findOne({ phone });
             if (existingPhone) {
-                sendConflict(response, "User with specified phone number already exists.");
+                sendError(response, HTTPCode.Conflict, "User with specified phone number already exists.");
                 return;
             }
         } catch (error) {
             console.error(error);
-            sendServerError(response, "Unexpected error while trying to find existing user.");
+            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to find existing user.");
             return;
         }
 
@@ -88,21 +79,21 @@ export const methods = {
             sendCreated(response);
         } catch (error) {
             console.error(error);
-            sendServerError(response, "Unexpected error while trying to add new user.");
+            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to add new user.");
         }
     },
 
     async delete(request, response): Promise<void> {
         const { rut } = request.query as Record<string, string | undefined>;
         if (!rut) {
-            sendBadRequest(response, "Expected RUT query parameter.");
+            sendError(response, HTTPCode.BadRequest, "Expected RUT query parameter.");
             return;
         }
 
         try {
             const user = await User.Model.findOne({ _id: parseInt(rut ?? "0") });
             if (!user) {
-                sendNotFound(response, "User does not exist.");
+                sendError(response, HTTPCode.NotFound, "User does not exist.");
                 return;
             }
 
@@ -110,7 +101,7 @@ export const methods = {
             sendNoContent(response);
         } catch (error) {
             console.error(error);
-            sendServerError(response, "Unexpected error while trying to delete the user.");
+            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to delete the user.");
         }
     },
 } satisfies Methods;

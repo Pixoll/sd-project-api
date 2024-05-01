@@ -9,7 +9,7 @@ exports.methods = {
     async get(request, response) {
         const { rut, email, phone } = request.query;
         if ((+!!rut) + (+!!email) + (+!!phone) !== 1) {
-            (0, base_1.sendBadRequest)(response, "Expected only one of either rut, email or phone in query.");
+            (0, base_1.sendError)(response, base_1.HTTPCode.BadRequest, "Expected only one of either rut, email or phone in query.");
             return;
         }
         try {
@@ -21,24 +21,24 @@ exports.methods = {
                 ],
             });
             if (!user) {
-                (0, base_1.sendNotFound)(response, "User does not exist.");
+                (0, base_1.sendError)(response, base_1.HTTPCode.NotFound, "User does not exist.");
                 return;
             }
             (0, base_1.sendOk)(response, (0, util_1.omit)(db_1.User.toJSON(user), ["password"]));
         }
         catch (error) {
             console.error(error);
-            (0, base_1.sendServerError)(response, "Unexpected error while trying to get user.");
+            (0, base_1.sendError)(response, base_1.HTTPCode.ServerError, "Unexpected error while trying to get user.");
         }
     },
     async post(request, response) {
         if (request.headers["content-type"] !== "application/json") {
-            (0, base_1.sendBadRequest)(response, "Content-Type header must be 'application/json'.");
+            (0, base_1.sendError)(response, base_1.HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
             return;
         }
         const validationResult = (0, db_1.validateStructure)(request.body, db_1.User.Model);
         if (validationResult !== true) {
-            (0, base_1.sendBadRequest)(response, validationResult);
+            (0, base_1.sendError)(response, base_1.HTTPCode.BadRequest, validationResult);
             return;
         }
         const userJson = request.body;
@@ -46,23 +46,23 @@ exports.methods = {
         try {
             const existingRut = await db_1.User.Model.findOne({ _id: rut });
             if (existingRut) {
-                (0, base_1.sendConflict)(response, "User with specified RUT already exists.");
+                (0, base_1.sendError)(response, base_1.HTTPCode.Conflict, "User with specified RUT already exists.");
                 return;
             }
             const existingEmail = await db_1.User.Model.findOne({ email });
             if (existingEmail) {
-                (0, base_1.sendConflict)(response, "User with specified email already exists.");
+                (0, base_1.sendError)(response, base_1.HTTPCode.Conflict, "User with specified email already exists.");
                 return;
             }
             const existingPhone = await db_1.User.Model.findOne({ phone });
             if (existingPhone) {
-                (0, base_1.sendConflict)(response, "User with specified phone number already exists.");
+                (0, base_1.sendError)(response, base_1.HTTPCode.Conflict, "User with specified phone number already exists.");
                 return;
             }
         }
         catch (error) {
             console.error(error);
-            (0, base_1.sendServerError)(response, "Unexpected error while trying to find existing user.");
+            (0, base_1.sendError)(response, base_1.HTTPCode.ServerError, "Unexpected error while trying to find existing user.");
             return;
         }
         try {
@@ -74,19 +74,19 @@ exports.methods = {
         }
         catch (error) {
             console.error(error);
-            (0, base_1.sendServerError)(response, "Unexpected error while trying to add new user.");
+            (0, base_1.sendError)(response, base_1.HTTPCode.ServerError, "Unexpected error while trying to add new user.");
         }
     },
     async delete(request, response) {
         const { rut } = request.query;
         if (!rut) {
-            (0, base_1.sendBadRequest)(response, "Expected RUT query parameter.");
+            (0, base_1.sendError)(response, base_1.HTTPCode.BadRequest, "Expected RUT query parameter.");
             return;
         }
         try {
             const user = await db_1.User.Model.findOne({ _id: parseInt(rut ?? "0") });
             if (!user) {
-                (0, base_1.sendNotFound)(response, "User does not exist.");
+                (0, base_1.sendError)(response, base_1.HTTPCode.NotFound, "User does not exist.");
                 return;
             }
             await user.deleteOne();
@@ -94,7 +94,7 @@ exports.methods = {
         }
         catch (error) {
             console.error(error);
-            (0, base_1.sendServerError)(response, "Unexpected error while trying to delete the user.");
+            (0, base_1.sendError)(response, base_1.HTTPCode.ServerError, "Unexpected error while trying to delete the user.");
         }
     },
 };
