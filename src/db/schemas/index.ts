@@ -3,7 +3,7 @@ import { intersectSets, subtractSets } from "../../util";
 
 export * as User from "./User";
 
-export function validateStructure(object: object, model: AnyModel): true | string {
+export function validateStructure(object: object, model: AnyModel, partial = false): true | string {
     const schemaName = model.collection.name;
     const structure = model.schema.obj;
     const { all, optional } = Object.entries(structure).reduce((result, [k, v]) => {
@@ -30,9 +30,11 @@ export function validateStructure(object: object, model: AnyModel): true | strin
         return `The following properties are not part of the ${schemaName} schema: ${[...extraKeys].join(", ")}.`;
     }
 
-    const missingKeys = subtractSets(all, givenKeys);
-    if (missingKeys.size > 0) {
-        return `Missing the following properties from the ${schemaName} schema: ${[...missingKeys].join(", ")}.`;
+    if (!partial) {
+        const missingKeys = subtractSets(all, givenKeys);
+        if (missingKeys.size > 0) {
+            return `Missing the following properties from the ${schemaName} schema: ${[...missingKeys].join(", ")}.`;
+        }
     }
 
     for (const [key, value] of Object.entries(temp)) {
@@ -42,9 +44,11 @@ export function validateStructure(object: object, model: AnyModel): true | strin
                 v && typeof v === "object" && "alias" in v && v.alias === key
             )[0][1];
 
-        const required = typeof valueStructure === "object" && "required" in valueStructure && valueStructure.required;
-        if (required && (typeof value === "undefined" || value === null)) {
-            return `'${key}' is required in the ${schemaName} schema.`;
+        if (!partial) {
+            const required = typeof valueStructure === "object" && "required" in valueStructure && valueStructure.required;
+            if (required && (typeof value === "undefined" || value === null)) {
+                return `'${key}' is required in the ${schemaName} schema.`;
+            }
         }
 
         const expectedType = typeof valueStructure === "object" && "type" in valueStructure
