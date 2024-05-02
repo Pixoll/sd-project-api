@@ -5,7 +5,7 @@ const util_1 = require("../../util");
 const base_1 = require("./base");
 exports.Model = (0, base_1.model)("user", new base_1.Schema({
     _id: {
-        type: Number,
+        type: String,
         required: true,
         alias: "rut",
         description: "The user's RUT.",

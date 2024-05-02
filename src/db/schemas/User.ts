@@ -3,13 +3,13 @@ import { DocumentFromModel, JSONFromModel, Schema, model } from "./base";
 
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
-    rut: number;
+    rut: string;
 };
 
 /* eslint-disable camelcase */
 export const Model = model("user", new Schema({
     _id: {
-        type: Number,
+        type: String,
         required: true,
         alias: "rut",
         description: "The user's RUT.",
