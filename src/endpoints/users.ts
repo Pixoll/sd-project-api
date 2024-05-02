@@ -4,6 +4,17 @@ import { User, validateStructure } from "../db";
 import { omit, replaceKey } from "../util";
 
 export const methods = {
+    /**
+     * @name Get User
+     * @description Returns a {schema:User} for the given `rut`, `email` or `phone` number.
+     * @query rut -- number -- RUT of the user. `email` and `phone` cannot be present if this parameter is.
+     * @query email -- string -- Email of the user. `rut` and `phone` cannot be present if this parameter is.
+     * @query phone -- number -- Phone number of the user. `rut` and `email` cannot be present if this parameter is.
+     * @response A {schema:User} object without the hashed password.
+     * @code 200 Successfully retrieved the user.
+     * @code 400 Provided more than one kind of parameter.
+     * @code 404 No user exists with the provided query.
+     */
     async get(request, response): Promise<void> {
         const { rut, email, phone } = request.query as Record<string, string | undefined>;
         if ((+!!rut) + (+!!email) + (+!!phone) !== 1) {
@@ -36,6 +47,14 @@ export const methods = {
         }
     },
 
+    /**
+     * @name Create User
+     * @description Create a new {schema:User}. Only one user per `rut`, `email` or `phone` number may exist at one time.
+     * @body A {schema:User} object.
+     * @code 201 Successfully created new user.
+     * @code 400 Malformed user structure.
+     * @code 409 A user with that `rut`, `email` or `phone` number already exists.
+     */
     async post(request, response): Promise<void> {
         if (request.headers["content-type"] !== "application/json") {
             sendError(response, HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
@@ -88,6 +107,14 @@ export const methods = {
         }
     },
 
+    /**
+     * @name Delete User
+     * @description Delete the {schema:User} matching the provided `rut`.
+     * @query rut -- string -- RUT of the user.
+     * @code 204 Successfully deleted the user.
+     * @code 400 Malformed `rut`.
+     * @code 404 User with that `rut` does not exist.
+     */
     async delete(request, response): Promise<void> {
         const { rut } = request.query as Record<string, string | undefined>;
         if (!rut) {
