@@ -27,7 +27,7 @@ export const methods = {
             ...email && { email },
             ...phone && { phone: parseInt(phone) },
         };
-        const validationResult = validateStructure(search, User.Model, true);
+        const validationResult = await validateStructure(search, User.Model, true);
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
@@ -61,7 +61,7 @@ export const methods = {
             return;
         }
 
-        const validationResult = validateStructure(request.body, User.Model);
+        const validationResult = await validateStructure(request.body, User.Model);
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
@@ -123,7 +123,7 @@ export const methods = {
         }
 
         const search = { rut: parseInt(rut) };
-        const validationResult = validateStructure(search, User.Model, true);
+        const validationResult = await validateStructure(search, User.Model, true);
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;

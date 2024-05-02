@@ -1,11 +1,12 @@
+import { Error } from "mongoose";
 import { AnyModel } from "./base";
 import { intersectSets, subtractSets } from "../../util";
 
 export * as User from "./User";
 
-export function validateStructure(object: object, model: AnyModel, partial = false): true | string {
-    const schemaName = model.collection.name;
-    const structure = model.schema.obj;
+export async function validateStructure(object: object, Model: AnyModel, partial = false): Promise<true | string> {
+    const schemaName = Model.collection.name;
+    const structure = Model.schema.obj;
     const { all, optional } = Object.entries(structure).reduce((result, [k, v]) => {
         const key = v && typeof v === "object" && "alias" in v && typeof v.alias === "string" ? v.alias : k;
         if (!v || typeof v !== "object" || !("type" in v) || !v.required) {
@@ -37,51 +38,16 @@ export function validateStructure(object: object, model: AnyModel, partial = fal
         }
     }
 
-    for (const [key, value] of Object.entries(temp)) {
-        const valueStructure = key in structure
-            ? structure[key]
-            : Object.entries(structure).filter(([, v]) =>
-                v && typeof v === "object" && "alias" in v && v.alias === key
-            )[0][1];
+    const validationError: Error.ValidationError | undefined = new Model(object).validateSync();
+    if (!validationError) return true;
 
-        if (!partial) {
-            const required = typeof valueStructure === "object" && "required" in valueStructure && valueStructure.required;
-            if (required && (typeof value === "undefined" || value === null)) {
-                return `'${key}' is required in the ${schemaName} schema.`;
-            }
-        }
+    const firstError = Object.values(validationError.errors)[0];
+    const errorLocation = structure[firstError.path];
+    const key = typeof errorLocation === "object" && "alias" in errorLocation ? `${errorLocation.alias}` : firstError.path;
 
-        const expectedType = typeof valueStructure === "object" && "type" in valueStructure
-            ? valueStructure.type
-            : valueStructure;
-
-        let matchesExpected = true;
-        switch (expectedType) {
-            case String:
-                if (typeof value !== "string") matchesExpected = false;
-                break;
-            case Number:
-                if (typeof value !== "number" || isNaN(value)) matchesExpected = false;
-                break;
-            case Date:
-                if (!(value instanceof Date) && (typeof value !== "string" || isNaN(Date.parse(value)))) {
-                    matchesExpected = false;
-                }
-                break;
-            case Boolean:
-                if (typeof value !== "boolean") matchesExpected = false;
-                break;
-            case Array:
-                if (!Array.isArray(value)) matchesExpected = false;
-                break;
-            default:
-                throw new RangeError(`"${expectedType.name}" type not handled.`);
-        }
-
-        if (!matchesExpected) {
-            return `'${key}' is of type ${expectedType.name} in the ${schemaName} schema.`;
-        }
-    }
-
-    return true;
+    return firstError instanceof Error.CastError
+        ? `'${key}' is of type ${firstError.kind.toLowerCase()} in the ${schemaName} schema.`
+        : firstError.kind === "required"
+            ? `'${key}' is  is required in the ${schemaName} schema.`
+            : firstError.message;
 }
