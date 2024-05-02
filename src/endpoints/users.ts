@@ -95,8 +95,15 @@ export const methods = {
             return;
         }
 
+        const search = { rut: parseInt(rut) };
+        const validationResult = validateStructure(search, User.Model, true);
+        if (validationResult !== true) {
+            sendError(response, HTTPCode.BadRequest, validationResult);
+            return;
+        }
+
         try {
-            const user = await User.Model.findOne({ _id: parseInt(rut ?? "0") });
+            const user = await User.Model.findOne(replaceKey(search, "rut", "_id"));
             if (!user) {
                 sendError(response, HTTPCode.NotFound, "User does not exist.");
                 return;
