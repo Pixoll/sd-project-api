@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { replaceKey } from "../../util";
-import { DocumentFromModel, JSONFromModel } from "./base";
+import { DocumentFromModel, JSONFromModel, SchemaObject } from "./base";
 
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
@@ -62,7 +62,7 @@ export const Model = mongoose.model("user", new mongoose.Schema({
         type: String,
         required: true,
     },
-}));
+} satisfies SchemaObject));
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
