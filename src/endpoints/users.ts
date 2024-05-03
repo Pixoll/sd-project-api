@@ -10,7 +10,7 @@ export const methods = {
      * @query rut -- number -- RUT of the user. `email` and `phone` cannot be present if this parameter is.
      * @query email -- string -- Email of the user. `rut` and `phone` cannot be present if this parameter is.
      * @query phone -- number -- Phone number of the user. `rut` and `email` cannot be present if this parameter is.
-     * @response A {schema:User} object without the hashed password.
+     * @response A {schema:User} object without the `password` field.
      * @code 200 Successfully retrieved the user.
      * @code 400 Provided more than one kind of parameter.
      * @code 404 No user exists with the provided query.
