@@ -69,7 +69,7 @@ Resource fields that may contain a null value have types that are prefixed with 
 
 Check if the API is available.
 
-### URL
+#### URL
 
 ```
 GET /ping
@@ -85,7 +85,7 @@ GET /ping
 
 Returns a [User](#user-object) for the given `rut`, `email` or `phone` number.
 
-### URL
+#### URL
 
 ```
 GET /users
@@ -115,7 +115,7 @@ A [User](#user-object) object without the hashed password.
 
 Create a new [User](#user-object). Only one user per `rut`, `email` or `phone` number may exist at one time.
 
-### URL
+#### URL
 
 ```
 POST /users
@@ -137,7 +137,7 @@ A [User](#user-object) object.
 
 Delete the [User](#user-object) matching the provided `rut`.
 
-### URL
+#### URL
 
 ```
 DELETE /users
