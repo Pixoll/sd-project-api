@@ -101,7 +101,7 @@ GET /users
 
 #### Response Body
 
-A [User](#user-object) object without the hashed password.
+A [User](#user-object) object without the `password` field.
 
 #### Response Codes
 
