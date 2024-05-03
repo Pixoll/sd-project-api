@@ -17,7 +17,7 @@ Basic API for software design class project.
 
 This API uses the REST style for its endpoints and methods.
 
-#### Base URL
+## Base URL
 
 ```
 http://localhost:PORT/api/v1
