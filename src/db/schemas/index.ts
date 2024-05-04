@@ -1,5 +1,4 @@
-import { Error, HydratedDocument } from "mongoose";
-import { Model } from "./base";
+import { Error, HydratedDocument, Model } from "mongoose";
 import { intersectSets, subtractSets } from "../../util";
 
 export * as User from "./User";
@@ -12,8 +11,8 @@ export async function validateStructure<A, B, C, D, F>(
     const schemaName = Model.collection.name;
     const structure = Model.schema.obj;
     const { all, optional } = Object.entries(structure).reduce((result, [k, v]) => {
-        const key = typeof v.alias === "string" ? v.alias : k;
-        if (!v.required) {
+        const key = v && typeof v === "object" && "alias" in v && typeof v.alias === "string" ? v.alias : k;
+        if (v && typeof v === "object" && "required" in v && !v.required) {
             result.optional.add(key.toString());
         }
         result.all.add(key.toString());
@@ -46,7 +45,7 @@ export async function validateStructure<A, B, C, D, F>(
     if (!validationError) return true;
 
     const firstError = Object.values(validationError.errors)[0];
-    const errorLocation = structure[firstError.path];
+    const errorLocation = structure[firstError.path as keyof typeof structure];
     const key = typeof errorLocation === "object" && "alias" in errorLocation ? `${errorLocation.alias}` : firstError.path;
 
     return firstError instanceof Error.CastError

@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.toJSON = exports.Model = void 0;
+const mongoose_1 = __importDefault(require("mongoose"));
 const util_1 = require("../../util");
-const base_1 = require("./base");
-exports.Model = (0, base_1.model)("user", new base_1.Schema({
+exports.Model = mongoose_1.default.model("user", new mongoose_1.default.Schema({
     _id: {
         type: String,
         required: true,

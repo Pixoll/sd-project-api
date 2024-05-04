@@ -1,5 +1,6 @@
+import mongoose from "mongoose";
 import { replaceKey } from "../../util";
-import { DocumentFromModel, JSONFromModel, Schema, model } from "./base";
+import { DocumentFromModel, JSONFromModel } from "./base";
 
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
@@ -7,7 +8,7 @@ export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
 };
 
 /* eslint-disable camelcase */
-export const Model = model("user", new Schema({
+export const Model = mongoose.model("user", new mongoose.Schema({
     _id: {
         type: String,
         required: true,
