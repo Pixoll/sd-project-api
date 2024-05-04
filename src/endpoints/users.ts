@@ -23,7 +23,7 @@ export const methods = {
         }
 
         const search = {
-            ...rut && { rut: parseInt(rut) },
+            ...rut && { rut },
             ...email && { email },
             ...phone && { phone: parseInt(phone) },
         };
@@ -122,15 +122,14 @@ export const methods = {
             return;
         }
 
-        const search = { rut: parseInt(rut) };
-        const validationResult = await validateStructure(search, User.Model, true);
+        const validationResult = await validateStructure({ rut }, User.Model, true);
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
         }
 
         try {
-            const user = await User.Model.findOne(replaceKey(search, "rut", "_id"));
+            const user = await User.Model.findOne({ _id: rut });
             if (!user) {
                 sendError(response, HTTPCode.NotFound, "User does not exist.");
                 return;
