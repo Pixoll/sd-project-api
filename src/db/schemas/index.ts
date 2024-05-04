@@ -41,7 +41,7 @@ export async function validateStructure<A, B, C, D, F>(
         }
     }
 
-    const validationError = new Model(object).validateSync(!partial ? [...givenKeys] : undefined);
+    const validationError = new Model(object).validateSync(partial ? [...givenKeys] : undefined);
     if (!validationError) return true;
 
     const firstError = Object.values(validationError.errors)[0];
