@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { replaceKey } from "../../util";
 import { DocumentFromModel, JSONFromModel, SchemaTypeOptions } from "./base";
+import { regions } from "../../endpoints/regions";
 
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
@@ -58,8 +59,9 @@ export const Model = mongoose.model("user", new mongoose.Schema({
         unique: true,
         cast: false,
         description: "The user's phone number.",
+        min: 0,
         validate: {
-            validator: (phone: number): boolean => phone > 0 && phone.toString().length === 9,
+            validator: (phone: number): boolean => phone.toString().length === 9,
             message: "Invalid phone number.",
         },
     },
@@ -71,12 +73,26 @@ export const Model = mongoose.model("user", new mongoose.Schema({
                 cast: false,
                 required: true,
                 description: "The user's region address.",
+                validate: {
+                    validator: (region: string): boolean => regions.some(r =>
+                        r.name.toLowerCase() === region.toLowerCase()
+                    ),
+                    message: "Invalid region name.",
+                },
             },
             city: {
                 type: String,
                 cast: false,
                 required: true,
                 description: "The user's city address.",
+                validate: {
+                    validator(this: { region: string }, commune: string): boolean {
+                        return !!regions
+                            .find(r => r.name.toLowerCase() === this.region.toLowerCase())?.communes
+                            .some(c => c.toLowerCase() === commune.toLowerCase());
+                    },
+                    message: "Invalid city/commune name.",
+                },
             },
             street: {
                 type: String,
@@ -89,6 +105,7 @@ export const Model = mongoose.model("user", new mongoose.Schema({
                 cast: false,
                 required: true,
                 description: "The user's street number address.",
+                min: 0,
             },
             secondary: {
                 type: String,
