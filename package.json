@@ -5,7 +5,7 @@
   "description": "",
   "main": "out/index.js",
   "scripts": {
-    "start": "nodemon --watch out --delay 5 out/index.js",
+    "start": "nodemon --watch out out/index.js",
     "build": "tsc",
     "lint": "eslint src",
     "lint:fix": "eslint --fix src"
