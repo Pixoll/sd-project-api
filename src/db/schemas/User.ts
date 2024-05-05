@@ -8,6 +8,12 @@ export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
     rut: string;
 };
 
+/**
+ * @see https://emailregex.com/
+ */
+// eslint-disable-next-line max-len
+const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 /* eslint-disable camelcase */
 export const Model = mongoose.model("user", new mongoose.Schema({
     _id: {
@@ -52,6 +58,10 @@ export const Model = mongoose.model("user", new mongoose.Schema({
         unique: true,
         cast: false,
         description: "The user's email address.",
+        validate: {
+            validator: (email: string): boolean => emailRegex.test(email),
+            message: "Invalid email.",
+        },
     },
     phone: {
         type: Number,
