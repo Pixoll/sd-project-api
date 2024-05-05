@@ -44,13 +44,15 @@ export async function validateStructure<A, B, C, D, F>(
     const validationError = new Model(object).validateSync(partial ? [...givenKeys] : undefined);
     if (!validationError) return true;
 
-    const firstError = Object.values(validationError.errors)[0];
+    const [fullPath, firstError] = Object.entries(validationError.errors)[0];
     const errorLocation = structure[firstError.path as keyof typeof structure];
     const key = typeof errorLocation === "object" && "alias" in errorLocation ? `${errorLocation.alias}` : firstError.path;
+    const kind = firstError.kind.toLowerCase() === "embedded" ? "object" : firstError.kind.toLowerCase();
+    const parsedPath = fullPath.toString().split(".").slice(0, -1).join(".") + "." + key;
 
     return firstError instanceof Error.CastError
-        ? `'${key}' is of type ${firstError.kind.toLowerCase()} in the ${schemaName} schema.`
-        : firstError.kind === "required"
-            ? `'${key}' is  is required in the ${schemaName} schema.`
+        ? `'${parsedPath}' is of type ${kind} in the ${schemaName} schema.`
+        : kind === "required"
+            ? `'${parsedPath}' is  is required in the ${schemaName} schema.`
             : firstError.message;
 }
