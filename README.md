@@ -83,6 +83,22 @@ GET /ping
 | --- | --- |
 | 200 OK | API is available. |
 
+### Get Regions
+
+Get a list of all regions in the country alongside all their communes. Obtained from this file: [/static/regions_communes.json](/static/regions_communes.json).
+
+#### URL
+
+```
+GET /regions
+```
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 200 OK | Successfully retrieved the regions list. |
+
 ### Get User
 
 Returns a [User](#user-object) for the given `rut`, `email` or `phone` number.
