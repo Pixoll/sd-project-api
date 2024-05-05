@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { replaceKey } from "../../util";
-import { DocumentFromModel, JSONFromModel } from "./base";
+import { DocumentFromModel, JSONFromModel, SchemaTypeOptions } from "./base";
 
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
@@ -60,43 +60,59 @@ export const Model = mongoose.model("user", new mongoose.Schema({
         description: "The user's phone number.",
         validate: {
             validator: (phone: number): boolean => phone > 0 && phone.toString().length === 9,
+            message: "Invalid phone number.",
         },
     },
-    address_city: {
-        type: String,
+    address: {
+        type: {
+            _id: false,
+            region: {
+                type: String,
+                cast: false,
+                required: true,
+                description: "The user's region address.",
+            },
+            city: {
+                type: String,
+                cast: false,
+                required: true,
+                description: "The user's city address.",
+            },
+            street: {
+                type: String,
+                cast: false,
+                required: true,
+                description: "The user's street address.",
+            },
+            number: {
+                type: Number,
+                cast: false,
+                required: true,
+                description: "The user's street number address.",
+            },
+            secondary: {
+                type: String,
+                cast: false,
+                required: false,
+                default: null,
+                description: "The user's secondary address information.",
+            },
+        } satisfies SchemaTypeOptions,
+        cast: false,
         required: true,
-        cast: false,
-        description: "The user's city address.",
-    },
-    address_street: {
-        type: String,
-        required: true,
-        cast: false,
-        description: "The user's street address.",
-    },
-    address_number: {
-        type: Number,
-        required: true,
-        cast: false,
-        description: "The user's street number address.",
-        validate: {
-            validator: (number: number): boolean => number > 0,
-        },
-    },
-    address_secondary: {
-        type: String,
-        required: false,
-        cast: false,
-        default: null,
-        description: "The user's apartment or building address.",
+        description: "The user's address.",
     },
     password: {
         type: String,
         required: true,
         cast: false,
         description: "The user's password.",
+        validate: {
+            validator: (password: string): boolean => password.length > 8,
+            message: "Password must have at least 8 characters.",
+        },
     },
-}));
+} satisfies SchemaTypeOptions));
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
@@ -113,9 +129,8 @@ function validateRut(rut: string): boolean {
     const [digits, expectedVerificationDigit] = rut.split("-");
     if ((+digits) < 1e6) return false;
 
-    const sum = digits.split("").reverse().reduce((acc, d, i) =>
-        acc + (+d) * rutValidationSequence[i % rutValidationSequence.length]
-    , 0);
+    const sum = digits.split("").reverse()
+        .reduce((acc, d, i) => acc + (+d) * rutValidationSequence[i % rutValidationSequence.length], 0);
 
     const verificationNumber = 11 - sum + Math.trunc(sum / 11) * 11;
     const verificationDigit = verificationNumber === 10 ? "K" : (verificationNumber % 11).toString();

@@ -57,10 +57,12 @@ Resource fields that may contain a null value have types that are prefixed with 
 | second_last_name | string | The user's second last name. |
 | email | string | The user's email address. |
 | phone | number | The user's phone number. |
-| address_city | string | The user's city address. |
-| address_street | string | The user's street address. |
-| address_number | number | The user's street number address. |
-| address_secondary? | ?string | The user's apartment or building address. |
+| address | object | The user's address. |
+| address.region | string | The user's region address. |
+| address.city | string | The user's city address. |
+| address.street | string | The user's street address. |
+| address.number | number | The user's street number address. |
+| address.secondary? | ?string | The user's secondary address information. |
 | password | string | The user's password. |
 
 ## Endpoints
