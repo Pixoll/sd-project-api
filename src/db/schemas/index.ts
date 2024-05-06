@@ -52,15 +52,17 @@ export function validateStructure<A, B, C, D, F>(
     const validationError = new Model(object).validateSync(partial ? [...givenKeys] : undefined);
     if (!validationError) return true;
 
-    const [fullPath, firstError] = Object.entries(validationError.errors)[0];
+    const error = Object.entries(validationError.errors)
+        .find(([path]) => !exclude?.includes(path.toString()));
+    if (!error) return true;
+
+    const [fullPath, firstError] = error;
     const errorLocation = structure[firstError.path as keyof typeof structure];
     const key = typeof errorLocation === "object" && "alias" in errorLocation ? `${errorLocation.alias}` : firstError.path;
     const kind = firstError.kind.toLowerCase() === "embedded" ? "object" : firstError.kind.toLowerCase();
     const parsedPath = fullPath.toString().includes(".")
         ? fullPath.toString().split(".").slice(0, -1).join(".") + "." + key
         : key;
-
-    if (exclude?.includes(parsedPath)) return true;
 
     return firstError instanceof Error.CastError
         ? `'${parsedPath}' is of type ${kind} in the ${schemaName} schema.`
