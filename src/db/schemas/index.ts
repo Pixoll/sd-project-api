@@ -8,14 +8,14 @@ type StructureValidationOptions = {
     exclude?: string[];
 };
 
-export function validateStructure<A, B, C, D, F>(
+export async function validateStructure<A, B, C, D, F>(
     object: object,
     Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>,
     { partial, exclude }: StructureValidationOptions = {
         partial: false,
         exclude: [],
     }
-): true | string {
+): Promise<true | string> {
     const schemaName = Model.collection.name;
     const structure = Model.schema.obj;
     const { all, optional } = Object.entries(structure).reduce((result, [k, v]) => {
@@ -49,7 +49,9 @@ export function validateStructure<A, B, C, D, F>(
         }
     }
 
-    const validationError = new Model(object).validateSync(partial ? [...givenKeys] : undefined);
+    const validationError = await new Model(object).validate(partial ? [...givenKeys] : undefined)
+        .then(() => null)
+        .catch(e => e as Error.ValidationError);
     if (!validationError) return true;
 
     const error = Object.entries(validationError.errors)

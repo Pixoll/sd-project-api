@@ -1,6 +1,6 @@
 import { config as dotenvConfig } from "dotenv";
 import express from "express";
-import * as db from "./db";
+import { connect } from "./db";
 import * as endpoints from "./endpoints";
 import { Methods } from "./endpoints/base";
 
@@ -17,7 +17,7 @@ const MONGO_URI = process.env.MONGO_URI;
 if (!MONGO_URI) throw new Error("env.MONGO_URI must be specified");
 
 void async function (): Promise<void> {
-    await db.connect(MONGO_URI);
+    await connect(MONGO_URI);
 
     app.listen(PORT, () => {
         console.log("Server listening on port:", PORT);

@@ -27,7 +27,7 @@ export const methods = {
             ...email && { email },
             ...phone && { phone: parseInt(phone) },
         };
-        const validationResult = validateStructure(search, User.Model, { partial: true });
+        const validationResult = await validateStructure(search, User.Model, { partial: true });
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
@@ -51,7 +51,7 @@ export const methods = {
      * @name Create User
      * @description Create a new {schema:User}. Only one user per `rut`, `email` or `phone` number may exist at one time.
      * @description `salt` may not be specified in the request.
-     * @body A {schema:User} object.
+     * @body A {schema:User} object without the `salt`.
      * @code 201 Successfully created new user.
      * @code 400 Malformed user structure.
      * @code 409 A user with that `rut`, `email` or `phone` number already exists.
@@ -67,7 +67,7 @@ export const methods = {
             return;
         }
 
-        const validationResult = validateStructure(request.body, User.Model, { exclude: ["salt"] });
+        const validationResult = await validateStructure(request.body, User.Model, { exclude: ["salt"] });
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
@@ -131,7 +131,7 @@ export const methods = {
             return;
         }
 
-        const validationResult = validateStructure({ rut }, User.Model, { partial: true });
+        const validationResult = await validateStructure({ rut }, User.Model, { partial: true });
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
