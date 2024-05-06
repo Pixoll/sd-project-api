@@ -135,7 +135,7 @@ export const Model = mongoose.model("user", new mongoose.Schema({
         cast: false,
         description: "The user's password.",
         validate: {
-            validator: (password: string): boolean => password.length > 8,
+            validator: (password: string): boolean => password.length >= 8,
             message: "Password must have at least 8 characters.",
         },
     },
