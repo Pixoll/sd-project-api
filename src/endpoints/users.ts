@@ -27,7 +27,7 @@ export const methods = {
             ...email && { email },
             ...phone && { phone: parseInt(phone) },
         };
-        const validationResult = validateStructure(search, User.Model, true);
+        const validationResult = validateStructure(search, User.Model, { partial: true });
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
@@ -67,7 +67,7 @@ export const methods = {
             return;
         }
 
-        const validationResult = validateStructure(request.body, User.Model);
+        const validationResult = validateStructure(request.body, User.Model, { exclude: ["salt"] });
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
@@ -131,7 +131,7 @@ export const methods = {
             return;
         }
 
-        const validationResult = validateStructure({ rut }, User.Model, true);
+        const validationResult = validateStructure({ rut }, User.Model, { partial: true });
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;

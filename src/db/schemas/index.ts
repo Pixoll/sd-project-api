@@ -3,10 +3,18 @@ import { intersectSets, subtractSets } from "../../util";
 
 export * as User from "./User";
 
+type StructureValidationOptions = {
+    partial?: boolean;
+    exclude?: string[];
+};
+
 export function validateStructure<A, B, C, D, F>(
     object: object,
     Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>,
-    partial = false
+    { partial, exclude }: StructureValidationOptions = {
+        partial: false,
+        exclude: [],
+    }
 ): true | string {
     const schemaName = Model.collection.name;
     const structure = Model.schema.obj;
@@ -35,7 +43,7 @@ export function validateStructure<A, B, C, D, F>(
     }
 
     if (!partial) {
-        const missingKeys = subtractSets(all, givenKeys);
+        const missingKeys = subtractSets(subtractSets(all, givenKeys), new Set(exclude ?? []));
         if (missingKeys.size > 0) {
             return `Missing the following properties from the ${schemaName} schema: ${[...missingKeys].join(", ")}.`;
         }
@@ -48,7 +56,11 @@ export function validateStructure<A, B, C, D, F>(
     const errorLocation = structure[firstError.path as keyof typeof structure];
     const key = typeof errorLocation === "object" && "alias" in errorLocation ? `${errorLocation.alias}` : firstError.path;
     const kind = firstError.kind.toLowerCase() === "embedded" ? "object" : firstError.kind.toLowerCase();
-    const parsedPath = fullPath.toString().split(".").slice(0, -1).join(".") + "." + key;
+    const parsedPath = fullPath.toString().includes(".")
+        ? fullPath.toString().split(".").slice(0, -1).join(".") + "." + key
+        : key;
+
+    if (exclude?.includes(parsedPath)) return true;
 
     return firstError instanceof Error.CastError
         ? `'${parsedPath}' is of type ${kind} in the ${schemaName} schema.`

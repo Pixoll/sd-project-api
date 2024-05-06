@@ -25,7 +25,7 @@ export const methods = {
             return;
         }
 
-        const validationResult = validateStructure({ email, password }, User.Model, true);
+        const validationResult = validateStructure({ email, password }, User.Model, { partial: true });
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
