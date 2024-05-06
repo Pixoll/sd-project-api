@@ -82,8 +82,8 @@ POST /login
 
 | Field | Type | Description |
 | --- | --- | --- |
-| email | string | The user's email |
-| password | string | The user's password |
+| email | string | The user's email. |
+| password | string | The user's password. |
 
 #### Response Codes
 
