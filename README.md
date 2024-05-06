@@ -46,6 +46,16 @@ Resource fields that may contain a null value have types that are prefixed with 
 | nullable_field | ?string |
 | optional_and_nullable_field? | ?string |
 
+### Address Object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| region | string | The region. |
+| city | string | The city or commune. |
+| street | string | The street name. |
+| number | number | The street number. |
+| secondary? | ?string | Secondary address information like apartment building. |
+
 ### User Object
 
 | Field | Type | Description |
@@ -57,12 +67,7 @@ Resource fields that may contain a null value have types that are prefixed with 
 | second_last_name | string | The user's second last name. |
 | email | string | The user's email address. |
 | phone | number | The user's phone number. |
-| address | object | The user's address. |
-| address.region | string | The user's region address. |
-| address.city | string | The user's city address. |
-| address.street | string | The user's street address. |
-| address.number | number | The user's street number address. |
-| address.secondary? | ?string | The user's secondary address information. |
+| address | [Address](#address-object) object | The user's address. |
 | password | string | The user's password. |
 | salt | string | The user's salt for the password. |
 
@@ -168,7 +173,7 @@ POST /users
 
 #### Request Body
 
-A [User](#user-object) object.
+A [User](#user-object) object without the `salt`.
 
 #### Response Codes
 

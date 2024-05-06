@@ -5,6 +5,4 @@ export type JSONFromModel<M> = M extends Model<infer JSON, infer _2, infer _3, i
 export type DocumentFromModel<M> = M extends Model<infer _1, infer _2, infer _3, infer _4, infer Doc, infer _6>
     ? Doc
     : never;
-export type SchemaTypeOptions = Record<string, mongoose.SchemaTypeOptions<any>> | {
-    _id?: boolean;
-};
+export type SchemaTypeOptions = Record<string, mongoose.SchemaTypeOptions<any>>;

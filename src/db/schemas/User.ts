@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { replaceKey } from "../../util";
 import { DocumentFromModel, JSONFromModel, SchemaTypeOptions } from "./base";
-import { regions } from "../../endpoints/regions";
+import { Schema as Address } from "./Address";
+import { replaceKey } from "../../util";
 
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
@@ -76,55 +76,7 @@ export const Model = mongoose.model("user", new mongoose.Schema({
         },
     },
     address: {
-        type: {
-            _id: false,
-            region: {
-                type: String,
-                cast: false,
-                required: true,
-                description: "The user's region address.",
-                validate: {
-                    validator: (region: string): boolean => regions.some(r =>
-                        r.name.toLowerCase() === region.toLowerCase()
-                    ),
-                    message: "Invalid region name.",
-                },
-            },
-            city: {
-                type: String,
-                cast: false,
-                required: true,
-                description: "The user's city address.",
-                validate: {
-                    validator(this: { region: string }, commune: string): boolean {
-                        return !!regions
-                            .find(r => r.name.toLowerCase() === this.region.toLowerCase())?.communes
-                            .some(c => c.toLowerCase() === commune.toLowerCase());
-                    },
-                    message: "Invalid city/commune name.",
-                },
-            },
-            street: {
-                type: String,
-                cast: false,
-                required: true,
-                description: "The user's street address.",
-            },
-            number: {
-                type: Number,
-                cast: false,
-                required: true,
-                description: "The user's street number address.",
-                min: 0,
-            },
-            secondary: {
-                type: String,
-                cast: false,
-                required: false,
-                default: null,
-                description: "The user's secondary address information.",
-            },
-        } satisfies SchemaTypeOptions,
+        type: Address,
         cast: false,
         required: true,
         description: "The user's address.",
@@ -156,7 +108,7 @@ export function toJSON(document: Document): JSON {
 
 const rutValidationSequence = [2, 3, 4, 5, 6, 7] as const;
 
-function validateRut(rut: string): boolean {
+export function validateRut(rut: string): boolean {
     if (!/^\d{7,}-[\dk]$/i.test(rut)) return false;
 
     const [digits, expectedVerificationDigit] = rut.split("-");
