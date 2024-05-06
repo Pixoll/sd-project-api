@@ -139,6 +139,12 @@ export const Model = mongoose.model("user", new mongoose.Schema({
             message: "Password must have at least 8 characters.",
         },
     },
+    salt: {
+        type: String,
+        required: true,
+        cast: false,
+        description: "The user's salt for the password.",
+    },
 } satisfies SchemaTypeOptions));
 /* eslint-enable camelcase */
 

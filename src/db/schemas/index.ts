@@ -3,11 +3,11 @@ import { intersectSets, subtractSets } from "../../util";
 
 export * as User from "./User";
 
-export async function validateStructure<A, B, C, D, F>(
+export function validateStructure<A, B, C, D, F>(
     object: object,
     Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>,
     partial = false
-): Promise<true | string> {
+): true | string {
     const schemaName = Model.collection.name;
     const structure = Model.schema.obj;
     const { all, optional } = Object.entries(structure).reduce((result, [k, v]) => {

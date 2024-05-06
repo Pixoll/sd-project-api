@@ -64,8 +64,35 @@ Resource fields that may contain a null value have types that are prefixed with 
 | address.number | number | The user's street number address. |
 | address.secondary? | ?string | The user's secondary address information. |
 | password | string | The user's password. |
+| salt | string | The user's salt for the password. |
 
 ## Endpoints
+
+### Login User
+
+Verify user login credentials.
+
+#### URL
+
+```
+POST /login
+```
+
+#### Request Body
+
+| Field | Type | Description |
+| --- | --- | --- |
+| email | string | The user's email |
+| password | string | The user's password |
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 200 OK | Successfully logged in. |
+| 400 Bad Request | Malformed request. |
+| 401 Unauthorized | Wrong password. |
+| 404 Not Found | User with that `email` does not exist. |
 
 ### Send Ping
 
@@ -119,7 +146,7 @@ GET /users
 
 #### Response Body
 
-A [User](#user-object) object without the `password` field.
+A [User](#user-object) object without the `password` or `salt` field.
 
 #### Response Codes
 
@@ -131,7 +158,7 @@ A [User](#user-object) object without the `password` field.
 
 ### Create User
 
-Create a new [User](#user-object). Only one user per `rut`, `email` or `phone` number may exist at one time.
+Create a new [User](#user-object). Only one user per `rut`, `email` or `phone` number may exist at one time. `salt` may not be specified in the request.
 
 #### URL
 

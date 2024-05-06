@@ -1,4 +1,4 @@
-import { createHash } from "crypto";
+import { createHash, randomBytes } from "crypto";
 import { HTTPCode, Methods, sendOk, sendCreated, sendNoContent, sendError } from "./base";
 import { User, validateStructure } from "../db";
 import { omit, replaceKey } from "../util";
@@ -10,7 +10,7 @@ export const methods = {
      * @query rut -- number -- RUT of the user. `email` and `phone` cannot be present if this parameter is.
      * @query email -- string -- Email of the user. `rut` and `phone` cannot be present if this parameter is.
      * @query phone -- number -- Phone number of the user. `rut` and `email` cannot be present if this parameter is.
-     * @response A {schema:User} object without the `password` field.
+     * @response A {schema:User} object without the `password` or `salt` field.
      * @code 200 Successfully retrieved the user.
      * @code 400 Provided more than one kind of parameter.
      * @code 404 No user exists with the provided query.
@@ -27,7 +27,7 @@ export const methods = {
             ...email && { email },
             ...phone && { phone: parseInt(phone) },
         };
-        const validationResult = await validateStructure(search, User.Model, true);
+        const validationResult = validateStructure(search, User.Model, true);
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
@@ -40,7 +40,7 @@ export const methods = {
                 return;
             }
 
-            sendOk(response, omit(User.toJSON(user), ["password"]));
+            sendOk(response, omit(User.toJSON(user), ["password", "salt"]));
         } catch (error) {
             console.error(error);
             sendError(response, HTTPCode.ServerError, "Unexpected error while trying to get user.");
@@ -50,6 +50,7 @@ export const methods = {
     /**
      * @name Create User
      * @description Create a new {schema:User}. Only one user per `rut`, `email` or `phone` number may exist at one time.
+     * @description `salt` may not be specified in the request.
      * @body A {schema:User} object.
      * @code 201 Successfully created new user.
      * @code 400 Malformed user structure.
@@ -61,7 +62,12 @@ export const methods = {
             return;
         }
 
-        const validationResult = await validateStructure(request.body, User.Model);
+        if (request.body.salt) {
+            sendError(response, HTTPCode.BadRequest, "Password salt may not be specified in the request.");
+            return;
+        }
+
+        const validationResult = validateStructure(request.body, User.Model);
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
@@ -94,10 +100,13 @@ export const methods = {
             return;
         }
 
+        const salt = randomBytes(16).toString("hex");
+
         try {
             await new User.Model({
                 ...replaceKey(omit(userJson, ["password"]), "rut", "_id"),
-                password: hashPassword(userJson.password),
+                password: hashPassword(userJson.password, salt),
+                salt,
             }).save();
 
             sendCreated(response);
@@ -122,7 +131,7 @@ export const methods = {
             return;
         }
 
-        const validationResult = await validateStructure({ rut }, User.Model, true);
+        const validationResult = validateStructure({ rut }, User.Model, true);
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;
@@ -144,6 +153,6 @@ export const methods = {
     },
 } satisfies Methods;
 
-function hashPassword(string: string): string {
-    return createHash("sha256").update(string).digest("hex");
+export function hashPassword(password: string, salt: string): string {
+    return createHash("sha256").update(password + salt).digest("hex");
 }
