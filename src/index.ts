@@ -2,6 +2,7 @@ import { config as dotenvConfig } from "dotenv";
 import express from "express";
 import * as db from "./db";
 import * as endpoints from "./endpoints";
+import { Methods } from "./endpoints/base";
 
 dotenvConfig();
 
@@ -23,7 +24,7 @@ void async function (): Promise<void> {
     });
 
     for (const [endpoint, { methods }] of Object.entries(endpoints)) {
-        for (const [name, handler] of Object.entries(methods)) {
+        for (const [name, handler] of Object.entries(methods as Required<Methods>)) {
             router[name]("/" + endpoint, handler);
         }
     }
