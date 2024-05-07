@@ -23,116 +23,27 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import mongoose from "mongoose";
-import { DocumentFromModel, JSONFromModel } from "./base";
+import { DocumentFromModel } from "./base";
+import * as Address from "./Address";
+import { ReplaceKey } from "../../util";
 export type Document = DocumentFromModel<typeof Model>;
-export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
+export type JSON = {
     rut: string;
+    first_name: string;
+    second_name?: string | null | undefined;
+    first_last_name: string;
+    second_last_name: string;
+    email: string;
+    phone: number;
+    address: Address.JSON;
+    password: string;
+    salt: string;
 };
-export declare const Model: mongoose.Model<{
+export declare const Model: mongoose.Model<ReplaceKey<JSON, "rut", "_id">, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKey<JSON, "rut", "_id">> & Omit<JSON, "rut"> & Record<"_id", string> & Required<{
     _id: string;
-    first_name: string;
-    first_last_name: string;
-    second_last_name: string;
-    email: string;
-    phone: number;
-    address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    password: string;
-    salt: string;
-    second_name?: string | null | undefined;
-}, {}, {}, {}, mongoose.Document<unknown, {}, {
+}>, mongoose.Schema<ReplaceKey<JSON, "rut", "_id">, mongoose.Model<ReplaceKey<JSON, "rut", "_id">, any, any, any, mongoose.Document<unknown, any, ReplaceKey<JSON, "rut", "_id">> & Omit<JSON, "rut"> & Record<"_id", string> & Required<{
     _id: string;
-    first_name: string;
-    first_last_name: string;
-    second_last_name: string;
-    email: string;
-    phone: number;
-    address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    password: string;
-    salt: string;
-    second_name?: string | null | undefined;
-}> & {
-    _id: string;
-    first_name: string;
-    first_last_name: string;
-    second_last_name: string;
-    email: string;
-    phone: number;
-    address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    password: string;
-    salt: string;
-    second_name?: string | null | undefined;
-} & Required<{
-    _id: string;
-}>, mongoose.Schema<any, mongoose.Model<any, any, any, any, any, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, {
-    _id: string;
-    first_name: string;
-    first_last_name: string;
-    second_last_name: string;
-    email: string;
-    phone: number;
-    address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    password: string;
-    salt: string;
-    second_name?: string | null | undefined;
-}, mongoose.Document<unknown, {}, mongoose.FlatRecord<{
-    _id: string;
-    first_name: string;
-    first_last_name: string;
-    second_last_name: string;
-    email: string;
-    phone: number;
-    address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    password: string;
-    salt: string;
-    second_name?: string | null | undefined;
-}>> & mongoose.FlatRecord<{
-    _id: string;
-    first_name: string;
-    first_last_name: string;
-    second_last_name: string;
-    email: string;
-    phone: number;
-    address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    password: string;
-    salt: string;
-    second_name?: string | null | undefined;
-}> & Required<{
+}>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, ReplaceKey<JSON, "rut", "_id">, mongoose.Document<unknown, {}, mongoose.FlatRecord<ReplaceKey<JSON, "rut", "_id">>> & mongoose.FlatRecord<ReplaceKey<JSON, "rut", "_id">> & Required<{
     _id: string;
 }>>>;
 export declare function toJSON(document: Document): JSON;

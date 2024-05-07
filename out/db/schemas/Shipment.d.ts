@@ -23,206 +23,30 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import mongoose from "mongoose";
-import { DocumentFromModel, JSONFromModel } from "./base";
+import { DocumentFromModel } from "./base";
+import * as Address from "./Address";
+import * as Package from "./Package";
+import { ReplaceKey } from "../../util";
 export type Document = DocumentFromModel<typeof Model>;
-export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
+export type JSON = {
     id: string;
+    rut_sender: string;
+    rut_recipient: string;
+    source_address: Address.JSON;
+    destination_address: Address.JSON;
+    dispatch_timestamp: number;
+    delivery_timestamp: number;
+    shipping_type: string;
+    pending_payment: boolean;
+    home_pickup: boolean;
+    home_delivery: boolean;
+    packages: Package.JSON[];
 };
-export declare const Model: mongoose.Model<{
+export declare const Model: mongoose.Model<ReplaceKey<JSON, "id", "_id">, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKey<JSON, "id", "_id">> & Omit<JSON, "id"> & Record<"_id", string> & Required<{
     _id: string;
-    home_pickup: boolean;
-    rut_sender: string;
-    rut_recipient: string;
-    source_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    destination_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    dispatch_timestamp: number;
-    delivery_timestamp: number;
-    shipping_type: string;
-    pending_payment: boolean;
-    home_delivery: boolean;
-    packages: mongoose.Types.DocumentArray<{
-        type: string;
-        description: string;
-        length: number;
-        width: number;
-        height: number;
-        weight: number;
-    }>;
-}, {}, {}, {}, mongoose.Document<unknown, {}, {
+}>, mongoose.Schema<ReplaceKey<JSON, "id", "_id">, mongoose.Model<ReplaceKey<JSON, "id", "_id">, any, any, any, mongoose.Document<unknown, any, ReplaceKey<JSON, "id", "_id">> & Omit<JSON, "id"> & Record<"_id", string> & Required<{
     _id: string;
-    home_pickup: boolean;
-    rut_sender: string;
-    rut_recipient: string;
-    source_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    destination_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    dispatch_timestamp: number;
-    delivery_timestamp: number;
-    shipping_type: string;
-    pending_payment: boolean;
-    home_delivery: boolean;
-    packages: mongoose.Types.DocumentArray<{
-        type: string;
-        description: string;
-        length: number;
-        width: number;
-        height: number;
-        weight: number;
-    }>;
-}> & {
-    _id: string;
-    home_pickup: boolean;
-    rut_sender: string;
-    rut_recipient: string;
-    source_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    destination_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    dispatch_timestamp: number;
-    delivery_timestamp: number;
-    shipping_type: string;
-    pending_payment: boolean;
-    home_delivery: boolean;
-    packages: mongoose.Types.DocumentArray<{
-        type: string;
-        description: string;
-        length: number;
-        width: number;
-        height: number;
-        weight: number;
-    }>;
-} & Required<{
-    _id: string;
-}>, mongoose.Schema<any, mongoose.Model<any, any, any, any, any, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, {
-    _id: string;
-    home_pickup: boolean;
-    rut_sender: string;
-    rut_recipient: string;
-    source_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    destination_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    dispatch_timestamp: number;
-    delivery_timestamp: number;
-    shipping_type: string;
-    pending_payment: boolean;
-    home_delivery: boolean;
-    packages: mongoose.Types.DocumentArray<{
-        type: string;
-        description: string;
-        length: number;
-        width: number;
-        height: number;
-        weight: number;
-    }>;
-}, mongoose.Document<unknown, {}, mongoose.FlatRecord<{
-    _id: string;
-    home_pickup: boolean;
-    rut_sender: string;
-    rut_recipient: string;
-    source_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    destination_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    dispatch_timestamp: number;
-    delivery_timestamp: number;
-    shipping_type: string;
-    pending_payment: boolean;
-    home_delivery: boolean;
-    packages: mongoose.Types.DocumentArray<{
-        type: string;
-        description: string;
-        length: number;
-        width: number;
-        height: number;
-        weight: number;
-    }>;
-}>> & mongoose.FlatRecord<{
-    _id: string;
-    home_pickup: boolean;
-    rut_sender: string;
-    rut_recipient: string;
-    source_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    destination_address: {
-        number: number;
-        region: string;
-        city: string;
-        street: string;
-        secondary?: string | null | undefined;
-    };
-    dispatch_timestamp: number;
-    delivery_timestamp: number;
-    shipping_type: string;
-    pending_payment: boolean;
-    home_delivery: boolean;
-    packages: mongoose.Types.DocumentArray<{
-        type: string;
-        description: string;
-        length: number;
-        width: number;
-        height: number;
-        weight: number;
-    }>;
-}> & Required<{
+}>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, ReplaceKey<JSON, "id", "_id">, mongoose.Document<unknown, {}, mongoose.FlatRecord<ReplaceKey<JSON, "id", "_id">>> & mongoose.FlatRecord<ReplaceKey<JSON, "id", "_id">> & Required<{
     _id: string;
 }>>>;
 export declare function toJSON(document: Document): JSON;

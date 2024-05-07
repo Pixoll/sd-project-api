@@ -2,7 +2,15 @@ import mongoose from "mongoose";
 import { SchemaTypeOptions } from "./base";
 import { regions } from "../../endpoints/regions";
 
-export const Schema = new mongoose.Schema({
+export type JSON = {
+    region: string;
+    city: string;
+    street: string;
+    number: number;
+    secondary?: string | null | undefined;
+};
+
+export const Schema = new mongoose.Schema<JSON>({
     region: {
         type: String,
         cast: false,

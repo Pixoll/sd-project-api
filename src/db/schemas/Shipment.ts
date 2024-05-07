@@ -1,21 +1,32 @@
 import mongoose from "mongoose";
-import { DocumentFromModel, JSONFromModel, SchemaTypeOptions } from "./base";
-import { Schema as Address } from "./Address";
-import { Schema as Package } from "./Package";
+import { DocumentFromModel, SchemaTypeOptions } from "./base";
+import * as Address from "./Address";
+import * as Package from "./Package";
 import * as User from "./User";
-import { omit, replaceKey } from "../../util";
+import { ReplaceKey, replaceKey } from "../../util";
 import { fees } from "../../endpoints/fees";
 
 export type Document = DocumentFromModel<typeof Model>;
-export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
+export type JSON = {
     id: string;
+    rut_sender: string;
+    rut_recipient: string;
+    source_address: Address.JSON;
+    destination_address: Address.JSON;
+    dispatch_timestamp: number;
+    delivery_timestamp: number;
+    shipping_type: string;
+    pending_payment: boolean;
+    home_pickup: boolean;
+    home_delivery: boolean;
+    packages: Package.JSON[];
 };
 
 const shippingTypes = fees.shipping.map(p => p.id);
 const shippingTypesList = shippingTypes.map(t => `\`${t}\``).join(", ").replace(/, ([^,]+)$/, " or $1");
 
 /* eslint-disable camelcase */
-export const Model = mongoose.model("shipment", new mongoose.Schema({
+export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKey<JSON, "id", "_id">>({
     _id: {
         type: String,
         default: (): string => new mongoose.Types.ObjectId().toHexString(),
@@ -53,13 +64,13 @@ export const Model = mongoose.model("shipment", new mongoose.Schema({
         description: "RUT of the recipient. Must be of an existing {schema:User}.",
     },
     source_address: {
-        type: Address,
+        type: Address.Schema,
         required: true,
         cast: false,
         description: "Address where the packages are being shipped from.",
     },
     destination_address: {
-        type: Address,
+        type: Address.Schema,
         required: true,
         cast: false,
         description: "Address where the packages are being shipped to.",
@@ -102,7 +113,7 @@ export const Model = mongoose.model("shipment", new mongoose.Schema({
         description: "Whether the packages are being shipped to the recipient's address.",
     },
     packages: {
-        type: [Package],
+        type: [Package.Schema],
         required: true,
         cast: false,
         description: "All the packages being shipped.",
@@ -111,9 +122,5 @@ export const Model = mongoose.model("shipment", new mongoose.Schema({
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
-    const json = replaceKey(document.toJSON(), "_id", "id");
-    return {
-        ...omit(json, ["packages"]),
-        packages: [...json.packages.map(p => p.toJSON())],
-    };
+    return replaceKey(document.toJSON(), "_id", "id");
 }

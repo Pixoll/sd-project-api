@@ -23,27 +23,15 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import mongoose from "mongoose";
-export declare const Schema: mongoose.Schema<any, mongoose.Model<any, any, any, any, any, any>, {}, {}, {}, {}, {
-    _id: false;
-    versionKey: false;
-}, {
-    number: number;
+export type JSON = {
     region: string;
     city: string;
     street: string;
-    secondary?: string | null | undefined;
-}, mongoose.Document<unknown, {}, mongoose.FlatRecord<{
     number: number;
-    region: string;
-    city: string;
-    street: string;
     secondary?: string | null | undefined;
-}>> & mongoose.FlatRecord<{
-    number: number;
-    region: string;
-    city: string;
-    street: string;
-    secondary?: string | null | undefined;
-}> & {
+};
+export declare const Schema: mongoose.Schema<JSON, mongoose.Model<JSON, any, any, any, mongoose.Document<unknown, any, JSON> & JSON & {
+    _id: mongoose.Types.ObjectId;
+}, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, JSON, mongoose.Document<unknown, {}, mongoose.FlatRecord<JSON>> & mongoose.FlatRecord<JSON> & {
     _id: mongoose.Types.ObjectId;
 }>;

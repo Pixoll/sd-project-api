@@ -1,11 +1,20 @@
 import mongoose from "mongoose";
-import { DocumentFromModel, JSONFromModel, SchemaTypeOptions } from "./base";
-import { Schema as Address } from "./Address";
-import { replaceKey } from "../../util";
+import { DocumentFromModel, SchemaTypeOptions } from "./base";
+import * as Address from "./Address";
+import { ReplaceKey, replaceKey } from "../../util";
 
 export type Document = DocumentFromModel<typeof Model>;
-export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
+export type JSON = {
     rut: string;
+    first_name: string;
+    second_name?: string | null | undefined;
+    first_last_name: string;
+    second_last_name: string;
+    email: string;
+    phone: number;
+    address: Address.JSON;
+    password: string;
+    salt: string;
 };
 
 /**
@@ -15,7 +24,7 @@ export type JSON = Omit<JSONFromModel<typeof Model>, "_id"> & {
 const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /* eslint-disable camelcase */
-export const Model = mongoose.model("user", new mongoose.Schema({
+export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKey<JSON, "rut", "_id">>({
     _id: {
         type: String,
         required: true,
@@ -76,7 +85,7 @@ export const Model = mongoose.model("user", new mongoose.Schema({
         },
     },
     address: {
-        type: Address,
+        type: Address.Schema,
         cast: false,
         required: true,
         description: "The user's address.",

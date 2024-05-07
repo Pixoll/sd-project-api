@@ -2,10 +2,19 @@ import mongoose from "mongoose";
 import { SchemaTypeOptions } from "./base";
 import { fees } from "../../endpoints/fees";
 
+export type JSON = {
+    type: string;
+    description: string;
+    length: number;
+    width: number;
+    height: number;
+    weight: number;
+};
+
 const packageTypes = fees.package_type.map(p => p.id);
 const packageTypesList = packageTypes.map(t => `\`${t}\``).join(", ").replace(/, ([^,]+)$/, " or $1");
 
-export const Schema = new mongoose.Schema({
+export const Schema = new mongoose.Schema<JSON>({
     type: {
         type: String,
         enum: packageTypes,
