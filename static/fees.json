@@ -1,0 +1,43 @@
+{
+  "shipping": [
+    {
+      "id": "same_day",
+      "name": "Same Day Shipping",
+      "fee": 5000
+    },
+    {
+      "id": "fast",
+      "name": "Fast Shipping",
+      "fee": 2500
+    },
+    {
+      "id": "regular",
+      "name": "Regular Shipping",
+      "fee": 1000
+    }
+  ],
+  "extra": [
+    {
+      "id": "home_pickup",
+      "name": "Home Pick-up",
+      "fee": 1000
+    },
+    {
+      "id": "home_shipping",
+      "name": "Home Shipping",
+      "fee": 1000
+    }
+  ],
+  "package_type": [
+    {
+      "id": "document",
+      "name": "Document",
+      "fee": 100
+    },
+    {
+      "id": "package",
+      "name": "Package ($/kg)",
+      "fee": 1000
+    }
+  ]
+}
