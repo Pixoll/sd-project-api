@@ -1,14 +1,8 @@
-import { readFileSync } from "fs";
 import { Methods, sendOk } from "./base";
-import path from "path";
+import { RecursiveReadonly } from "../util";
+import _regions from "../../static/regions_communes.json";
 
-export const regions = JSON.parse(readFileSync(
-    path.join(__dirname, "../../static/regions_communes.json"),
-    "utf-8"
-)) as ReadonlyArray<{
-    readonly name: string;
-    readonly communes: readonly string[];
-}>;
+export const regions = _regions as RecursiveReadonly<typeof _regions>;
 
 export const methods = {
     /**

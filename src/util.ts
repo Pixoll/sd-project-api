@@ -1,3 +1,7 @@
+export type RecursiveReadonly<T> = T extends object ? { readonly [P in keyof T]: RecursiveReadonly<T[P]> }
+    : T extends Array<infer U> ? ReadonlyArray<RecursiveReadonly<U>>
+    : T;
+
 export function subtractSets<T>(lhs: Set<T>, rhs: Set<T>): Set<T> {
     return new Set([...lhs].filter(e => !rhs.has(e)));
 }

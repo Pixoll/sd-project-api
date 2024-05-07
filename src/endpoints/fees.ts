@@ -1,15 +1,8 @@
-import { readFileSync } from "fs";
 import { Methods, sendOk } from "./base";
-import path from "path";
+import { RecursiveReadonly } from "../util";
+import _fees from "../../static/fees.json";
 
-export const fees = JSON.parse(readFileSync(
-    path.join(__dirname, "../../static/fees.json"),
-    "utf8"
-)) as Readonly<Record<"shipping" | "extra" | "package_type", ReadonlyArray<{
-    readonly id: string;
-    readonly name: string;
-    readonly fee: number;
-}>>>;
+export const fees = _fees as RecursiveReadonly<typeof _fees>;
 
 export const methods = {
     /**
