@@ -73,6 +73,26 @@ Resource fields that may contain a null value have types that are prefixed with 
 
 ## Endpoints
 
+### Get Fees
+
+Get a list of all applicable fees.
+
+#### URL
+
+```
+GET /fees
+```
+
+#### Response Body
+
+Contents of [/static/fees.json](/static/fees.json).
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 200 OK | Successfully retrieved the fees list. |
+
 ### Login User
 
 Verify user login credentials.
@@ -117,13 +137,17 @@ GET /ping
 
 ### Get Regions
 
-Get a list of all regions in the country alongside all their communes. Obtained from this file: [/static/regions_communes.json](/static/regions_communes.json).
+Get a list of all regions in the country alongside all their communes.
 
 #### URL
 
 ```
 GET /regions
 ```
+
+#### Response Body
+
+Contents of [/static/regions_communes.json](/static/regions_communes.json).
 
 #### Response Codes
 

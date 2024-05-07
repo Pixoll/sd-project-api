@@ -14,7 +14,7 @@ export const methods = {
     /**
      * @name Get Regions
      * @description Get a list of all regions in the country alongside all their communes.
-     * @description Obtained from this file: {file:/static/regions_communes.json}.
+     * @response Contents of {file:/static/regions_communes.json}.
      * @code 200 Successfully retrieved the regions list.
      */
     get(_, response): void {
