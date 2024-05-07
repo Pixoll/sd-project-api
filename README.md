@@ -67,7 +67,7 @@ Resource fields that may contain a null value have types that are prefixed with 
 | second_last_name | string | The user's second last name. |
 | email | string | The user's email address. |
 | phone | number | The user's phone number. |
-| address | [Address](#address-object) object | The user's address. |
+| address | [address](#address-object) object | The user's address. |
 | password | string | The user's password. |
 | salt | string | The user's salt for the password. |
 
@@ -157,7 +157,7 @@ Contents of [/static/regions_communes.json](/static/regions_communes.json).
 
 ### Get User
 
-Returns a [User](#user-object) for the given `rut`, `email` or `phone` number.
+Returns a [user](#user-object) for the given `rut`, `email` or `phone` number.
 
 #### URL
 
@@ -175,7 +175,7 @@ GET /users
 
 #### Response Body
 
-A [User](#user-object) object without the `password` or `salt` field.
+A [user](#user-object) object without the `password` or `salt` field.
 
 #### Response Codes
 
@@ -187,7 +187,7 @@ A [User](#user-object) object without the `password` or `salt` field.
 
 ### Create User
 
-Create a new [User](#user-object). Only one user per `rut`, `email` or `phone` number may exist at one time. `salt` may not be specified in the request.
+Create a new [user](#user-object). Only one user per `rut`, `email` or `phone` number may exist at one time. `salt` may not be specified in the request.
 
 #### URL
 
@@ -197,7 +197,7 @@ POST /users
 
 #### Request Body
 
-A [User](#user-object) object without the `salt`.
+A [user](#user-object) object without the `salt`.
 
 #### Response Codes
 
@@ -209,7 +209,7 @@ A [User](#user-object) object without the `salt`.
 
 ### Delete User
 
-Delete the [User](#user-object) matching the provided `rut`.
+Delete the [user](#user-object) matching the provided `rut`.
 
 #### URL
 
