@@ -16,6 +16,7 @@
     "noImplicitOverride": true,
     "noImplicitAny": true,
     "removeComments": true,
+    "declaration": true,
   },
   "include": [
     "./src/**/*",
