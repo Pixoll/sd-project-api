@@ -1,6 +1,7 @@
 import { Error, HydratedDocument, Model } from "mongoose";
 import { intersectSets, subtractSets } from "../../util";
 
+export * as Shipment from "./Shipment";
 export * as User from "./User";
 
 type StructureValidationOptions = {
