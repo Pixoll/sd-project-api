@@ -121,32 +121,6 @@ Contents of [/static/fees.json](/static/fees.json).
 | --- | --- |
 | 200 OK | Successfully retrieved the fees list. |
 
-### Login User
-
-Verify user login credentials.
-
-#### URL
-
-```
-POST /login
-```
-
-#### Request Body
-
-| Field | Type | Description |
-| --- | --- | --- |
-| email | string | The user's email. |
-| password | string | The user's password. |
-
-#### Response Codes
-
-| HTTP Code | Description |
-| --- | --- |
-| 200 OK | Successfully logged in. |
-| 400 Bad Request | Malformed request. |
-| 401 Unauthorized | Wrong password. |
-| 404 Not Found | User with that `email` does not exist. |
-
 ### Send Ping
 
 Check if the API is available.
@@ -331,3 +305,29 @@ DELETE /users
 | 204 No Content | Successfully deleted the user. |
 | 400 Bad Request | Did not provide `rut`, or malformed `rut`. |
 | 404 Not Found | User with that `rut` does not exist. |
+
+### Login User
+
+Verify user login credentials.
+
+#### URL
+
+```
+POST /users/login
+```
+
+#### Request Body
+
+| Field | Type | Description |
+| --- | --- | --- |
+| email | string | The user's email. |
+| password | string | The user's password. |
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 200 OK | Successfully logged in. |
+| 400 Bad Request | Malformed request. |
+| 401 Unauthorized | Wrong password. |
+| 404 Not Found | User with that `email` does not exist. |

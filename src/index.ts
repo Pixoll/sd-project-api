@@ -25,7 +25,7 @@ void async function (): Promise<void> {
 
     for (const [endpoint, { methods }] of Object.entries(endpoints)) {
         for (const [name, handler] of Object.entries(methods as Required<Methods>)) {
-            router[name]("/" + endpoint, handler);
+            router[name]("/" + endpoint.replace(/__/g, "/"), handler);
         }
     }
 
