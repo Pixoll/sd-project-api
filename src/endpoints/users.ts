@@ -112,7 +112,7 @@ export const methods = {
             sendCreated(response);
         } catch (error) {
             console.error(error);
-            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to add new user.");
+            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to create new user.");
         }
     },
 

@@ -1,22 +1,26 @@
 import { Error, HydratedDocument, Model } from "mongoose";
-import { intersectSets, subtractSets } from "../../util";
+import { ReplaceKey, intersectSets, subtractSets } from "../../util";
 
 export * as Shipment from "./Shipment";
 export * as User from "./User";
 
-type StructureValidationOptions = {
+type StructureValidationOptions<JSON> = {
     partial?: boolean;
-    exclude?: string[];
+    exclude?: Array<keyof JSON & string>;
 };
 
-export async function validateStructure<A, B, C, D, F>(
+export async function validateStructure<
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    A, B, C, D, F, J extends A extends ReplaceKey<infer JSON, infer _1, infer _2> ? JSON : A
+>(
     object: object,
     Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>,
-    { partial, exclude }: StructureValidationOptions = {
+    options: StructureValidationOptions<J> = {
         partial: false,
         exclude: [],
     }
 ): Promise<true | string> {
+    const { partial, exclude } = options;
     const schemaName = Model.collection.name;
     const structure = Model.schema.obj;
     const { all, optional } = Object.entries(structure).reduce((result, [k, v]) => {
@@ -56,7 +60,7 @@ export async function validateStructure<A, B, C, D, F>(
     if (!validationError) return true;
 
     const error = Object.entries(validationError.errors)
-        .find(([path]) => !exclude?.includes(path.toString()));
+        .find(([path]) => !exclude?.includes(path.toString() as keyof J & string));
     if (!error) return true;
 
     const [fullPath, firstError] = error;

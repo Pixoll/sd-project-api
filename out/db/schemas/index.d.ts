@@ -23,10 +23,11 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import { HydratedDocument, Model } from "mongoose";
+import { ReplaceKey } from "../../util";
 export * as Shipment from "./Shipment";
 export * as User from "./User";
-type StructureValidationOptions = {
+type StructureValidationOptions<JSON> = {
     partial?: boolean;
-    exclude?: string[];
+    exclude?: Array<keyof JSON & string>;
 };
-export declare function validateStructure<A, B, C, D, F>(object: object, Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>, { partial, exclude }?: StructureValidationOptions): Promise<true | string>;
+export declare function validateStructure<A, B, C, D, F, J extends A extends ReplaceKey<infer JSON, infer _1, infer _2> ? JSON : A>(object: object, Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>, options?: StructureValidationOptions<J>): Promise<true | string>;
