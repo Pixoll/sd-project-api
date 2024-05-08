@@ -138,7 +138,7 @@ export const methods = {
         }
 
         try {
-            const user = await User.Model.findOne({ _id: rut });
+            const user = await User.Model.findById(rut);
             if (!user) {
                 sendError(response, HTTPCode.NotFound, "User does not exist.");
                 return;
