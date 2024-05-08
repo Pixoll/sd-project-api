@@ -201,7 +201,7 @@ GET /shipments
 
 #### Response Body
 
-A [shipment](#shipment-object).
+A [shipment](#shipment-object) object.
 
 #### Response Codes
 

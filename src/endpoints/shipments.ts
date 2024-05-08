@@ -6,7 +6,7 @@ export const methods = {
      * @name Get Shipment
      * @description Returns a {schema:Shipment} for the given tracking `id`.
      * @query id -- string -- The shipment's tracking id.
-     * @response A {schema:Shipment}.
+     * @response A {schema:Shipment} object.
      * @code 200 Successfully retrieved the shipment.
      * @code 400 Did not provide tracking id.
      * @code 404 No shipment exists with the provided tracking id.
