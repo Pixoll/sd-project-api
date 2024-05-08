@@ -1,4 +1,6 @@
 /* eslint-disable camelcase */
+export * as admins from "./admins";
+export * as admins__login from "./admins__login";
 export * as fees from "./fees";
 export * as ping from "./ping";
 export * as regions from "./regions";

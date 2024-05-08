@@ -22,13 +22,26 @@
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
-import { HydratedDocument, Model } from "mongoose";
+import mongoose from "mongoose";
+import { DocumentFromModel } from "./base";
 import { ReplaceKey } from "../../util";
-export * as Admin from "./Admin";
-export * as Shipment from "./Shipment";
-export * as User from "./User";
-type StructureValidationOptions<JSON> = {
-    partial?: boolean;
-    exclude?: Array<keyof JSON & string>;
+export type Document = DocumentFromModel<typeof Model>;
+export type JSON = {
+    rut: string;
+    first_name: string;
+    second_name?: string | null | undefined;
+    first_last_name: string;
+    second_last_name: string;
+    email: string;
+    phone: number;
+    password: string;
+    salt: string;
 };
-export declare function validateStructure<A, B, C, D, F, J extends A extends ReplaceKey<infer JSON, infer _1, infer _2> ? JSON : A>(object: object, Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>, options?: StructureValidationOptions<J>): Promise<true | string>;
+export declare const Model: mongoose.Model<ReplaceKey<JSON, "rut", "_id">, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKey<JSON, "rut", "_id">> & Omit<JSON, "rut"> & Record<"_id", string> & Required<{
+    _id: string;
+}>, mongoose.Schema<ReplaceKey<JSON, "rut", "_id">, mongoose.Model<ReplaceKey<JSON, "rut", "_id">, any, any, any, mongoose.Document<unknown, any, ReplaceKey<JSON, "rut", "_id">> & Omit<JSON, "rut"> & Record<"_id", string> & Required<{
+    _id: string;
+}>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, ReplaceKey<JSON, "rut", "_id">, mongoose.Document<unknown, {}, mongoose.FlatRecord<ReplaceKey<JSON, "rut", "_id">>> & mongoose.FlatRecord<ReplaceKey<JSON, "rut", "_id">> & Required<{
+    _id: string;
+}>>>;
+export declare function toJSON(document: Document): JSON;

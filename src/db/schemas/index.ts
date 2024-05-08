@@ -1,6 +1,7 @@
 import { Error, HydratedDocument, Model } from "mongoose";
 import { ReplaceKey, intersectSets, subtractSets } from "../../util";
 
+export * as Admin from "./Admin";
 export * as Shipment from "./Shipment";
 export * as User from "./User";
 

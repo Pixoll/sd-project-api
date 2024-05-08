@@ -56,6 +56,20 @@ Resource fields that may contain a null value have types that are prefixed with 
 | number | number | The street number. |
 | secondary? | ?string | Secondary address information like apartment building. |
 
+### Admin Object
+
+| Field | Type | Description |
+| --- | --- | --- |
+| rut | string | The admins's RUT. |
+| first_name | string | The admins's first name. |
+| second_name? | ?string | The admins's second name. |
+| first_last_name | string | The admins's first last name. |
+| second_last_name | string | The admins's second last name. |
+| email | string | The admins's email address. |
+| phone | number | The admins's phone number. |
+| password | string | The admins's password. |
+| salt | string | The admins's salt for the password. |
+
 ### Package Object
 
 | Field | Type | Description |
@@ -100,6 +114,106 @@ Resource fields that may contain a null value have types that are prefixed with 
 | salt | string | The user's salt for the password. |
 
 ## Endpoints
+
+### Get Admin
+
+Returns an [admin](#admin-object) for the given `rut`.
+
+#### URL
+
+```
+GET /admins
+```
+
+#### Request Query Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| rut | number | RUT of the admin. |
+
+#### Response Body
+
+An [admin](#admin-object) object without the `password` or `salt` field.
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 200 OK | Successfully retrieved the admin. |
+| 400 Bad Request | Did not provide `rut` or it's malformed. |
+| 404 Not Found | No admin exists with that `rut`. |
+
+### Create Admin
+
+Create a new [admin](#admin-object). `salt` may not be specified in the request.
+
+#### URL
+
+```
+POST /admins
+```
+
+#### Request Body
+
+An [admin](#admin-object) object without the `salt`.
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 201 Created | Successfully created new admin. |
+| 400 Bad Request | Malformed admin structure. |
+| 409 Conflict | An admin with that `rut` already exists. |
+
+### Delete Admin
+
+Delete the [admin](#admin-object) matching the provided `rut`.
+
+#### URL
+
+```
+DELETE /admins
+```
+
+#### Request Query Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| rut | string | RUT of the admin. |
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 204 No Content | Successfully deleted the admin. |
+| 400 Bad Request | Did not provide `rut`, or malformed `rut`. |
+| 404 Not Found | Admin with that `rut` does not exist. |
+
+### Login as Admin
+
+Verify admin login credentials.
+
+#### URL
+
+```
+POST /admins/login
+```
+
+#### Request Body
+
+| Field | Type | Description |
+| --- | --- | --- |
+| email | string | The admin's email. |
+| password | string | The admin's password. |
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 200 OK | Successfully logged in. |
+| 400 Bad Request | Malformed request. |
+| 401 Unauthorized | Wrong password. |
+| 404 Not Found | Admin with that `email` does not exist. |
 
 ### Get Fees
 
