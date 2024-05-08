@@ -183,6 +183,34 @@ Contents of [/static/regions_communes.json](/static/regions_communes.json).
 | --- | --- |
 | 200 OK | Successfully retrieved the regions list. |
 
+### Get Shipment
+
+Returns a [shipment](#shipment-object) for the given tracking `id`.
+
+#### URL
+
+```
+GET /shipments
+```
+
+#### Request Query Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | string | The shipment's tracking id. |
+
+#### Response Body
+
+A [shipment](#shipment-object).
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 200 OK | Successfully retrieved the shipment. |
+| 400 Bad Request | Did not provide tracking id. |
+| 404 Not Found | No shipment exists with the provided tracking id. |
+
 ### Create Shipment
 
 Create a new [shipment](#shipment-object). `id` may not be specified in the request.
@@ -231,7 +259,7 @@ A [user](#user-object) object without the `password` or `salt` field.
 | HTTP Code | Description |
 | --- | --- |
 | 200 OK | Successfully retrieved the user. |
-| 400 Bad Request | Provided more than one kind of parameter. |
+| 400 Bad Request | Provided none or more than one kind of parameter. |
 | 404 Not Found | No user exists with the provided query. |
 
 ### Create User

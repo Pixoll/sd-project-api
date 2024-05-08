@@ -12,7 +12,7 @@ export const methods = {
      * @query phone -- number -- Phone number of the user. `rut` and `email` cannot be present if this parameter is.
      * @response A {schema:User} object without the `password` or `salt` field.
      * @code 200 Successfully retrieved the user.
-     * @code 400 Provided more than one kind of parameter.
+     * @code 400 Provided none or more than one kind of parameter.
      * @code 404 No user exists with the provided query.
      */
     async get(request, response): Promise<void> {
