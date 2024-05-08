@@ -257,7 +257,7 @@ A [user](#user-object) object without the `password` or `salt` field.
 | HTTP Code | Description |
 | --- | --- |
 | 200 OK | Successfully retrieved the user. |
-| 400 Bad Request | Provided none or more than one kind of parameter. |
+| 400 Bad Request | Provided none or more than one kind of parameter, or the parameter is malformed. |
 | 404 Not Found | No user exists with the provided query. |
 
 ### Create User
@@ -306,7 +306,7 @@ DELETE /users
 | 400 Bad Request | Did not provide `rut`, or malformed `rut`. |
 | 404 Not Found | User with that `rut` does not exist. |
 
-### Login User
+### Login as User
 
 Verify user login credentials.
 

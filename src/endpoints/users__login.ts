@@ -4,7 +4,7 @@ import { hashPassword } from "./users";
 
 export const methods = {
     /**
-     * @name Login User
+     * @name Login as User
      * @description Verify user login credentials.
      * @body email -- string -- The user's email.
      * @body password -- string -- The user's password.
