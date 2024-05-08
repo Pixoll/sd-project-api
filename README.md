@@ -60,15 +60,15 @@ Resource fields that may contain a null value have types that are prefixed with 
 
 | Field | Type | Description |
 | --- | --- | --- |
-| rut | string | The admins's RUT. |
-| first_name | string | The admins's first name. |
-| second_name? | ?string | The admins's second name. |
-| first_last_name | string | The admins's first last name. |
-| second_last_name | string | The admins's second last name. |
-| email | string | The admins's email address. |
-| phone | number | The admins's phone number. |
-| password | string | The admins's password. |
-| salt | string | The admins's salt for the password. |
+| rut | string | The admin's RUT. |
+| first_name | string | The admin's first name. |
+| second_name? | ?string | The admin's second name. |
+| first_last_name | string | The admin's first last name. |
+| second_last_name | string | The admin's second last name. |
+| email | string | The admin's email address. |
+| phone | number | The admin's phone number. |
+| password | string | The admin's password. |
+| salt | string | The admin's salt for the password. |
 
 ### Package Object
 
