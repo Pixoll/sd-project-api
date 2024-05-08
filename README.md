@@ -46,58 +46,6 @@ Resource fields that may contain a null value have types that are prefixed with 
 | nullable_field | ?string |
 | optional_and_nullable_field? | ?string |
 
-### Address Object
-
-| Field | Type | Description |
-| --- | --- | --- |
-| region | string | The region. |
-| city | string | The city or commune. |
-| street | string | The street name. |
-| number | number | The street number. |
-| secondary? | ?string | Secondary address information like apartment building. |
-
-### Package Object
-
-| Field | Type | Description |
-| --- | --- | --- |
-| type | string | Type of the package. One of: `document` or `package`. |
-| description | string | Brief description of what the package contains. |
-| length | number | Length of the package in mm. |
-| width | number | Width of the package in mm. |
-| height | number | Height of the package in mm. |
-| weight | number | Weight of the package in kg. |
-
-### Shipment Object
-
-| Field | Type | Description |
-| --- | --- | --- |
-| id | string | The shipment id. Used for tracking. |
-| rut_sender | string | RUT of the sender. Must be of an existing [user](#user-object). |
-| rut_recipient | string | RUT of the recipient. Must be of an existing [user](#user-object). |
-| source_address | [address](#address-object) object | Address where the packages are being shipped from. |
-| destination_address | [address](#address-object) object | Address where the packages are being shipped to. |
-| dispatch_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address. |
-| delivery_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address. |
-| shipping_type | string | Type of the shipment. One of: `same_day`, `fast` or `regular`. |
-| pending_payment | boolean | Whether the shipment is going to be paid by the recipient or not. |
-| home_pickup | boolean | Whether the packages are being picked up at the sender's address. |
-| home_delivery | boolean | Whether the packages are being shipped to the recipient's address. |
-| packages | array of [package](#package-object) objects | All the packages being shipped. |
-
-### User Object
-
-| Field | Type | Description |
-| --- | --- | --- |
-| rut | string | The user's RUT. |
-| first_name | string | The user's first name. |
-| second_name? | ?string | The user's second name. |
-| first_last_name | string | The user's first last name. |
-| second_last_name | string | The user's second last name. |
-| email | string | The user's email address. |
-| phone | number | The user's phone number. |
-| address | [address](#address-object) object | The user's address. |
-| password | string | The user's password. |
-| salt | string | The user's salt for the password. |
 
 ## Endpoints
 
@@ -182,6 +130,27 @@ Contents of [/static/regions_communes.json](/static/regions_communes.json).
 | HTTP Code | Description |
 | --- | --- |
 | 200 OK | Successfully retrieved the regions list. |
+
+### Create Shipment
+
+Create a new [shipment](#shipment-object). `id` may not be specified in the request.
+
+#### URL
+
+```
+POST /shipments
+```
+
+#### Request Body
+
+A [shipment](#shipment-object) object without the `id`.
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 201 Created | Successfully created new shipment. |
+| 400 Bad Request | Malformed shipment structure. |
 
 ### Get User
 
