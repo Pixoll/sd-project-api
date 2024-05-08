@@ -118,7 +118,9 @@ export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKey<J
         cast: false,
         description: "All the packages being shipped.",
     },
-} satisfies SchemaTypeOptions));
+} satisfies SchemaTypeOptions, {
+    versionKey: false,
+}));
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {

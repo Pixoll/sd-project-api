@@ -21,7 +21,7 @@ export type JSON = {
  * @see https://emailregex.com/
  */
 // eslint-disable-next-line max-len
-const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+export const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /* eslint-disable camelcase */
 export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKey<JSON, "rut", "_id">>({
@@ -106,13 +106,13 @@ export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKey<JSON,
         cast: false,
         description: "The user's salt for the password.",
     },
-} satisfies SchemaTypeOptions));
+} satisfies SchemaTypeOptions, {
+    versionKey: false,
+}));
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
-    return replaceKey(document.toJSON({
-        versionKey: false,
-    }), "_id", "rut");
+    return replaceKey(document.toJSON(), "_id", "rut");
 }
 
 const rutValidationSequence = [2, 3, 4, 5, 6, 7] as const;

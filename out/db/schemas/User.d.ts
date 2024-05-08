@@ -39,6 +39,7 @@ export type JSON = {
     password: string;
     salt: string;
 };
+export declare const emailRegex: RegExp;
 export declare const Model: mongoose.Model<ReplaceKey<JSON, "rut", "_id">, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKey<JSON, "rut", "_id">> & Omit<JSON, "rut"> & Record<"_id", string> & Required<{
     _id: string;
 }>, mongoose.Schema<ReplaceKey<JSON, "rut", "_id">, mongoose.Model<ReplaceKey<JSON, "rut", "_id">, any, any, any, mongoose.Document<unknown, any, ReplaceKey<JSON, "rut", "_id">> & Omit<JSON, "rut"> & Record<"_id", string> & Required<{
