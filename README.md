@@ -208,8 +208,8 @@ A [shipment](#shipment-object) object.
 | HTTP Code | Description |
 | --- | --- |
 | 200 OK | Successfully retrieved the shipment. |
-| 400 Bad Request | Did not provide tracking id. |
-| 404 Not Found | No shipment exists with the provided tracking id. |
+| 400 Bad Request | Did not provide tracking `id`. |
+| 404 Not Found | Shipment with that tracking `id` does not exist. |
 
 ### Create Shipment
 
@@ -231,6 +231,30 @@ A [shipment](#shipment-object) object without the `id`.
 | --- | --- |
 | 201 Created | Successfully created new shipment. |
 | 400 Bad Request | Malformed shipment structure. |
+
+### Delete Shipment
+
+Delete the [shipment](#shipment-object) matching the provided tracking `id`.
+
+#### URL
+
+```
+DELETE /shipments
+```
+
+#### Request Query Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| id | string | The shipment's tracking id. |
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 204 No Content | Successfully deleted the shipment. |
+| 400 Bad Request | Did not provide tracking `id`. |
+| 404 Not Found | Shipment with that tracking `id` does not exist. |
 
 ### Get User
 
@@ -305,5 +329,5 @@ DELETE /users
 | HTTP Code | Description |
 | --- | --- |
 | 204 No Content | Successfully deleted the user. |
-| 400 Bad Request | Malformed `rut`. |
+| 400 Bad Request | Did not provide `rut`, or malformed `rut`. |
 | 404 Not Found | User with that `rut` does not exist. |

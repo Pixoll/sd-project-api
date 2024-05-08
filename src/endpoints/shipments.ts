@@ -1,4 +1,4 @@
-import { HTTPCode, Methods, sendCreated, sendError, sendOk } from "./base";
+import { HTTPCode, Methods, sendCreated, sendError, sendNoContent, sendOk } from "./base";
 import { Shipment, validateStructure } from "../db";
 
 export const methods = {
@@ -8,8 +8,8 @@ export const methods = {
      * @query id -- string -- The shipment's tracking id.
      * @response A {schema:Shipment} object.
      * @code 200 Successfully retrieved the shipment.
-     * @code 400 Did not provide tracking id.
-     * @code 404 No shipment exists with the provided tracking id.
+     * @code 400 Did not provide tracking `id`.
+     * @code 404 Shipment with that tracking `id` does not exist.
      */
     async get(request, response): Promise<void> {
         const { id } = request.query as Partial<Record<string, string>>;
@@ -66,9 +66,35 @@ export const methods = {
         }
     },
 
-    // async delete(request, response): Promise<void> {
+    /**
+     * @name Delete Shipment
+     * @description Delete the {schema:Shipment} matching the provided tracking `id`.
+     * @query id -- string -- The shipment's tracking id.
+     * @code 204 Successfully deleted the shipment.
+     * @code 400 Did not provide tracking `id`.
+     * @code 404 Shipment with that tracking `id` does not exist.
+     */
+    async delete(request, response): Promise<void> {
+        const { id } = request.query as Partial<Record<string, string>>;
+        if (!id) {
+            sendError(response, HTTPCode.BadRequest, "Expected shipment id in the query.");
+            return;
+        }
 
-    // },
+        try {
+            const shipment = await Shipment.Model.findById(id);
+            if (!shipment) {
+                sendError(response, HTTPCode.NotFound, "Shipment does not exist.");
+                return;
+            }
+
+            await shipment.deleteOne();
+            sendNoContent(response);
+        } catch (error) {
+            console.error(error);
+            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to get shipment.");
+        }
+    },
 
     // async patch(request, response): Promise<void> {
 
