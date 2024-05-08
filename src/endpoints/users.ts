@@ -121,7 +121,7 @@ export const methods = {
      * @description Delete the {schema:User} matching the provided `rut`.
      * @query rut -- string -- RUT of the user.
      * @code 204 Successfully deleted the user.
-     * @code 400 Malformed `rut`.
+     * @code 400 Did not provide `rut`, or malformed `rut`.
      * @code 404 User with that `rut` does not exist.
      */
     async delete(request, response): Promise<void> {
