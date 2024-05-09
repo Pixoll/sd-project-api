@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { DocumentFromModel, SchemaTypeOptions } from "./base";
-import { emailRegex, validateRut } from "./User";
+import { emailRegex, isValidRut } from "./User";
 import { ReplaceKey, replaceKey } from "../../util";
 
 export type Document = DocumentFromModel<typeof Model>;
@@ -25,7 +25,7 @@ export const Model = mongoose.model("admin", new mongoose.Schema<ReplaceKey<JSON
         alias: "rut",
         description: "The admin's RUT.",
         validate: {
-            validator: validateRut,
+            validator: isValidRut,
             message: "Invalid RUT.",
         },
     },

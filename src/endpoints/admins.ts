@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "crypto";
 import { HTTPCode, Methods, sendOk, sendCreated, sendNoContent, sendError } from "./base";
-import { Admin, validateStructure } from "../db";
+import { Admin, User, validateStructure } from "../db";
 import { omit, replaceKey } from "../util";
 
 export const methods = {
@@ -20,9 +20,8 @@ export const methods = {
             return;
         }
 
-        const validationResult = await validateStructure({ rut }, Admin.Model, { partial: true });
-        if (validationResult !== true) {
-            sendError(response, HTTPCode.BadRequest, validationResult);
+        if (!User.isValidRut(rut)) {
+            sendError(response, HTTPCode.BadRequest, "Invalid RUT.");
             return;
         }
 
@@ -110,9 +109,8 @@ export const methods = {
             return;
         }
 
-        const validationResult = await validateStructure({ rut }, Admin.Model, { partial: true });
-        if (validationResult !== true) {
-            sendError(response, HTTPCode.BadRequest, validationResult);
+        if (!User.isValidRut(rut)) {
+            sendError(response, HTTPCode.BadRequest, "Invalid RUT.");
             return;
         }
 

@@ -39,7 +39,7 @@ export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKey<J
         cast: false,
         validate: {
             async validator(this: { rut_recipient: string }, rut: string): Promise<boolean> {
-                if (!User.validateRut(rut)) throw new Error("Invalid sender RUT.");
+                if (!User.isValidRut(rut)) throw new Error("Invalid sender RUT.");
                 if (rut === this.rut_recipient) throw new Error("Sender's RUT can't be the same as the recipient's.");
                 const user = await User.Model.findOne({ _id: rut });
                 if (!user) throw new Error(`User with RUT ${rut} does not exist.`);
@@ -54,7 +54,7 @@ export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKey<J
         cast: false,
         validate: {
             async validator(this: { rut_sender: string }, rut: string): Promise<boolean> {
-                if (!User.validateRut(rut)) throw new Error("Invalid recipient RUT.");
+                if (!User.isValidRut(rut)) throw new Error("Invalid recipient RUT.");
                 if (rut === this.rut_sender) throw new Error("Recipient's RUT can't be the same as the sender's.");
                 const user = await User.Model.findOne({ _id: rut });
                 if (!user) throw new Error(`User with RUT ${rut} does not exist.`);

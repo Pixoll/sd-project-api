@@ -131,9 +131,8 @@ export const methods = {
             return;
         }
 
-        const validationResult = await validateStructure({ rut }, User.Model, { partial: true });
-        if (validationResult !== true) {
-            sendError(response, HTTPCode.BadRequest, validationResult);
+        if (!User.isValidRut(rut)) {
+            sendError(response, HTTPCode.BadRequest, "Invalid RUT.");
             return;
         }
 

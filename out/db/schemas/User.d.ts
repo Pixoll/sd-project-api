@@ -48,4 +48,4 @@ export declare const Model: mongoose.Model<ReplaceKey<JSON, "rut", "_id">, {}, {
     _id: string;
 }>>>;
 export declare function toJSON(document: Document): JSON;
-export declare function validateRut(rut: string): boolean;
+export declare function isValidRut(rut: string): boolean;

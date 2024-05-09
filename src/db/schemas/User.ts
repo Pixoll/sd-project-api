@@ -32,7 +32,7 @@ export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKey<JSON,
         alias: "rut",
         description: "The user's RUT.",
         validate: {
-            validator: validateRut,
+            validator: isValidRut,
             message: "Invalid RUT.",
         },
     },
@@ -117,7 +117,7 @@ export function toJSON(document: Document): JSON {
 
 const rutValidationSequence = [2, 3, 4, 5, 6, 7] as const;
 
-export function validateRut(rut: string): boolean {
+export function isValidRut(rut: string): boolean {
     if (!/^\d{7,}-[\dk]$/i.test(rut)) return false;
 
     const [digits, expectedVerificationDigit] = rut.split("-");
