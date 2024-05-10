@@ -8,7 +8,7 @@ dotenvConfig();
 
 const app = express();
 app.use(express.json({
-    limit: "1mb",
+    limit: "1.3MB",
 }));
 
 // eslint-disable-next-line new-cap
