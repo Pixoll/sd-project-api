@@ -10,7 +10,7 @@ export const methods = {
      * @query rut -- number -- RUT of the user. `email` and `phone` cannot be present if this parameter is.
      * @query email -- string -- Email of the user. `rut` and `phone` cannot be present if this parameter is.
      * @query phone -- number -- Phone number of the user. `rut` and `email` cannot be present if this parameter is.
-     * @response A {schema:User} object without the `password` or `salt` field.
+     * @response A {schema:User} object without the `password` or `salt` fields.
      * @code 200 Successfully retrieved the user.
      * @code 400 Provided none or more than one kind of parameter, or the parameter is malformed.
      * @code 404 No user exists with the provided query.
@@ -51,7 +51,7 @@ export const methods = {
      * @name Create User
      * @description Create a new {schema:User}. Only one user per `rut`, `email` or `phone` number may exist at one time.
      * @description `salt` may not be specified in the request.
-     * @body A {schema:User} object without the `salt`.
+     * @body A {schema:User} object without the `salt` or `verified` fields.
      * @code 201 Successfully created new user.
      * @code 400 Malformed user structure.
      * @code 409 A user with that `rut`, `email` or `phone` number already exists.
@@ -62,12 +62,16 @@ export const methods = {
             return;
         }
 
-        if (request.body.salt) {
-            sendError(response, HTTPCode.BadRequest, "Password salt may not be specified in the request.");
+        if (request.body.salt || request.body.verified) {
+            sendError(
+                response,
+                HTTPCode.BadRequest,
+                "Password 'salt' and 'verified' fields may not be specified in the request."
+            );
             return;
         }
 
-        const validationResult = await validateStructure(request.body, User.Model, { exclude: ["salt"] });
+        const validationResult = await validateStructure(request.body, User.Model, { exclude: ["salt", "verified"] });
         if (validationResult !== true) {
             sendError(response, HTTPCode.BadRequest, validationResult);
             return;

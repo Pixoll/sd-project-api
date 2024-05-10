@@ -18,6 +18,7 @@ export declare enum HTTPCode {
     Unauthorized = 401,
     NotFound = 404,
     Conflict = 409,
+    ContentTooLarge = 413,
     ServerError = 500
 }
 export declare function sendOk(response: Response, data?: unknown): void;

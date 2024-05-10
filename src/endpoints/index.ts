@@ -7,3 +7,4 @@ export * as regions from "./regions";
 export * as shipments from "./shipments";
 export * as users from "./users";
 export * as users__login from "./users__login";
+export * as users__verify_id from "./users__verify_id";

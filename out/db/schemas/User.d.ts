@@ -38,6 +38,7 @@ export type JSON = {
     address: Address.JSON;
     password: string;
     salt: string;
+    verified: boolean;
 };
 export declare const emailRegex: RegExp;
 export declare const Model: mongoose.Model<ReplaceKey<JSON, "rut", "_id">, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKey<JSON, "rut", "_id">> & Omit<JSON, "rut"> & Record<"_id", string> & Required<{

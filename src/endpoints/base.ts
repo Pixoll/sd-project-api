@@ -25,6 +25,7 @@ export enum HTTPCode {
     Unauthorized = 401,
     NotFound = 404,
     Conflict = 409,
+    ContentTooLarge = 413,
     ServerError = 500,
 }
 

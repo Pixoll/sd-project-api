@@ -112,6 +112,7 @@ Resource fields that may contain a null value have types that are prefixed with 
 | address | [address](#address-object) object | The user's address. |
 | password | string | The user's password. |
 | salt | string | The user's salt for the password. |
+| verified | boolean | Whether the user has verified their identity or not. |
 
 ## Endpoints
 
@@ -364,7 +365,7 @@ GET /users
 
 #### Response Body
 
-A [user](#user-object) object without the `password` or `salt` field.
+A [user](#user-object) object without the `password` or `salt` fields.
 
 #### Response Codes
 
@@ -386,7 +387,7 @@ POST /users
 
 #### Request Body
 
-A [user](#user-object) object without the `salt`.
+A [user](#user-object) object without the `salt` or `verified` fields.
 
 #### Response Codes
 
@@ -445,3 +446,33 @@ POST /users/login
 | 400 Bad Request | Malformed request. |
 | 401 Unauthorized | Wrong password. |
 | 404 Not Found | User with that `email` does not exist. |
+
+### Verify User Identity
+
+Verify a user's ID by reading the QR code at the back of it. Will not process images bigger than 1MB.
+
+#### URL
+
+```
+POST /users/verify_id
+```
+
+#### Request Query Parameters
+
+| Parameter | Type | Description |
+| --- | --- | --- |
+| rut | string | RUT of the user to verify. |
+
+#### Request Body
+
+data -- string -- Image encoded in base64 format.
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 200 OK | Successfully verified the user's identity. |
+| 400 Bad Request | Malformed request or QR content. |
+| 404 Not Found | User with that `rut` does not exist. |
+| 409 Conflict | User is already verified. |
+| 413 Content Too Large | Image is bigger than 1MB. |

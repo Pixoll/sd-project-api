@@ -15,6 +15,7 @@ export type JSON = {
     address: Address.JSON;
     password: string;
     salt: string;
+    verified: boolean;
 };
 
 /**
@@ -105,6 +106,12 @@ export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKey<JSON,
         required: true,
         cast: false,
         description: "The user's salt for the password.",
+    },
+    verified: {
+        type: Boolean,
+        required: true,
+        cast: false,
+        description: "Whether the user has verified their identity or not.",
     },
 } satisfies SchemaTypeOptions, {
     versionKey: false,
