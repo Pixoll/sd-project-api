@@ -109,8 +109,9 @@ export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKey<JSON,
     },
     verified: {
         type: Boolean,
-        required: true,
+        required: false,
         cast: false,
+        default: false,
         description: "Whether the user has verified their identity or not.",
     },
 } satisfies SchemaTypeOptions, {
