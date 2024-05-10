@@ -13,8 +13,8 @@ export type JSON = {
     rut_recipient: string;
     source_address: Address.JSON;
     destination_address: Address.JSON;
-    dispatch_timestamp: number;
-    delivery_timestamp: number;
+    dispatch_timestamp: number | null;
+    delivery_timestamp: number | null;
     shipping_type: string;
     pending_payment: boolean;
     home_pickup: boolean;
@@ -77,14 +77,16 @@ export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKey<J
     },
     dispatch_timestamp: {
         type: Number,
-        required: true,
+        required: false,
         cast: false,
+        default: null,
         description: "When the shipment was picked up from the source address.",
     },
     delivery_timestamp: {
         type: Number,
-        required: true,
+        required: false,
         cast: false,
+        default: null,
         description: "When the shipment arrived to the destination address.",
     },
     shipping_type: {

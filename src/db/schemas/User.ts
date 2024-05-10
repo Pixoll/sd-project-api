@@ -7,7 +7,7 @@ export type Document = DocumentFromModel<typeof Model>;
 export type JSON = {
     rut: string;
     first_name: string;
-    second_name?: string | null | undefined;
+    second_name: string | null;
     first_last_name: string;
     second_last_name: string;
     email: string;

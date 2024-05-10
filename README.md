@@ -90,8 +90,8 @@ Resource fields that may contain a null value have types that are prefixed with 
 | rut_recipient | string | RUT of the recipient. Must be of an existing [user](#user-object). |
 | source_address | [address](#address-object) object | Address where the packages are being shipped from. |
 | destination_address | [address](#address-object) object | Address where the packages are being shipped to. |
-| dispatch_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address. |
-| delivery_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address. |
+| dispatch_timestamp | ?[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address. |
+| delivery_timestamp | ?[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address. |
 | shipping_type | string | Type of the shipment. One of: `same_day`, `fast` or `regular`. |
 | pending_payment | boolean | Whether the shipment is going to be paid by the recipient or not. |
 | home_pickup | boolean | Whether the packages are being picked up at the sender's address. |

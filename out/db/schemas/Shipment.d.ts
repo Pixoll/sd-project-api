@@ -34,8 +34,8 @@ export type JSON = {
     rut_recipient: string;
     source_address: Address.JSON;
     destination_address: Address.JSON;
-    dispatch_timestamp: number;
-    delivery_timestamp: number;
+    dispatch_timestamp: number | null;
+    delivery_timestamp: number | null;
     shipping_type: string;
     pending_payment: boolean;
     home_pickup: boolean;
