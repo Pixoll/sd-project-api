@@ -58,7 +58,12 @@ export const methods = {
             return;
         }
 
-        const image = await Jimp.read(Buffer.from(data, "base64"));
+        const image = await Jimp.read(Buffer.from(data, "base64")).catch(() => null);
+        if (!image) {
+            sendError(response, HTTPCode.BadRequest, "Could not resolve image from provided data.");
+            return;
+        }
+
         const raw = new Uint8ClampedArray(image.bitmap.data.toJSON().data);
         const idUrl = jsQR(raw, image.bitmap.width, image.bitmap.height)?.data ?? null;
         if (!idUrl) {
