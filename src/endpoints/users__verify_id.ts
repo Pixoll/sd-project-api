@@ -35,13 +35,13 @@ export const methods = {
             return;
         }
 
-        const existing = await User.Model.findById(rut);
-        if (!existing) {
+        const user = await User.Model.findById(rut);
+        if (!user) {
             sendError(response, HTTPCode.NotFound, "User does not exist.");
             return;
         }
 
-        if (existing.verified) {
+        if (user.verified) {
             sendError(response, HTTPCode.Conflict, "User has already verified their identity.");
             return;
         }
@@ -80,8 +80,8 @@ export const methods = {
         // we'll just assume everything else is correct from here
         // there's no API to actually check this
 
-        existing.verified = true;
-        await existing.save();
+        user.verified = true;
+        await user.save();
 
         sendOk(response);
     },
