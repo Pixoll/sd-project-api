@@ -27,6 +27,7 @@
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "eslint": "latest",
+    "node-fetch": "^2.7.0",
     "typescript": "latest"
   }
 }
