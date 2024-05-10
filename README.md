@@ -54,7 +54,7 @@ Resource fields that may contain a null value have types that are prefixed with 
 | city | string | The city or commune. |
 | street | string | The street name. |
 | number | number | The street number. |
-| secondary? | ?string | Secondary address information like apartment building. |
+| secondary | ?string | Secondary address information like apartment building. |
 
 ### Admin Object
 
@@ -62,7 +62,7 @@ Resource fields that may contain a null value have types that are prefixed with 
 | --- | --- | --- |
 | rut | string | The admin's RUT. |
 | first_name | string | The admin's first name. |
-| second_name? | ?string | The admin's second name. |
+| second_name | ?string | The admin's second name. |
 | first_last_name | string | The admin's first last name. |
 | second_last_name | string | The admin's second last name. |
 | email | string | The admin's email address. |
@@ -104,7 +104,7 @@ Resource fields that may contain a null value have types that are prefixed with 
 | --- | --- | --- |
 | rut | string | The user's RUT. |
 | first_name | string | The user's first name. |
-| second_name? | ?string | The user's second name. |
+| second_name | ?string | The user's second name. |
 | first_last_name | string | The user's first last name. |
 | second_last_name | string | The user's second last name. |
 | email | string | The user's email address. |
