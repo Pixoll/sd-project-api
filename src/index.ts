@@ -7,7 +7,9 @@ import { Methods } from "./endpoints/base";
 dotenvConfig();
 
 const app = express();
-app.use(express.json());
+app.use(express.json({
+    limit: "1mb",
+}));
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
