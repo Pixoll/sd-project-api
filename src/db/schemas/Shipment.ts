@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DocumentFromModel, SchemaTypeOptions } from "./base";
+import { DocumentFromModel, SchemaTypeOptions, Timestamps } from "./base";
 import * as Address from "./Address";
 import * as Package from "./Package";
 import * as User from "./User";
@@ -21,7 +21,7 @@ export type JSON = {
     home_pickup: boolean;
     home_delivery: boolean;
     packages: Package.JSON[];
-};
+} & Timestamps;
 
 const shippingTypes = fees.shipping.map(p => p.id);
 const shippingTypesList = shippingTypes.map(t => `\`${t}\``).join(", ").replace(/, ([^,]+)$/, " or $1");
@@ -31,7 +31,11 @@ const packageStatusesList = packageStatuses.map(s => `\`${s}\``).join(", ").repl
 type PackageStatus = typeof packageStatuses[number];
 
 /* eslint-disable camelcase */
-export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKeys<JSON, { id: "_id" }>>({
+export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKeys<JSON, {
+    id: "_id";
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
+}>>({
     _id: {
         type: String,
         default: (): string => new mongoose.Types.ObjectId().toHexString(),
@@ -139,5 +143,9 @@ export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKeys<
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
-    return replaceKeys(document.toJSON(), { _id: "id" } as const);
+    return replaceKeys(document.toJSON(), {
+        _id: "id",
+        createdAt: "created_timestamp",
+        updatedAt: "updated_timestamp",
+    } as const);
 }

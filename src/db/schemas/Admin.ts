@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DocumentFromModel, SchemaTypeOptions } from "./base";
+import { DocumentFromModel, SchemaTypeOptions, Timestamps } from "./base";
 import { emailRegex, isValidRut } from "./User";
 import { ReplaceKeys, replaceKeys } from "../../util";
 
@@ -14,10 +14,14 @@ export type JSON = {
     phone: number;
     password: string;
     salt: string;
-};
+} & Timestamps;
 
 /* eslint-disable camelcase */
-export const Model = mongoose.model("admin", new mongoose.Schema<ReplaceKeys<JSON, { rut: "_id" }>>({
+export const Model = mongoose.model("admin", new mongoose.Schema<ReplaceKeys<JSON, {
+    rut: "_id";
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
+}>>({
     _id: {
         type: String,
         required: true,
@@ -100,5 +104,9 @@ export const Model = mongoose.model("admin", new mongoose.Schema<ReplaceKeys<JSO
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
-    return replaceKeys(document.toJSON(), { _id: "rut" } as const);
+    return replaceKeys(document.toJSON(), {
+        _id: "rut",
+        createdAt: "created_timestamp",
+        updatedAt: "updated_timestamp",
+    } as const);
 }

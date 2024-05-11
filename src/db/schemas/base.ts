@@ -7,3 +7,7 @@ export type DocumentFromModel<M> = M extends mongoose.Model<infer _1, infer _2, 
 export type SchemaTypeOptions = Record<string, mongoose.SchemaTypeOptions<any> & {
     description: string;
 }>;
+export type Timestamps = {
+    created_timestamp: number;
+    updated_timestamp: number;
+};

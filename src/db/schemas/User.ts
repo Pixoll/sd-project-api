@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DocumentFromModel, SchemaTypeOptions } from "./base";
+import { DocumentFromModel, SchemaTypeOptions, Timestamps } from "./base";
 import * as Address from "./Address";
 import { ReplaceKeys, replaceKeys } from "../../util";
 
@@ -16,7 +16,7 @@ export type JSON = {
     password: string;
     salt: string;
     verified: boolean;
-};
+} & Timestamps;
 
 /**
  * @see https://emailregex.com/
@@ -25,7 +25,11 @@ export type JSON = {
 export const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /* eslint-disable camelcase */
-export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKeys<JSON, { rut: "_id" }>>({
+export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKeys<JSON, {
+    rut: "_id";
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
+}>>({
     _id: {
         type: String,
         required: true,
@@ -121,7 +125,11 @@ export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKeys<JSON
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
-    return replaceKeys(document.toJSON(), { _id: "rut" } as const);
+    return replaceKeys(document.toJSON(), {
+        _id: "rut",
+        createdAt: "created_timestamp",
+        updatedAt: "updated_timestamp",
+    } as const);
 }
 
 const rutValidationSequence = [2, 3, 4, 5, 6, 7] as const;

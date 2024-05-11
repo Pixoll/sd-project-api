@@ -23,7 +23,7 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import mongoose from "mongoose";
-import { DocumentFromModel } from "./base";
+import { DocumentFromModel, Timestamps } from "./base";
 import { ReplaceKeys } from "../../util";
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = {
@@ -36,31 +36,51 @@ export type JSON = {
     phone: number;
     password: string;
     salt: string;
-};
+} & Timestamps;
 export declare const Model: mongoose.Model<ReplaceKeys<JSON, {
     rut: "_id";
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
 }>, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKeys<JSON, {
     rut: "_id";
-}>> & Omit<JSON, "rut"> & {
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
+}>> & Omit<JSON, "rut" | "created_timestamp" | "updated_timestamp"> & {
     _id: string;
+    createdAt: number;
+    updatedAt: number;
 } & Required<{
     _id: string;
 }>, mongoose.Schema<ReplaceKeys<JSON, {
     rut: "_id";
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
 }>, mongoose.Model<ReplaceKeys<JSON, {
     rut: "_id";
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
 }>, any, any, any, mongoose.Document<unknown, any, ReplaceKeys<JSON, {
     rut: "_id";
-}>> & Omit<JSON, "rut"> & {
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
+}>> & Omit<JSON, "rut" | "created_timestamp" | "updated_timestamp"> & {
     _id: string;
+    createdAt: number;
+    updatedAt: number;
 } & Required<{
     _id: string;
 }>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, ReplaceKeys<JSON, {
     rut: "_id";
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
 }>, mongoose.Document<unknown, {}, mongoose.FlatRecord<ReplaceKeys<JSON, {
     rut: "_id";
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
 }>>> & mongoose.FlatRecord<ReplaceKeys<JSON, {
     rut: "_id";
+    created_timestamp: "createdAt";
+    updated_timestamp: "updatedAt";
 }>> & Required<{
     _id: string;
 }>>>;
