@@ -69,6 +69,8 @@ Resource fields that may contain a null value have types that are prefixed with 
 | phone | number | The admin's phone number. |
 | password | string | The admin's password. |
 | salt | string | The admin's salt for the password. |
+| created_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created. |
+| updated_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was las updated. |
 
 ### Package Object
 
@@ -92,11 +94,14 @@ Resource fields that may contain a null value have types that are prefixed with 
 | destination_address | [address](#address-object) object | Address where the packages are being shipped to. |
 | dispatch_timestamp | ?[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address. |
 | delivery_timestamp | ?[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address. |
+| status | string | Status of the package. One of: `pending`, `pre-transit`, `in_transit`, `out_for_delivery` or `delivered`. |
 | shipping_type | string | Type of the shipment. One of: `same_day`, `fast` or `regular`. |
 | pending_payment | boolean | Whether the shipment is going to be paid by the recipient or not. |
 | home_pickup | boolean | Whether the packages are being picked up at the sender's address. |
 | home_delivery | boolean | Whether the packages are being shipped to the recipient's address. |
 | packages | array of [package](#package-object) objects | All the packages being shipped. |
+| created_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created. |
+| updated_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was las updated. |
 
 ### User Object
 
@@ -113,6 +118,8 @@ Resource fields that may contain a null value have types that are prefixed with 
 | password | string | The user's password. |
 | salt | string | The user's salt for the password. |
 | verified | boolean | Whether the user has verified their identity or not. |
+| created_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created. |
+| updated_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was las updated. |
 
 ## Endpoints
 
