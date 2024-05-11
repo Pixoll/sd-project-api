@@ -12,3 +12,4 @@ export declare function omit<T extends object, K extends keyof T>(object: T, key
 export declare function replaceKeys<T extends object, KVs extends {
     [K in keyof T]?: string;
 }>(object: T, keys: KVs): ReplaceKeys<T, KVs>;
+export declare function hasKeys<T extends object>(object: T, keys: Array<keyof T>): boolean;

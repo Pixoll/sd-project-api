@@ -31,3 +31,10 @@ export function replaceKeys<T extends object, KVs extends { [K in keyof T]?: str
     }
     return finalObject as ReplaceKeys<T, KVs>;
 }
+
+export function hasKeys<T extends object>(object: T, keys: Array<keyof T>): boolean {
+    for (const key of keys)
+        if (key in object)
+            return true;
+    return false;
+}

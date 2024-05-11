@@ -1,14 +1,14 @@
 import { createHash, randomBytes } from "crypto";
 import { HTTPCode, Methods, sendOk, sendCreated, sendNoContent, sendError } from "./base";
 import { Admin, User, validateStructure } from "../db";
-import { omit, replaceKeys } from "../util";
+import { hasKeys, omit, replaceKeys } from "../util";
 
 export const methods = {
     /**
      * @name Get Admin
      * @description Returns an {schema:Admin} for the given `rut`.
      * @query rut -- number -- RUT of the admin.
-     * @response An {schema:Admin} object without the `password` or `salt` field.
+     * @response An {schema:Admin} object without the `password` and `salt` fields.
      * @code 200 Successfully retrieved the admin.
      * @code 400 Did not provide `rut` or it's malformed.
      * @code 404 No admin exists with that `rut`.
@@ -41,8 +41,8 @@ export const methods = {
 
     /**
      * @name Create Admin
-     * @description Create a new {schema:Admin}. `salt` may not be specified in the request.
-     * @body An {schema:Admin} object without the `salt`.
+     * @description Create a new {schema:Admin}.
+     * @body An {schema:Admin} object without the `salt`, `created_timestamp` and `updated_timestamp` fields.
      * @code 201 Successfully created new admin.
      * @code 400 Malformed admin structure.
      * @code 409 An admin with that `rut` already exists.
@@ -53,8 +53,12 @@ export const methods = {
             return;
         }
 
-        if (request.body.salt) {
-            sendError(response, HTTPCode.BadRequest, "Password salt may not be specified in the request.");
+        if (hasKeys(request.body, ["salt", "created_timestamp", "updated_timestamp"])) {
+            sendError(
+                response,
+                HTTPCode.BadRequest,
+                "Password 'salt', 'created_timestamp' and 'updated_timestamp' fields may not be specified in the request."
+            );
             return;
         }
 

@@ -1,5 +1,6 @@
 import { HTTPCode, Methods, sendCreated, sendError, sendNoContent, sendOk } from "./base";
 import { Shipment, validateStructure } from "../db";
+import { hasKeys } from "../util";
 
 export const methods = {
     /**
@@ -34,8 +35,8 @@ export const methods = {
 
     /**
      * @name Create Shipment
-     * @description Create a new {schema:Shipment}. `id` may not be specified in the request.
-     * @body A {schema:Shipment} object without the `id`.
+     * @description Create a new {schema:Shipment}.
+     * @body A {schema:Shipment} object without the `id`, `created_timestamp` and `updated_timestamp` fields.
      * @code 201 Successfully created new shipment.
      * @code 400 Malformed shipment structure.
      */
@@ -45,8 +46,12 @@ export const methods = {
             return;
         }
 
-        if (request.body.id) {
-            sendError(response, HTTPCode.BadRequest, "Shipment id may not be specified in the request.");
+        if (hasKeys(request.body, ["id", "created_timestamp", "updated_timestamp"])) {
+            sendError(
+                response,
+                HTTPCode.BadRequest,
+                "Shipment 'id', 'created_timestamp' and 'updated_timestamp' fields may not be specified in the request."
+            );
             return;
         }
 
