@@ -1,6 +1,6 @@
 import { HTTPCode, Methods, sendCreated, sendError, sendNoContent, sendOk } from "./base";
 import { Shipment, validateStructure } from "../db";
-import { hasKeys } from "../util";
+import { hasOneOfKeys } from "../util";
 
 export const methods = {
     /**
@@ -46,7 +46,7 @@ export const methods = {
             return;
         }
 
-        if (hasKeys(request.body, ["id", "created_timestamp", "updated_timestamp"])) {
+        if (hasOneOfKeys(request.body, ["id", "created_timestamp", "updated_timestamp"])) {
             sendError(
                 response,
                 HTTPCode.BadRequest,

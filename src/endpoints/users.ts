@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "crypto";
 import { HTTPCode, Methods, sendOk, sendCreated, sendNoContent, sendError } from "./base";
 import { User, validateStructure } from "../db";
-import { hasKeys, omit, replaceKeys } from "../util";
+import { hasOneOfKeys, omit, replaceKeys } from "../util";
 
 export const methods = {
     /**
@@ -61,7 +61,7 @@ export const methods = {
             return;
         }
 
-        if (hasKeys(request.body, ["salt", "verified", "created_timestamp", "updated_timestamp"])) {
+        if (hasOneOfKeys(request.body, ["salt", "verified", "created_timestamp", "updated_timestamp"])) {
             sendError(
                 response,
                 HTTPCode.BadRequest,
