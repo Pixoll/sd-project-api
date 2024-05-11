@@ -122,6 +122,7 @@ export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKey<J
     },
 } satisfies SchemaTypeOptions, {
     versionKey: false,
+    timestamps: true,
 }));
 /* eslint-enable camelcase */
 

@@ -95,6 +95,7 @@ export const Model = mongoose.model("admin", new mongoose.Schema<ReplaceKey<JSON
     },
 } satisfies SchemaTypeOptions, {
     versionKey: false,
+    timestamps: true,
 }));
 /* eslint-enable camelcase */
 
