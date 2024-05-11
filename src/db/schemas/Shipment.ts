@@ -3,7 +3,7 @@ import { DocumentFromModel, SchemaTypeOptions } from "./base";
 import * as Address from "./Address";
 import * as Package from "./Package";
 import * as User from "./User";
-import { ReplaceKey, replaceKey } from "../../util";
+import { ReplaceKeys, replaceKeys } from "../../util";
 import { fees } from "../../endpoints/fees";
 
 export type Document = DocumentFromModel<typeof Model>;
@@ -31,7 +31,7 @@ const packageStatusesList = packageStatuses.map(s => `\`${s}\``).join(", ").repl
 type PackageStatus = typeof packageStatuses[number];
 
 /* eslint-disable camelcase */
-export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKey<JSON, "id", "_id">>({
+export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKeys<JSON, { id: "_id" }>>({
     _id: {
         type: String,
         default: (): string => new mongoose.Types.ObjectId().toHexString(),
@@ -139,5 +139,5 @@ export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKey<J
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
-    return replaceKey(document.toJSON(), "_id", "id");
+    return replaceKeys(document.toJSON(), { _id: "id" } as const);
 }

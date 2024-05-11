@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { DocumentFromModel, SchemaTypeOptions } from "./base";
 import { emailRegex, isValidRut } from "./User";
-import { ReplaceKey, replaceKey } from "../../util";
+import { ReplaceKeys, replaceKeys } from "../../util";
 
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = {
@@ -17,7 +17,7 @@ export type JSON = {
 };
 
 /* eslint-disable camelcase */
-export const Model = mongoose.model("admin", new mongoose.Schema<ReplaceKey<JSON, "rut", "_id">>({
+export const Model = mongoose.model("admin", new mongoose.Schema<ReplaceKeys<JSON, { rut: "_id" }>>({
     _id: {
         type: String,
         required: true,
@@ -100,5 +100,5 @@ export const Model = mongoose.model("admin", new mongoose.Schema<ReplaceKey<JSON
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
-    return replaceKey(document.toJSON(), "_id", "rut");
+    return replaceKeys(document.toJSON(), { _id: "rut" } as const);
 }

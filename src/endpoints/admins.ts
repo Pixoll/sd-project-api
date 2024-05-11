@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "crypto";
 import { HTTPCode, Methods, sendOk, sendCreated, sendNoContent, sendError } from "./base";
 import { Admin, User, validateStructure } from "../db";
-import { omit, replaceKey } from "../util";
+import { omit, replaceKeys } from "../util";
 
 export const methods = {
     /**
@@ -82,7 +82,7 @@ export const methods = {
 
         try {
             await new Admin.Model({
-                ...replaceKey(omit(adminJson, ["password"]), "rut", "_id"),
+                ...replaceKeys(omit(adminJson, ["password"]), { rut: "_id" } as const),
                 password: hashPassword(adminJson.password, salt),
                 salt,
             }).save();

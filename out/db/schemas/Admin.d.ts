@@ -24,7 +24,7 @@
 /// <reference types="mongoose/types/inferschematype" />
 import mongoose from "mongoose";
 import { DocumentFromModel } from "./base";
-import { ReplaceKey } from "../../util";
+import { ReplaceKeys } from "../../util";
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = {
     rut: string;
@@ -37,11 +37,31 @@ export type JSON = {
     password: string;
     salt: string;
 };
-export declare const Model: mongoose.Model<ReplaceKey<JSON, "rut", "_id">, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKey<JSON, "rut", "_id">> & Omit<JSON, "rut"> & Record<"_id", string> & Required<{
+export declare const Model: mongoose.Model<ReplaceKeys<JSON, {
+    rut: "_id";
+}>, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKeys<JSON, {
+    rut: "_id";
+}>> & Omit<JSON, "rut"> & {
     _id: string;
-}>, mongoose.Schema<ReplaceKey<JSON, "rut", "_id">, mongoose.Model<ReplaceKey<JSON, "rut", "_id">, any, any, any, mongoose.Document<unknown, any, ReplaceKey<JSON, "rut", "_id">> & Omit<JSON, "rut"> & Record<"_id", string> & Required<{
+} & Required<{
     _id: string;
-}>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, ReplaceKey<JSON, "rut", "_id">, mongoose.Document<unknown, {}, mongoose.FlatRecord<ReplaceKey<JSON, "rut", "_id">>> & mongoose.FlatRecord<ReplaceKey<JSON, "rut", "_id">> & Required<{
+}>, mongoose.Schema<ReplaceKeys<JSON, {
+    rut: "_id";
+}>, mongoose.Model<ReplaceKeys<JSON, {
+    rut: "_id";
+}>, any, any, any, mongoose.Document<unknown, any, ReplaceKeys<JSON, {
+    rut: "_id";
+}>> & Omit<JSON, "rut"> & {
+    _id: string;
+} & Required<{
+    _id: string;
+}>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, ReplaceKeys<JSON, {
+    rut: "_id";
+}>, mongoose.Document<unknown, {}, mongoose.FlatRecord<ReplaceKeys<JSON, {
+    rut: "_id";
+}>>> & mongoose.FlatRecord<ReplaceKeys<JSON, {
+    rut: "_id";
+}>> & Required<{
     _id: string;
 }>>>;
 export declare function toJSON(document: Document): JSON;

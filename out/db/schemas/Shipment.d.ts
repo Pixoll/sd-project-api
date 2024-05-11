@@ -26,7 +26,7 @@ import mongoose from "mongoose";
 import { DocumentFromModel } from "./base";
 import * as Address from "./Address";
 import * as Package from "./Package";
-import { ReplaceKey } from "../../util";
+import { ReplaceKeys } from "../../util";
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = {
     id: string;
@@ -45,11 +45,31 @@ export type JSON = {
 };
 declare const packageStatuses: readonly ["pending", "pre-transit", "in_transit", "out_for_delivery", "delivered"];
 type PackageStatus = typeof packageStatuses[number];
-export declare const Model: mongoose.Model<ReplaceKey<JSON, "id", "_id">, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKey<JSON, "id", "_id">> & Omit<JSON, "id"> & Record<"_id", string> & Required<{
+export declare const Model: mongoose.Model<ReplaceKeys<JSON, {
+    id: "_id";
+}>, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKeys<JSON, {
+    id: "_id";
+}>> & Omit<JSON, "id"> & {
     _id: string;
-}>, mongoose.Schema<ReplaceKey<JSON, "id", "_id">, mongoose.Model<ReplaceKey<JSON, "id", "_id">, any, any, any, mongoose.Document<unknown, any, ReplaceKey<JSON, "id", "_id">> & Omit<JSON, "id"> & Record<"_id", string> & Required<{
+} & Required<{
     _id: string;
-}>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, ReplaceKey<JSON, "id", "_id">, mongoose.Document<unknown, {}, mongoose.FlatRecord<ReplaceKey<JSON, "id", "_id">>> & mongoose.FlatRecord<ReplaceKey<JSON, "id", "_id">> & Required<{
+}>, mongoose.Schema<ReplaceKeys<JSON, {
+    id: "_id";
+}>, mongoose.Model<ReplaceKeys<JSON, {
+    id: "_id";
+}>, any, any, any, mongoose.Document<unknown, any, ReplaceKeys<JSON, {
+    id: "_id";
+}>> & Omit<JSON, "id"> & {
+    _id: string;
+} & Required<{
+    _id: string;
+}>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, ReplaceKeys<JSON, {
+    id: "_id";
+}>, mongoose.Document<unknown, {}, mongoose.FlatRecord<ReplaceKeys<JSON, {
+    id: "_id";
+}>>> & mongoose.FlatRecord<ReplaceKeys<JSON, {
+    id: "_id";
+}>> & Required<{
     _id: string;
 }>>>;
 export declare function toJSON(document: Document): JSON;

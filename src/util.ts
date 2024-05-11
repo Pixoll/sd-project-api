@@ -2,7 +2,9 @@ export type RecursiveReadonly<T> = T extends object ? { readonly [P in keyof T]:
     : T extends Array<infer U> ? ReadonlyArray<RecursiveReadonly<U>>
     : T;
 
-export type ReplaceKey<T extends object, K1 extends keyof T, K2 extends string> = Omit<T, K1> & Record<K2, T[K1]>;
+export type ReplaceKeys<T extends object, KVs extends { [K in keyof T]?: string }> = Omit<T, keyof KVs> & {
+    [K in keyof KVs as KVs[K] extends undefined ? K : NonNullable<KVs[K]>]: K extends keyof T ? T[K] : never;
+};
 
 export function subtractSets<T>(lhs: Set<T>, rhs: Set<T>): Set<T> {
     return new Set([...lhs].filter(e => !rhs.has(e)));
@@ -13,23 +15,19 @@ export function intersectSets<T>(set1: Set<T>, set2: Set<T>): Set<T> {
 }
 
 export function omit<T extends object, K extends keyof T>(object: T, keys: K[]): Omit<T, K> {
-    const finalObject = {};
     const keysSet = new Set<keyof T>(keys);
-    const validEntires = Object.entries(object)
-        .filter(([k]) => !keysSet.has(k as keyof T));
-    for (const [key, value] of validEntires) {
-        // @ts-expect-error: always matches property type
-        finalObject[key] = value;
-    }
-    return finalObject as Omit<T, K>;
+    return Object.fromEntries(Object.entries(object)
+        .filter(([k]) => !keysSet.has(k as keyof T))) as Omit<T, K>;
 }
 
-export function replaceKey<T extends object, K1 extends keyof T, K2 extends string>(
-    object: T, key1: K1, key2: K2
-): ReplaceKey<T, K1, K2> {
-    // @ts-expect-error: matches return type
-    return {
-        ...omit(object, [key1]),
-        [key2]: object[key1],
-    };
+export function replaceKeys<T extends object, KVs extends { [K in keyof T]?: string }>(
+    object: T, keys: KVs
+): ReplaceKeys<T, KVs> {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const finalObject = {} as T;
+    for (const [k, v] of Object.entries(object)) {
+        const key = k in keys ? keys[k] : k;
+        finalObject[key as keyof T] = v;
+    }
+    return finalObject as ReplaceKeys<T, KVs>;
 }

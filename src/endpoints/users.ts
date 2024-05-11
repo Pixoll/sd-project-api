@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "crypto";
 import { HTTPCode, Methods, sendOk, sendCreated, sendNoContent, sendError } from "./base";
 import { User, validateStructure } from "../db";
-import { omit, replaceKey } from "../util";
+import { omit, replaceKeys } from "../util";
 
 export const methods = {
     /**
@@ -34,7 +34,7 @@ export const methods = {
         }
 
         try {
-            const user = await User.Model.findOne(replaceKey(search, "rut", "_id"));
+            const user = await User.Model.findOne(replaceKeys(search, { rut: "_id" } as const));
             if (!user) {
                 sendError(response, HTTPCode.NotFound, "User does not exist.");
                 return;
@@ -108,7 +108,7 @@ export const methods = {
 
         try {
             await new User.Model({
-                ...replaceKey(omit(userJson, ["password"]), "rut", "_id"),
+                ...replaceKeys(omit(userJson, ["password"]), { rut: "_id" } as const),
                 password: hashPassword(userJson.password, salt),
                 salt,
             }).save();

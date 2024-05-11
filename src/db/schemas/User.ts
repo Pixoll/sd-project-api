@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { DocumentFromModel, SchemaTypeOptions } from "./base";
 import * as Address from "./Address";
-import { ReplaceKey, replaceKey } from "../../util";
+import { ReplaceKeys, replaceKeys } from "../../util";
 
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = {
@@ -25,7 +25,7 @@ export type JSON = {
 export const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 /* eslint-disable camelcase */
-export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKey<JSON, "rut", "_id">>({
+export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKeys<JSON, { rut: "_id" }>>({
     _id: {
         type: String,
         required: true,
@@ -121,7 +121,7 @@ export const Model = mongoose.model("user", new mongoose.Schema<ReplaceKey<JSON,
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
-    return replaceKey(document.toJSON(), "_id", "rut");
+    return replaceKeys(document.toJSON(), { _id: "rut" } as const);
 }
 
 const rutValidationSequence = [2, 3, 4, 5, 6, 7] as const;
