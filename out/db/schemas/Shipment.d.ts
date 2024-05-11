@@ -36,12 +36,15 @@ export type JSON = {
     destination_address: Address.JSON;
     dispatch_timestamp: number | null;
     delivery_timestamp: number | null;
+    status: PackageStatus;
     shipping_type: string;
     pending_payment: boolean;
     home_pickup: boolean;
     home_delivery: boolean;
     packages: Package.JSON[];
 };
+declare const packageStatuses: readonly ["pending", "pre-transit", "in_transit", "out_for_delivery", "delivered"];
+type PackageStatus = typeof packageStatuses[number];
 export declare const Model: mongoose.Model<ReplaceKey<JSON, "id", "_id">, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKey<JSON, "id", "_id">> & Omit<JSON, "id"> & Record<"_id", string> & Required<{
     _id: string;
 }>, mongoose.Schema<ReplaceKey<JSON, "id", "_id">, mongoose.Model<ReplaceKey<JSON, "id", "_id">, any, any, any, mongoose.Document<unknown, any, ReplaceKey<JSON, "id", "_id">> & Omit<JSON, "id"> & Record<"_id", string> & Required<{
@@ -50,3 +53,4 @@ export declare const Model: mongoose.Model<ReplaceKey<JSON, "id", "_id">, {}, {}
     _id: string;
 }>>>;
 export declare function toJSON(document: Document): JSON;
+export {};

@@ -15,6 +15,7 @@ export type JSON = {
     destination_address: Address.JSON;
     dispatch_timestamp: number | null;
     delivery_timestamp: number | null;
+    status: PackageStatus;
     shipping_type: string;
     pending_payment: boolean;
     home_pickup: boolean;
@@ -24,6 +25,10 @@ export type JSON = {
 
 const shippingTypes = fees.shipping.map(p => p.id);
 const shippingTypesList = shippingTypes.map(t => `\`${t}\``).join(", ").replace(/, ([^,]+)$/, " or $1");
+const packageStatuses = ["pending", "pre-transit", "in_transit", "out_for_delivery", "delivered"] as const;
+const packageStatusesList = packageStatuses.map(s => `\`${s}\``).join(", ").replace(/, ([^,]+)$/, " or $1");
+
+type PackageStatus = typeof packageStatuses[number];
 
 /* eslint-disable camelcase */
 export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKey<JSON, "id", "_id">>({
@@ -88,6 +93,13 @@ export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKey<J
         cast: false,
         default: null,
         description: "When the shipment arrived to the destination address.",
+    },
+    status: {
+        type: String,
+        enum: packageStatuses,
+        required: true,
+        cast: false,
+        description: `Status of the package. One of: ${packageStatusesList}.`,
     },
     shipping_type: {
         type: String,
