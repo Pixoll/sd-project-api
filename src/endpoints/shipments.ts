@@ -56,8 +56,8 @@ export const methods = {
         }
 
         const validationResult = await validateStructure(request.body, Shipment.Model, { exclude: ["id"] });
-        if (validationResult !== true) {
-            sendError(response, HTTPCode.BadRequest, validationResult);
+        if (!validationResult.ok) {
+            sendError(response, HTTPCode.BadRequest, validationResult.message);
             return;
         }
 

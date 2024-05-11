@@ -28,8 +28,8 @@ export const methods = {
             ...phone && { phone: parseInt(phone) },
         };
         const validationResult = await validateStructure(search, User.Model, { partial: true });
-        if (validationResult !== true) {
-            sendError(response, HTTPCode.BadRequest, validationResult);
+        if (!validationResult.ok) {
+            sendError(response, HTTPCode.BadRequest, validationResult.message);
             return;
         }
 
@@ -72,8 +72,8 @@ export const methods = {
         }
 
         const validationResult = await validateStructure(request.body, User.Model, { exclude: ["salt", "verified"] });
-        if (validationResult !== true) {
-            sendError(response, HTTPCode.BadRequest, validationResult);
+        if (!validationResult.ok) {
+            sendError(response, HTTPCode.BadRequest, validationResult.message);
             return;
         }
 

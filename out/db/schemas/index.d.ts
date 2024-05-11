@@ -31,4 +31,12 @@ type StructureValidationOptions<JSON> = {
     partial?: boolean;
     exclude?: Array<keyof JSON & string>;
 };
-export declare function validateStructure<A, B, C, D, F, J extends A extends ReplaceKeys<infer JSON, infer _1> ? JSON : A>(object: object, Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>, options?: StructureValidationOptions<J>): Promise<true | string>;
+type ValidationResult = ValidationSuccess | ValidationError;
+type ValidationSuccess = {
+    ok: true;
+};
+type ValidationError = {
+    ok: false;
+    message: string;
+};
+export declare function validateStructure<A, B, C, D, F, J extends A extends ReplaceKeys<infer JSON, infer _1> ? JSON : A>(object: object, Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>, options?: StructureValidationOptions<J>): Promise<ValidationResult>;

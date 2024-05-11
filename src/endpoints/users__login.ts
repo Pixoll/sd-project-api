@@ -26,8 +26,8 @@ export const methods = {
         }
 
         const validationResult = await validateStructure({ email, password }, User.Model, { partial: true });
-        if (validationResult !== true) {
-            sendError(response, HTTPCode.BadRequest, validationResult);
+        if (!validationResult.ok) {
+            sendError(response, HTTPCode.BadRequest, validationResult.message);
             return;
         }
 

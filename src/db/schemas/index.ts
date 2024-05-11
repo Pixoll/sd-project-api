@@ -10,6 +10,17 @@ type StructureValidationOptions<JSON> = {
     exclude?: Array<keyof JSON & string>;
 };
 
+type ValidationResult = ValidationSuccess | ValidationError;
+
+type ValidationSuccess = {
+    ok: true;
+};
+
+type ValidationError = {
+    ok: false;
+    message: string;
+};
+
 export async function validateStructure<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     A, B, C, D, F, J extends A extends ReplaceKeys<infer JSON, infer _1> ? JSON : A
@@ -20,7 +31,7 @@ export async function validateStructure<
         partial: false,
         exclude: [],
     }
-): Promise<true | string> {
+): Promise<ValidationResult> {
     const { partial, exclude } = options;
     const schemaName = Model.collection.name;
     const structure = Model.schema.obj;
@@ -45,24 +56,30 @@ export async function validateStructure<
     const givenKeys = new Set(Object.keys(temp));
     const extraKeys = subtractSets(givenKeys, intersectSets(givenKeys, all));
     if (extraKeys.size > 0) {
-        return `The following properties are not part of the ${schemaName} schema: ${[...extraKeys].join(", ")}.`;
+        return {
+            ok: false,
+            message: `The following properties are not part of the ${schemaName} schema: ${[...extraKeys].join(", ")}.`,
+        };
     }
 
     if (!partial) {
         const missingKeys = subtractSets(subtractSets(all, givenKeys), new Set(exclude ?? []));
         if (missingKeys.size > 0) {
-            return `Missing the following properties from the ${schemaName} schema: ${[...missingKeys].join(", ")}.`;
+            return {
+                ok: false,
+                message: `Missing the following properties from the ${schemaName} schema: ${[...missingKeys].join(", ")}.`,
+            };
         }
     }
 
     const validationError = await new Model(object).validate(partial ? [...givenKeys] : undefined)
         .then(() => null)
         .catch(e => e as Error.ValidationError);
-    if (!validationError) return true;
+    if (!validationError) return { ok: true };
 
     const error = Object.entries(validationError.errors)
         .find(([path]) => !exclude?.includes(path.toString() as keyof J & string));
-    if (!error) return true;
+    if (!error) return { ok: true };
 
     const [fullPath, firstError] = error;
     const errorLocation = structure[firstError.path as keyof typeof structure];
@@ -72,9 +89,12 @@ export async function validateStructure<
         ? fullPath.toString().split(".").slice(0, -1).join(".") + "." + key
         : key;
 
-    return firstError instanceof Error.CastError
-        ? `'${parsedPath}' is of type ${kind} in the ${schemaName} schema.`
-        : kind === "required"
-            ? `'${parsedPath}' is  is required in the ${schemaName} schema.`
-            : firstError.message;
+    return {
+        ok: false,
+        message: firstError instanceof Error.CastError
+            ? `'${parsedPath}' is of type ${kind} in the ${schemaName} schema.`
+            : kind === "required"
+                ? `'${parsedPath}' is  is required in the ${schemaName} schema.`
+                : firstError.message,
+    };
 }
