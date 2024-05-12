@@ -141,7 +141,7 @@ GET /admins
 
 #### Response Body
 
-An [admin](#admin-object) object without the `password` or `salt` field.
+An [admin](#admin-object) object without the `password` and `salt` fields.
 
 #### Response Codes
 
@@ -153,7 +153,7 @@ An [admin](#admin-object) object without the `password` or `salt` field.
 
 ### Create Admin
 
-Create a new [admin](#admin-object). `salt` may not be specified in the request.
+Create a new [admin](#admin-object).
 
 #### URL
 
@@ -163,7 +163,7 @@ POST /admins
 
 #### Request Body
 
-An [admin](#admin-object) object without the `salt`.
+An [admin](#admin-object) object without the `salt`, `created_timestamp` and `updated_timestamp` fields.
 
 #### Response Codes
 
@@ -213,6 +213,12 @@ POST /admins/login
 | --- | --- | --- |
 | email | string | The admin's email. |
 | password | string | The admin's password. |
+
+#### Response Body
+
+| Field | Type | Description |
+| --- | --- | --- |
+| session_token | string | Session token for the logged in admin. |
 
 #### Response Codes
 
@@ -309,7 +315,7 @@ A [shipment](#shipment-object) object.
 
 ### Create Shipment
 
-Create a new [shipment](#shipment-object). `id` may not be specified in the request.
+Create a new [shipment](#shipment-object).
 
 #### URL
 
@@ -319,7 +325,7 @@ POST /shipments
 
 #### Request Body
 
-A [shipment](#shipment-object) object without the `id`.
+A [shipment](#shipment-object) object without the `id`, `created_timestamp` and `updated_timestamp` fields.
 
 #### Response Codes
 
@@ -372,7 +378,7 @@ GET /users
 
 #### Response Body
 
-A [user](#user-object) object without the `password` or `salt` fields.
+A [user](#user-object) object without the `password` and `salt` fields.
 
 #### Response Codes
 
@@ -384,7 +390,7 @@ A [user](#user-object) object without the `password` or `salt` fields.
 
 ### Create User
 
-Create a new [user](#user-object). Only one user per `rut`, `email` or `phone` number may exist at one time. `salt` may not be specified in the request.
+Create a new [user](#user-object). Only one user per `rut`, `email` or `phone` number may exist at one time.
 
 #### URL
 
@@ -394,7 +400,7 @@ POST /users
 
 #### Request Body
 
-A [user](#user-object) object without the `salt` or `verified` fields.
+A [user](#user-object) object without the `salt`, `verified`, `created_timestamp` and `updated_timestamp` fields.
 
 #### Response Codes
 
@@ -445,6 +451,12 @@ POST /users/login
 | email | string | The user's email. |
 | password | string | The user's password. |
 
+#### Response Body
+
+| Field | Type | Description |
+| --- | --- | --- |
+| session_token | string | Session token for the logged in user. |
+
 #### Response Codes
 
 | HTTP Code | Description |
@@ -472,7 +484,9 @@ POST /users/verify_id
 
 #### Request Body
 
-data -- string -- Image encoded in base64 format.
+| Field | Type | Description |
+| --- | --- | --- |
+| data | string | Image encoded in base64 format. |
 
 #### Response Codes
 

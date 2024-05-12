@@ -1,6 +1,7 @@
-import { User, validateStructure } from "../db";
 import { HTTPCode, Methods, sendError, sendOk } from "./base";
 import { hashPassword } from "./users";
+import { User, validateStructure } from "../db";
+import { generateToken } from "../tokens";
 
 export const methods = {
     /**
@@ -8,6 +9,7 @@ export const methods = {
      * @description Verify user login credentials.
      * @body email -- string -- The user's email.
      * @body password -- string -- The user's password.
+     * @response session_token -- string -- Session token for the logged in user.
      * @code 200 Successfully logged in.
      * @code 400 Malformed request.
      * @code 401 Wrong password.
@@ -37,13 +39,14 @@ export const methods = {
             return;
         }
 
-        const { salt, password: savedPassword } = matchingUser;
+        const { rut, salt, password: savedPassword } = User.toJSON(matchingUser);
         if (hashPassword(password, salt) !== savedPassword) {
             sendError(response, HTTPCode.Unauthorized, "Wrong password.");
             return;
         }
 
-        // TODO session tokens
-        sendOk(response);
+        sendOk(response, {
+            "session_token": generateToken("user", rut),
+        });
     },
 } satisfies Methods;
