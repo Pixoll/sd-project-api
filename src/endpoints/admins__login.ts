@@ -43,7 +43,7 @@ export const methods = {
             return;
         }
 
-        // TODO access tokens???
+        // TODO session tokens
         sendOk(response);
     },
 } satisfies Methods;
