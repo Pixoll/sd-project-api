@@ -336,13 +336,19 @@ A [shipment](#shipment-object) object without the `id`, `created_timestamp` and 
 
 ### Delete Shipment
 
-Delete the [shipment](#shipment-object) matching the provided tracking `id`.
+**Only usable by admins.** Delete the [shipment](#shipment-object) matching the provided tracking `id`.
 
 #### URL
 
 ```
 DELETE /shipments
 ```
+
+#### Request Headers
+
+| Name | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Session token of the logged in admin. See [/admins/login](#login-as-admin). |
 
 #### Request Query Parameters
 
@@ -356,23 +362,18 @@ DELETE /shipments
 | --- | --- |
 | 204 No Content | Successfully deleted the shipment. |
 | 400 Bad Request | Did not provide tracking `id`. |
+| 401 Unauthorized | Not an admin. |
 | 404 Not Found | Shipment with that tracking `id` does not exist. |
 
 ### Get User
 
-Returns a [user](#user-object) for the given `rut`, `email` or `phone` number. Providing no query will return all registered [user](#user-object)s, **only** if logged in as an admin.
+Returns a [user](#user-object) for the given `rut`, `email` or `phone` number.
 
 #### URL
 
 ```
 GET /users
 ```
-
-#### Request Headers
-
-| Name | Type | Description |
-| --- | --- | --- |
-| Authorization | session token | Session token of the logged in user. See [/admins/login](#login-as-admin) and [/users/login](#login-as-user). |
 
 #### Request Query Parameters
 

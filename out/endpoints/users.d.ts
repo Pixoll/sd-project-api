@@ -1,15 +1,15 @@
 /// <reference types="express" />
 import { User } from "../db";
 export declare const methods: {
-    get(request: import("express").Request<Record<string, string | undefined>, unknown, unknown, {
+    get(request: import("express").Request<Record<string, string>, unknown, unknown, {
         rut?: string | undefined;
         email?: string | undefined;
         phone?: string | undefined;
     }, Record<string, any>>, response: import("express").Response<Omit<User.JSON, "password" | "salt">, Record<string, any>>): Promise<void>;
-    post(request: import("express").Request<Record<string, string | undefined>, unknown, User.JSON, {
+    post(request: import("express").Request<Record<string, string>, unknown, User.JSON, {
         [x: string]: string | undefined;
     }, Record<string, any>>, response: import("express").Response<unknown, Record<string, any>>): Promise<void>;
-    delete(request: import("express").Request<Record<string, string | undefined>, unknown, unknown, {
+    delete(request: import("express").Request<Record<string, string>, unknown, unknown, {
         rut?: string | undefined;
     }, Record<string, any>>, response: import("express").Response<unknown, Record<string, any>>): Promise<void>;
 };

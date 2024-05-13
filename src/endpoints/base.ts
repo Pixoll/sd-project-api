@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { TokenType } from "../tokens";
+import { TokenType, getRutFromToken } from "../tokens";
 
 type MethodHandlerGenerics = {
     body?: unknown;
@@ -12,7 +12,7 @@ type MethodHandlerGenericsFallback<T extends MethodHandlerGenerics | undefined> 
     responseData: T extends MethodHandlerGenerics ? T["responseData"] : unknown;
 };
 export type MethodHandler<Params extends MethodHandlerGenerics | undefined = MethodHandlerGenerics> = (
-    request: Request<Record<string, string | undefined>, unknown, MethodHandlerGenericsFallback<Params>["body"], {
+    request: Request<Record<string, string>, unknown, MethodHandlerGenericsFallback<Params>["body"], {
         [K in MethodHandlerGenericsFallback<Params>["queryKeys"]]?: string
     }>,
     response: Response<MethodHandlerGenericsFallback<Params>["responseData"]>
@@ -87,7 +87,16 @@ type AuthorizationData = {
     rut: string;
 };
 
-export function getUserDataFromAuth(request: Request): AuthorizationData | null {
-    request.headers.authorization;
+export function getAuthorizedUser(request: Request): AuthorizationData | null {
+    const token = request.headers.authorization;
+    if (!token) return null;
+
+    for (const type of ["admin", "user"] satisfies TokenType[]) {
+        const rut = getRutFromToken(type, token);
+        if (rut) {
+            return { type, rut };
+        }
+    }
+
     return null;
 }

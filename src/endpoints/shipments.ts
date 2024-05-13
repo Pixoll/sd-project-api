@@ -1,4 +1,4 @@
-import { HTTPCode, EndpointHandler, sendCreated, sendError, sendNoContent, sendOk } from "./base";
+import { HTTPCode, EndpointHandler, sendCreated, sendError, sendNoContent, sendOk, getAuthorizedUser } from "./base";
 import { Shipment, validateStructure } from "../db";
 import { hasOneOfKeys } from "../util";
 
@@ -68,13 +68,20 @@ export const methods = {
 
     /**
      * @name Delete Shipment
-     * @description Delete the {schema:Shipment} matching the provided tracking `id`.
+     * @description **Only usable by admins.** Delete the {schema:Shipment} matching the provided tracking `id`.
+     * @header Authorization | string | Session token of the logged in admin. See {endpoint:admins/login}.
      * @query id | string | The shipment's tracking id.
      * @code 204 Successfully deleted the shipment.
      * @code 400 Did not provide tracking `id`.
+     * @code 401 Not an admin.
      * @code 404 Shipment with that tracking `id` does not exist.
      */
     async delete(request, response): Promise<void> {
+        if (getAuthorizedUser(request)?.type !== "admin") {
+            sendError(response, HTTPCode.Unauthorized, "Not an admin.");
+            return;
+        }
+
         const { id } = request.query;
         if (!id) {
             sendError(response, HTTPCode.BadRequest, "Expected shipment id in the query.");
@@ -95,10 +102,6 @@ export const methods = {
             sendError(response, HTTPCode.ServerError, "Unexpected error while trying to get shipment.");
         }
     },
-
-    // async patch(request, response): Promise<void> {
-
-    // },
 } satisfies EndpointHandler<{
     get: {
         queryKeys: "id";

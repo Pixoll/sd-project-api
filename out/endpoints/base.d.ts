@@ -10,7 +10,7 @@ type MethodHandlerGenericsFallback<T extends MethodHandlerGenerics | undefined> 
     queryKeys: T extends MethodHandlerGenerics ? T["queryKeys"] & string : string;
     responseData: T extends MethodHandlerGenerics ? T["responseData"] : unknown;
 };
-export type MethodHandler<Params extends MethodHandlerGenerics | undefined = MethodHandlerGenerics> = (request: Request<Record<string, string | undefined>, unknown, MethodHandlerGenericsFallback<Params>["body"], {
+export type MethodHandler<Params extends MethodHandlerGenerics | undefined = MethodHandlerGenerics> = (request: Request<Record<string, string>, unknown, MethodHandlerGenericsFallback<Params>["body"], {
     [K in MethodHandlerGenericsFallback<Params>["queryKeys"]]?: string;
 }>, response: Response<MethodHandlerGenericsFallback<Params>["responseData"]>) => Promise<void> | void;
 type RequireAtLeastOne<T extends object> = {
@@ -47,5 +47,5 @@ type AuthorizationData = {
     type: TokenType;
     rut: string;
 };
-export declare function getUserDataFromAuth(request: Request): AuthorizationData | null;
+export declare function getAuthorizedUser(request: Request): AuthorizationData | null;
 export {};

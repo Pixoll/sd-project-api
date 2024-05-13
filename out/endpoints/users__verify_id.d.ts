@@ -1,6 +1,6 @@
 /// <reference types="express" />
 export declare const methods: {
-    post(request: import("express").Request<Record<string, string | undefined>, unknown, {
+    post(request: import("express").Request<Record<string, string>, unknown, {
         data?: string | undefined;
     }, {
         rut?: string | undefined;
