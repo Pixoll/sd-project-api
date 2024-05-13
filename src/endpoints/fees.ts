@@ -14,4 +14,8 @@ export const methods = {
     get(_, response): void {
         sendOk(response, fees);
     },
-} satisfies EndpointHandler;
+} satisfies EndpointHandler<{
+    get: {
+        responseData: typeof fees;
+    };
+}>;

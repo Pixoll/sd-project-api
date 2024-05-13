@@ -13,7 +13,7 @@ export const methods = {
      * @code 404 Shipment with that tracking `id` does not exist.
      */
     async get(request, response): Promise<void> {
-        const { id } = request.query as Partial<Record<string, string>>;
+        const { id } = request.query;
         if (!id) {
             sendError(response, HTTPCode.BadRequest, "Expected shipment id in the query.");
             return;
@@ -75,7 +75,7 @@ export const methods = {
      * @code 404 Shipment with that tracking `id` does not exist.
      */
     async delete(request, response): Promise<void> {
-        const { id } = request.query as Partial<Record<string, string>>;
+        const { id } = request.query;
         if (!id) {
             sendError(response, HTTPCode.BadRequest, "Expected shipment id in the query.");
             return;
@@ -99,4 +99,15 @@ export const methods = {
     // async patch(request, response): Promise<void> {
 
     // },
-} satisfies EndpointHandler;
+} satisfies EndpointHandler<{
+    get: {
+        queryKeys: "id";
+        responseData: Shipment.JSON;
+    };
+    post: {
+        body: Shipment.JSON;
+    };
+    delete: {
+        queryKeys: "id";
+    };
+}>;

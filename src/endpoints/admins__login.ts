@@ -16,7 +16,7 @@ export const methods = {
      * @code 404 Admin with that `email` does not exist.
      */
     async post(request, response): Promise<void> {
-        const { email, password } = request.body as Partial<Record<string, string>>;
+        const { email, password } = request.body;
         if (!email || !password) {
             sendError(response, HTTPCode.BadRequest, "Expected both email and password in the request body.");
             return;
@@ -44,4 +44,14 @@ export const methods = {
             "session_token": generateToken("admin", rut),
         });
     },
-} satisfies EndpointHandler;
+} satisfies EndpointHandler<{
+    post: {
+        body: {
+            email: string;
+            password: string;
+        };
+        responseData: {
+            session_token: string;
+        };
+    };
+}>;

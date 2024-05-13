@@ -16,7 +16,7 @@ export const methods = {
      * @code 404 No user exists with the provided query.
      */
     async get(request, response): Promise<void> {
-        const { rut, email, phone } = request.query as Record<string, string | undefined>;
+        const { rut, email, phone } = request.query;
         if ((+!!rut) + (+!!email) + (+!!phone) !== 1) {
             sendError(response, HTTPCode.BadRequest, "Expected only one of either rut, email or phone in query.");
             return;
@@ -72,7 +72,7 @@ export const methods = {
             return;
         }
 
-        const userJson = request.body as User.JSON;
+        const userJson = request.body;
         const { rut, email, phone } = userJson;
 
         try {
@@ -124,7 +124,7 @@ export const methods = {
      * @code 404 User with that `rut` does not exist.
      */
     async delete(request, response): Promise<void> {
-        const { rut } = request.query as Record<string, string | undefined>;
+        const { rut } = request.query;
         if (!rut) {
             sendError(response, HTTPCode.BadRequest, "Expected RUT query parameter.");
             return;
@@ -149,7 +149,18 @@ export const methods = {
             sendError(response, HTTPCode.ServerError, "Unexpected error while trying to delete the user.");
         }
     },
-} satisfies EndpointHandler;
+} satisfies EndpointHandler<{
+    get: {
+        queryKeys: "rut" | "email" | "phone";
+        responseData: Omit<User.JSON, "password" | "salt">;
+    };
+    post: {
+        body: User.JSON;
+    };
+    delete: {
+        queryKeys: "rut";
+    };
+}>;
 
 export function hashPassword(password: string, salt: string): string {
     return createHash("sha256").update(password + salt).digest("hex");

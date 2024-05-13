@@ -1,4 +1,4 @@
-import { HTTPCode, EndpointHandler } from "./base";
+import { EndpointHandler, sendOk } from "./base";
 
 export const methods = {
     /**
@@ -7,6 +7,6 @@ export const methods = {
      * @code 200 API is available.
      */
     get(_, response): void {
-        response.send(HTTPCode.Ok).send();
+        sendOk(response);
     },
 } satisfies EndpointHandler;

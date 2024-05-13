@@ -14,7 +14,7 @@ export const methods = {
      * @code 404 No admin exists with that `rut`.
      */
     async get(request, response): Promise<void> {
-        const { rut } = request.query as Record<string, string | undefined>;
+        const { rut } = request.query;
         if (!rut) {
             sendError(response, HTTPCode.BadRequest, "Expected rut in query.");
             return;
@@ -102,7 +102,7 @@ export const methods = {
      * @code 404 Admin with that `rut` does not exist.
      */
     async delete(request, response): Promise<void> {
-        const { rut } = request.query as Record<string, string | undefined>;
+        const { rut } = request.query;
         if (!rut) {
             sendError(response, HTTPCode.BadRequest, "Expected RUT query parameter.");
             return;
@@ -127,7 +127,18 @@ export const methods = {
             sendError(response, HTTPCode.ServerError, "Unexpected error while trying to delete the admin.");
         }
     },
-} satisfies EndpointHandler;
+} satisfies EndpointHandler<{
+    get: {
+        queryKeys: "rut";
+        responseData: Omit<Admin.JSON, "password" | "salt">;
+    };
+    post: {
+        body: Admin.JSON;
+    };
+    delete: {
+        queryKeys: "rut";
+    };
+}>;
 
 export function hashPassword(password: string, salt: string): string {
     return createHash("sha256").update(password + salt).digest("hex");

@@ -1,7 +1,22 @@
 import { NextFunction, Request, Response } from "express";
 import { TokenType } from "../tokens";
 
-type MethodHandler = (request: Request, response: Response) => Promise<void> | void;
+type MethodHandlerGenerics = {
+    body?: unknown;
+    queryKeys?: string;
+    responseData?: unknown;
+};
+type MethodHandlerGenericsFallback<T extends MethodHandlerGenerics | undefined> = {
+    body: T extends MethodHandlerGenerics ? T["body"] : unknown;
+    queryKeys: T extends MethodHandlerGenerics ? T["queryKeys"] & string : string;
+    responseData: T extends MethodHandlerGenerics ? T["responseData"] : unknown;
+};
+export type MethodHandler<Params extends MethodHandlerGenerics | undefined = MethodHandlerGenerics> = (
+    request: Request<Record<string, string | undefined>, unknown, MethodHandlerGenericsFallback<Params>["body"], {
+        [K in MethodHandlerGenericsFallback<Params>["queryKeys"]]?: string
+    }>,
+    response: Response<MethodHandlerGenericsFallback<Params>["responseData"]>
+) => Promise<void> | void;
 
 /**
  * https://learn.microsoft.com/en-us/javascript/api/@azure/keyvault-certificates/requireatleastone
@@ -12,7 +27,15 @@ type RequireAtLeastOne<T extends object> = {
 
 type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
-export type EndpointHandler = RequireAtLeastOne<Record<Lowercase<Method>, MethodHandler>>;
+type EndpointHandlerGenerics = Partial<Record<Lowercase<Method>, MethodHandlerGenerics>>;
+
+export type EndpointHandler<Generics extends EndpointHandlerGenerics = EndpointHandlerGenerics> = RequireAtLeastOne<{
+    get: MethodHandler<Generics["get"]>;
+    post: MethodHandler<Generics["post"]>;
+    put: MethodHandler<Generics["put"]>;
+    delete: MethodHandler<Generics["delete"]>;
+    patch: MethodHandler<Generics["patch"]>;
+}>;
 
 export enum HTTPCode {
     Ok = 200,
@@ -27,6 +50,7 @@ export enum HTTPCode {
 }
 
 export function baseMiddleware(request: Request, response: Response, next: NextFunction): void {
+    console.log(request.params);
     const method = request.method as Method;
     if (method === "POST" && request.headers["content-type"] !== "application/json") {
         sendError(response, HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
@@ -36,7 +60,13 @@ export function baseMiddleware(request: Request, response: Response, next: NextF
     next();
 }
 
-export function sendOk(response: Response, data?: unknown): void {
+type ResponseBodyType<R extends Response> = R extends Response<infer DT> ? DT : never;
+type IfUnknown<T, Y, N> = [unknown] extends [T] ? Y : N;
+
+export function sendOk<R extends Response>(
+    response: R,
+    ...[data]: IfUnknown<ResponseBodyType<R>, [], [data: ResponseBodyType<R>]>
+): void {
     response.status(HTTPCode.Ok).send(data);
 }
 

@@ -15,4 +15,8 @@ export const methods = {
         sendOk(response, regions);
         return;
     },
-} satisfies EndpointHandler;
+} satisfies EndpointHandler<{
+    get: {
+        responseData: typeof regions;
+    };
+}>;

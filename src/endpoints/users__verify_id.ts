@@ -19,7 +19,7 @@ export const methods = {
      * @code 413 Image is bigger than 1MB.
      */
     async post(request, response): Promise<void> {
-        const { rut } = request.query as Record<string, string | undefined>;
+        const { rut } = request.query;
         if (!rut) {
             sendError(response, HTTPCode.BadRequest, "Expected RUT query parameter.");
             return;
@@ -41,7 +41,7 @@ export const methods = {
             return;
         }
 
-        const { data } = request.body as Partial<Record<string, string>>;
+        const { data } = request.body;
         if (!data) {
             sendError(response, HTTPCode.BadRequest, "Expected data property in the request body.");
             return;
@@ -80,4 +80,11 @@ export const methods = {
 
         sendOk(response);
     },
-} satisfies EndpointHandler;
+} satisfies EndpointHandler<{
+    post: {
+        body: {
+            data?: string;
+        };
+        queryKeys: "rut";
+    };
+}>;
