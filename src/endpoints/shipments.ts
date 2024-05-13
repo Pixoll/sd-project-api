@@ -35,12 +35,19 @@ export const methods = {
 
     /**
      * @name Create Shipment
+     * @description **Only usable while logged in.**
      * @description Create a new {schema:Shipment}.
      * @body A {schema:Shipment} object without the `id`, `created_timestamp` and `updated_timestamp` fields.
      * @code 201 Successfully created new shipment.
      * @code 400 Malformed shipment structure.
+     * @code 401 Not logged in.
      */
     async post(request, response): Promise<void> {
+        if (!getAuthorizedUser(request)) {
+            sendError(response, HTTPCode.Unauthorized, "Not logged in.");
+            return;
+        }
+
         if (hasOneOfKeys(request.body, ["id", "created_timestamp", "updated_timestamp"])) {
             sendError(
                 response,
@@ -68,7 +75,8 @@ export const methods = {
 
     /**
      * @name Delete Shipment
-     * @description **Only usable by admins.** Delete the {schema:Shipment} matching the provided tracking `id`.
+     * @description **Only usable while logged in as an admin.**
+     * @description Delete the {schema:Shipment} matching the provided tracking `id`.
      * @header Authorization | string | Session token of the logged in admin. See {endpoint:admins/login}.
      * @query id | string | The shipment's tracking id.
      * @code 204 Successfully deleted the shipment.
