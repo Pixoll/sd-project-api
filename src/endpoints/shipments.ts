@@ -1,4 +1,4 @@
-import { HTTPCode, Methods, sendCreated, sendError, sendNoContent, sendOk } from "./base";
+import { HTTPCode, EndpointHandler, sendCreated, sendError, sendNoContent, sendOk } from "./base";
 import { Shipment, validateStructure } from "../db";
 import { hasOneOfKeys } from "../util";
 
@@ -99,4 +99,4 @@ export const methods = {
     // async patch(request, response): Promise<void> {
 
     // },
-} satisfies Methods;
+} satisfies EndpointHandler;

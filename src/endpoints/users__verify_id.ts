@@ -1,6 +1,6 @@
 import Jimp from "jimp";
 import jsQR from "jsqr";
-import { HTTPCode, Methods, sendError, sendOk } from "./base";
+import { HTTPCode, EndpointHandler, sendError, sendOk } from "./base";
 import { User } from "../db";
 
 // eslint-disable-next-line max-len
@@ -80,4 +80,4 @@ export const methods = {
 
         sendOk(response);
     },
-} satisfies Methods;
+} satisfies EndpointHandler;

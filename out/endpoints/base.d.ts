@@ -4,13 +4,8 @@ type MethodHandler = (request: Request, response: Response) => Promise<void> | v
 type RequireAtLeastOne<T extends object> = {
     [K in keyof T]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<keyof T, K>>>;
 }[keyof T];
-export type Methods = RequireAtLeastOne<{
-    get: MethodHandler;
-    post: MethodHandler;
-    put: MethodHandler;
-    delete: MethodHandler;
-    patch: MethodHandler;
-}>;
+type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+export type EndpointHandler = RequireAtLeastOne<Record<Lowercase<Method>, MethodHandler>>;
 export declare enum HTTPCode {
     Ok = 200,
     Created = 201,

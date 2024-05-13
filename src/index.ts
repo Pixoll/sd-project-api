@@ -30,8 +30,9 @@ void async function (): Promise<void> {
     router.use(endpoints.baseMiddleware);
 
     for (const [endpoint, { methods }] of Object.entries(omit(endpoints, ["baseMiddleware"]))) {
-        for (const [name, handler] of Object.entries(methods as Required<endpoints.Methods>)) {
-            router[name]("/" + endpoint.replace(/__/g, "/"), handler);
+        const url = "/" + endpoint.replace(/__/g, "/");
+        for (const [method, handler] of Object.entries(methods as Required<endpoints.EndpointHandler>)) {
+            router[method](url, handler);
         }
     }
 

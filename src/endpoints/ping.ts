@@ -1,4 +1,4 @@
-import { HTTPCode, Methods } from "./base";
+import { HTTPCode, EndpointHandler } from "./base";
 
 export const methods = {
     /**
@@ -9,4 +9,4 @@ export const methods = {
     get(_, response): void {
         response.send(HTTPCode.Ok).send();
     },
-} satisfies Methods;
+} satisfies EndpointHandler;

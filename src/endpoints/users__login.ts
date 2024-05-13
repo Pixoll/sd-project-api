@@ -1,4 +1,4 @@
-import { HTTPCode, Methods, sendError, sendOk } from "./base";
+import { HTTPCode, EndpointHandler, sendError, sendOk } from "./base";
 import { hashPassword } from "./users";
 import { User, validateStructure } from "../db";
 import { generateToken } from "../tokens";
@@ -44,4 +44,4 @@ export const methods = {
             "session_token": generateToken("user", rut),
         });
     },
-} satisfies Methods;
+} satisfies EndpointHandler;

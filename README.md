@@ -360,13 +360,19 @@ DELETE /shipments
 
 ### Get User
 
-Returns a [user](#user-object) for the given `rut`, `email` or `phone` number.
+Returns a [user](#user-object) for the given `rut`, `email` or `phone` number. Providing no query will return all registered [user](#user-object)s, **only** if logged in as an admin.
 
 #### URL
 
 ```
 GET /users
 ```
+
+#### Request Headers
+
+| Name | Type | Description |
+| --- | --- | --- |
+| Authorization | session token | Session token of the logged in user. See [/admins/login](#login-as-admin) and [/users/login](#login-as-user). |
 
 #### Request Query Parameters
 

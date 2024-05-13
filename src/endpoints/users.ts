@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "crypto";
-import { HTTPCode, Methods, sendOk, sendCreated, sendNoContent, sendError } from "./base";
+import { HTTPCode, EndpointHandler, sendOk, sendCreated, sendNoContent, sendError } from "./base";
 import { User, validateStructure } from "../db";
 import { hasOneOfKeys, omit, replaceKeys } from "../util";
 
@@ -149,7 +149,7 @@ export const methods = {
             sendError(response, HTTPCode.ServerError, "Unexpected error while trying to delete the user.");
         }
     },
-} satisfies Methods;
+} satisfies EndpointHandler;
 
 export function hashPassword(password: string, salt: string): string {
     return createHash("sha256").update(password + salt).digest("hex");

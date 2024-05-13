@@ -1,4 +1,4 @@
-import { Methods, sendOk } from "./base";
+import { EndpointHandler, sendOk } from "./base";
 import { RecursiveReadonly } from "../util";
 import _regions from "../../static/regions_communes.json";
 
@@ -15,4 +15,4 @@ export const methods = {
         sendOk(response, regions);
         return;
     },
-} satisfies Methods;
+} satisfies EndpointHandler;

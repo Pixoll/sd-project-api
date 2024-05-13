@@ -1,4 +1,4 @@
-import { Methods, sendOk } from "./base";
+import { EndpointHandler, sendOk } from "./base";
 import { RecursiveReadonly } from "../util";
 import _fees from "../../static/fees.json";
 
@@ -14,4 +14,4 @@ export const methods = {
     get(_, response): void {
         sendOk(response, fees);
     },
-} satisfies Methods;
+} satisfies EndpointHandler;

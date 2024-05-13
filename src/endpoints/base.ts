@@ -10,13 +10,9 @@ type RequireAtLeastOne<T extends object> = {
     [K in keyof T]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<keyof T, K>>>;
 }[keyof T];
 
-export type Methods = RequireAtLeastOne<{
-    get: MethodHandler;
-    post: MethodHandler;
-    put: MethodHandler;
-    delete: MethodHandler;
-    patch: MethodHandler;
-}>;
+type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+
+export type EndpointHandler = RequireAtLeastOne<Record<Lowercase<Method>, MethodHandler>>;
 
 export enum HTTPCode {
     Ok = 200,
@@ -31,7 +27,8 @@ export enum HTTPCode {
 }
 
 export function baseMiddleware(request: Request, response: Response, next: NextFunction): void {
-    if (request.method === "POST" && request.headers["content-type"] !== "application/json") {
+    const method = request.method as Method;
+    if (method === "POST" && request.headers["content-type"] !== "application/json") {
         sendError(response, HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
         return;
     }
