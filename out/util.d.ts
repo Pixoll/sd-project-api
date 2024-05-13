@@ -9,6 +9,7 @@ export type ReplaceKeys<T extends object, KVs extends {
 export declare function subtractSets<T>(lhs: Set<T>, rhs: Set<T>): Set<T>;
 export declare function intersectSets<T>(set1: Set<T>, set2: Set<T>): Set<T>;
 export declare function omit<T extends object, K extends keyof T>(object: T, keys: K[]): Omit<T, K>;
+export declare function pick<T extends object, K extends keyof T>(object: T, keys: K[]): Pick<T, K>;
 export declare function replaceKeys<T extends object, KVs extends {
     [K in keyof T]?: string;
 }>(object: T, keys: KVs): ReplaceKeys<T, KVs>;

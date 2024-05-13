@@ -20,6 +20,12 @@ export function omit<T extends object, K extends keyof T>(object: T, keys: K[]):
         .filter(([k]) => !keysSet.has(k as keyof T))) as Omit<T, K>;
 }
 
+export function pick<T extends object, K extends keyof T>(object: T, keys: K[]): Pick<T, K> {
+    const keysSet = new Set<keyof T>(keys);
+    return Object.fromEntries(Object.entries(object)
+        .filter(([k]) => keysSet.has(k as keyof T))) as Pick<T, K>;
+}
+
 export function replaceKeys<T extends object, KVs extends { [K in keyof T]?: string }>(
     object: T, keys: KVs
 ): ReplaceKeys<T, KVs> {

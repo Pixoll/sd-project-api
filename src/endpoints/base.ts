@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { TokenType, getRutFromToken } from "../tokens";
+import { pick } from "../util";
 
 type MethodHandlerGenerics = {
     body?: unknown;
@@ -50,8 +51,10 @@ export enum HTTPCode {
 }
 
 export function baseMiddleware(request: Request, response: Response, next: NextFunction): void {
-    console.log(request.params);
+    const now = new Date().toISOString().replace(/T|\.\d{3}Z$/g, " ").trim();
     const method = request.method as Method;
+    console.log(`[${now}] ${method} ${request.path}`, pick(request, ["query", "body"]));
+
     if (method === "POST" && request.headers["content-type"] !== "application/json") {
         sendError(response, HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
         return;
