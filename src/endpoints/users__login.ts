@@ -7,9 +7,9 @@ export const methods = {
     /**
      * @name Login as User
      * @description Verify user login credentials.
-     * @body email -- string -- The user's email.
-     * @body password -- string -- The user's password.
-     * @response session_token -- string -- Session token for the logged in user.
+     * @body email | string | The user's email.
+     * @body password | string | The user's password.
+     * @response session_token | string | Session token for the logged in user.
      * @code 200 Successfully logged in.
      * @code 400 Malformed request.
      * @code 401 Wrong password.

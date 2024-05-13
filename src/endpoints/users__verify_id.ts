@@ -10,8 +10,8 @@ export const methods = {
     /**
      * @name Verify User Identity
      * @description Verify a user's ID by reading the QR code at the back of it. Will not process images bigger than 1MB.
-     * @query rut -- string -- RUT of the user to verify.
-     * @body data -- string -- Image encoded in base64 format.
+     * @query rut | string | RUT of the user to verify.
+     * @body data | string | Image encoded in base64 format.
      * @code 200 Successfully verified the user's identity.
      * @code 400 Malformed request or QR content.
      * @code 404 User with that `rut` does not exist.

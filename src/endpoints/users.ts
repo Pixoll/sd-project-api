@@ -7,9 +7,9 @@ export const methods = {
     /**
      * @name Get User
      * @description Returns a {schema:User} for the given `rut`, `email` or `phone` number.
-     * @query rut -- number -- RUT of the user. `email` and `phone` cannot be present if this parameter is.
-     * @query email -- string -- Email of the user. `rut` and `phone` cannot be present if this parameter is.
-     * @query phone -- number -- Phone number of the user. `rut` and `email` cannot be present if this parameter is.
+     * @query rut | number | RUT of the user. `email` and `phone` cannot be present if this parameter is.
+     * @query email | string | Email of the user. `rut` and `phone` cannot be present if this parameter is.
+     * @query phone | number | Phone number of the user. `rut` and `email` cannot be present if this parameter is.
      * @response A {schema:User} object without the `password` and `salt` fields.
      * @code 200 Successfully retrieved the user.
      * @code 400 Provided none or more than one kind of parameter, or the parameter is malformed.
@@ -123,7 +123,7 @@ export const methods = {
     /**
      * @name Delete User
      * @description Delete the {schema:User} matching the provided `rut`.
-     * @query rut -- string -- RUT of the user.
+     * @query rut | string | RUT of the user.
      * @code 204 Successfully deleted the user.
      * @code 400 Did not provide `rut`, or malformed `rut`.
      * @code 404 User with that `rut` does not exist.

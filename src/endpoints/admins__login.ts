@@ -7,9 +7,9 @@ export const methods = {
     /**
      * @name Login as Admin
      * @description Verify admin login credentials.
-     * @body email -- string -- The admin's email.
-     * @body password -- string -- The admin's password.
-     * @response session_token -- string -- Session token for the logged in admin.
+     * @body email | string | The admin's email.
+     * @body password | string | The admin's password.
+     * @response session_token | string | Session token for the logged in admin.
      * @code 200 Successfully logged in.
      * @code 400 Malformed request.
      * @code 401 Wrong password.

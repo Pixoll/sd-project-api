@@ -6,7 +6,7 @@ export const methods = {
     /**
      * @name Get Shipment
      * @description Returns a {schema:Shipment} for the given tracking `id`.
-     * @query id -- string -- The shipment's tracking id.
+     * @query id | string | The shipment's tracking id.
      * @response A {schema:Shipment} object.
      * @code 200 Successfully retrieved the shipment.
      * @code 400 Did not provide tracking `id`.
@@ -74,7 +74,7 @@ export const methods = {
     /**
      * @name Delete Shipment
      * @description Delete the {schema:Shipment} matching the provided tracking `id`.
-     * @query id -- string -- The shipment's tracking id.
+     * @query id | string | The shipment's tracking id.
      * @code 204 Successfully deleted the shipment.
      * @code 400 Did not provide tracking `id`.
      * @code 404 Shipment with that tracking `id` does not exist.

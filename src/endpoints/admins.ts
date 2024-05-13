@@ -7,7 +7,7 @@ export const methods = {
     /**
      * @name Get Admin
      * @description Returns an {schema:Admin} for the given `rut`.
-     * @query rut -- number -- RUT of the admin.
+     * @query rut | number | RUT of the admin.
      * @response An {schema:Admin} object without the `password` and `salt` fields.
      * @code 200 Successfully retrieved the admin.
      * @code 400 Did not provide `rut` or it's malformed.
@@ -101,7 +101,7 @@ export const methods = {
     /**
      * @name Delete Admin
      * @description Delete the {schema:Admin} matching the provided `rut`.
-     * @query rut -- string -- RUT of the admin.
+     * @query rut | string | RUT of the admin.
      * @code 204 Successfully deleted the admin.
      * @code 400 Did not provide `rut`, or malformed `rut`.
      * @code 404 Admin with that `rut` does not exist.
