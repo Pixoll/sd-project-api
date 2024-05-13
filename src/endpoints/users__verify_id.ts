@@ -19,11 +19,6 @@ export const methods = {
      * @code 413 Image is bigger than 1MB.
      */
     async post(request, response): Promise<void> {
-        if (request.headers["content-type"] !== "application/json") {
-            sendError(response, HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
-            return;
-        }
-
         const { rut } = request.query as Record<string, string | undefined>;
         if (!rut) {
             sendError(response, HTTPCode.BadRequest, "Expected RUT query parameter.");

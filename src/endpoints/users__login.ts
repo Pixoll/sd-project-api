@@ -16,11 +16,6 @@ export const methods = {
      * @code 404 User with that `email` does not exist.
      */
     async post(request, response): Promise<void> {
-        if (request.headers["content-type"] !== "application/json") {
-            sendError(response, HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
-            return;
-        }
-
         const { email, password } = request.body as Partial<Record<string, string>>;
         if (!email || !password) {
             sendError(response, HTTPCode.BadRequest, "Expected both email and password in the request body.");

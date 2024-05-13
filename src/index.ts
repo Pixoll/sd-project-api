@@ -2,8 +2,8 @@ import { config as dotenvConfig } from "dotenv";
 import express from "express";
 import { connect } from "./db";
 import * as endpoints from "./endpoints";
-import { Methods } from "./endpoints/base";
 import { loadTokens } from "./tokens";
+import { omit } from "./util";
 
 dotenvConfig();
 
@@ -27,8 +27,10 @@ void async function (): Promise<void> {
         console.log("Server listening on port:", PORT);
     });
 
-    for (const [endpoint, { methods }] of Object.entries(endpoints)) {
-        for (const [name, handler] of Object.entries(methods as Required<Methods>)) {
+    router.use(endpoints.baseMiddleware);
+
+    for (const [endpoint, { methods }] of Object.entries(omit(endpoints, ["baseMiddleware"]))) {
+        for (const [name, handler] of Object.entries(methods as Required<endpoints.Methods>)) {
             router[name]("/" + endpoint.replace(/__/g, "/"), handler);
         }
     }

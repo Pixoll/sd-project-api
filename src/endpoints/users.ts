@@ -56,11 +56,6 @@ export const methods = {
      * @code 409 A user with that `rut`, `email` or `phone` number already exists.
      */
     async post(request, response): Promise<void> {
-        if (request.headers["content-type"] !== "application/json") {
-            sendError(response, HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
-            return;
-        }
-
         if (hasOneOfKeys(request.body, ["salt", "verified", "created_timestamp", "updated_timestamp"])) {
             sendError(
                 response,

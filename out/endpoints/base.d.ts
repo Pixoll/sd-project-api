@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import { TokenType } from "../tokens";
 type MethodHandler = (request: Request, response: Response) => Promise<void> | void;
 type RequireAtLeastOne<T extends object> = {
     [K in keyof T]-?: Required<Pick<T, K>> & Partial<Pick<T, Exclude<keyof T, K>>>;
@@ -21,8 +22,14 @@ export declare enum HTTPCode {
     ContentTooLarge = 413,
     ServerError = 500
 }
+export declare function baseMiddleware(request: Request, response: Response, next: NextFunction): void;
 export declare function sendOk(response: Response, data?: unknown): void;
 export declare function sendCreated(response: Response): void;
 export declare function sendNoContent(response: Response): void;
 export declare function sendError(response: Response, code: HTTPCode, message: string): void;
+type AuthorizationData = {
+    type: TokenType;
+    rut: string;
+};
+export declare function getUserDataFromAuth(request: Request): AuthorizationData | null;
 export {};

@@ -48,11 +48,6 @@ export const methods = {
      * @code 409 An admin with that `rut` already exists.
      */
     async post(request, response): Promise<void> {
-        if (request.headers["content-type"] !== "application/json") {
-            sendError(response, HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
-            return;
-        }
-
         if (hasOneOfKeys(request.body, ["salt", "created_timestamp", "updated_timestamp"])) {
             sendError(
                 response,

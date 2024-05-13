@@ -41,11 +41,6 @@ export const methods = {
      * @code 400 Malformed shipment structure.
      */
     async post(request, response): Promise<void> {
-        if (request.headers["content-type"] !== "application/json") {
-            sendError(response, HTTPCode.BadRequest, "Content-Type header must be 'application/json'.");
-            return;
-        }
-
         if (hasOneOfKeys(request.body, ["id", "created_timestamp", "updated_timestamp"])) {
             sendError(
                 response,
