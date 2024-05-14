@@ -1,12 +1,14 @@
 import { createHash } from "crypto";
-import { HTTPCode, EndpointHandler, sendOk, sendError } from "./base";
+import { HTTPCode, EndpointHandler, sendOk, sendError, getAuthorizedUser } from "./base";
 import { Admin, User } from "../db";
 import { omit } from "../util";
 
 export const methods = {
     /**
      * @name Get Admin
+     * @description **Only usable while logged in as an admin.**
      * @description Returns an {schema:Admin} for the given `rut`.
+     * @header Authorization | string | Session token of the logged in admin. See {endpoint:admins/login}.
      * @query rut | number | RUT of the admin.
      * @response An {schema:Admin} object without the `password` and `salt` fields.
      * @code 200 Successfully retrieved the admin.
@@ -14,6 +16,11 @@ export const methods = {
      * @code 404 No admin exists with that `rut`.
      */
     async get(request, response): Promise<void> {
+        if (getAuthorizedUser(request)?.type !== "admin") {
+            sendError(response, HTTPCode.Unauthorized, "Not an admin.");
+            return;
+        }
+
         const { rut } = request.query;
         if (!rut) {
             sendError(response, HTTPCode.BadRequest, "Expected rut in query.");

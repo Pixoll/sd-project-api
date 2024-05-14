@@ -125,13 +125,19 @@ Resource fields that may contain a null value have types that are prefixed with 
 
 ### Get Admin
 
-Returns an [admin](#admin-object) for the given `rut`.
+**Only usable while logged in as an admin.** Returns an [admin](#admin-object) for the given `rut`.
 
 #### URL
 
 ```
 GET /admins
 ```
+
+#### Request Headers
+
+| Name | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Session token of the logged in admin. See [/admins/login](#login-as-admin). |
 
 #### Request Query Parameters
 
