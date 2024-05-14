@@ -155,6 +155,7 @@ An [admin](#admin-object) object without the `password` and `salt` fields.
 | --- | --- |
 | 200 OK | Successfully retrieved the admin. |
 | 400 Bad Request | Did not provide `rut` or it's malformed. |
+| 401 Unauthorized | Not an admin. |
 | 404 Not Found | No admin exists with that `rut`. |
 
 ### Login as Admin

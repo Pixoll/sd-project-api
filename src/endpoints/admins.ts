@@ -13,6 +13,7 @@ export const methods = {
      * @response An {schema:Admin} object without the `password` and `salt` fields.
      * @code 200 Successfully retrieved the admin.
      * @code 400 Did not provide `rut` or it's malformed.
+     * @code 401 Not an admin.
      * @code 404 No admin exists with that `rut`.
      */
     async get(request, response): Promise<void> {
