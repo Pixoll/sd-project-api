@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "crypto";
-import { HTTPCode, EndpointHandler, sendOk, sendCreated, sendNoContent, sendError } from "./base";
+import { HTTPCode, EndpointHandler, sendOk, sendCreated, sendNoContent, sendError, getAuthorizedUser } from "./base";
 import { User, validateStructure } from "../db";
 import { hasOneOfKeys, omit, replaceKeys } from "../util";
 
@@ -117,26 +117,23 @@ export const methods = {
 
     /**
      * @name Delete User
-     * @description Delete the {schema:User} matching the provided `rut`.
+     * @description **Only usable while logged in as a user.**
+     * @description Delete the {schema:User}'s account.
+     * @header Authorization | string | Session token of the logged in user. See {endpoint:users/login}.
      * @query rut | string | RUT of the user.
      * @code 204 Successfully deleted the user.
-     * @code 400 Did not provide `rut`, or malformed `rut`.
-     * @code 404 User with that `rut` does not exist.
+     * @code 401 Not logged in.
+     * @code 404 User does not exist.
      */
     async delete(request, response): Promise<void> {
-        const { rut } = request.query;
-        if (!rut) {
-            sendError(response, HTTPCode.BadRequest, "Expected RUT query parameter.");
-            return;
-        }
-
-        if (!User.isValidRut(rut)) {
-            sendError(response, HTTPCode.BadRequest, "Invalid RUT.");
+        const authorizedUser = getAuthorizedUser(request);
+        if (authorizedUser?.type !== "user") {
+            sendError(response, HTTPCode.Unauthorized, "Not logged in.");
             return;
         }
 
         try {
-            const user = await User.Model.findById(rut);
+            const user = await User.Model.findById(authorizedUser.rut);
             if (!user) {
                 sendError(response, HTTPCode.NotFound, "User does not exist.");
                 return;
