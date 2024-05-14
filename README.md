@@ -454,6 +454,34 @@ POST /users/login
 | 401 Unauthorized | Wrong password. |
 | 404 Not Found | User with that `email` does not exist. |
 
+### Get Current User
+
+**Only usable while logged in as a user.** Returns the information of the current logged in [user](#user-object).
+
+#### URL
+
+```
+GET /users/me
+```
+
+#### Request Headers
+
+| Name | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Session token of the logged in user. See [/users/login](#login-as-user). |
+
+#### Response Body
+
+A [user](#user-object) object without the `password` and `salt` fields.
+
+#### Response Codes
+
+| HTTP Code | Description |
+| --- | --- |
+| 200 OK | Successfully retrieved the user. |
+| 401 Unauthorized | Not logged in. |
+| 404 Not Found | User does not exist. |
+
 ### Verify User Identity
 
 **Only usable while logged in as a user.** Verify a user's ID by reading the QR code at the back of it. Will not process images bigger than 1MB.
