@@ -1,6 +1,6 @@
 import Jimp from "jimp";
 import jsQR from "jsqr";
-import { HTTPCode, EndpointHandler, sendError, sendOk } from "./base";
+import { HTTPCode, EndpointHandler, sendError, sendOk, getAuthorizedUser } from "./base";
 import { User } from "../db";
 
 // eslint-disable-next-line max-len
@@ -9,28 +9,26 @@ const idUrlRegex = /^https:\/\/portal\.sidiv\.registrocivil\.cl\/docstatus\?RUN=
 export const methods = {
     /**
      * @name Verify User Identity
+     * @description **Only usable while logged in as a user.**
      * @description Verify a user's ID by reading the QR code at the back of it. Will not process images bigger than 1MB.
+     * @header Authorization | string | Session token of the logged in user. See {endpoint:users/login}.
      * @query rut | string | RUT of the user to verify.
      * @body data | string | Image encoded in base64 format.
      * @code 200 Successfully verified the user's identity.
      * @code 400 Malformed request or QR content.
-     * @code 404 User with that `rut` does not exist.
+     * @code 401 Not logged in.
+     * @code 404 User does not exist.
      * @code 409 User is already verified.
      * @code 413 Image is bigger than 1MB.
      */
     async post(request, response): Promise<void> {
-        const { rut } = request.query;
-        if (!rut) {
-            sendError(response, HTTPCode.BadRequest, "Expected RUT query parameter.");
+        const authorizedUser = getAuthorizedUser(request);
+        if (authorizedUser?.type !== "user") {
+            sendError(response, HTTPCode.Unauthorized, "Not logged in.");
             return;
         }
 
-        if (!User.isValidRut(rut)) {
-            sendError(response, HTTPCode.BadRequest, "Invalid RUT.");
-            return;
-        }
-
-        const user = await User.Model.findById(rut);
+        const user = await User.Model.findById(authorizedUser.rut);
         if (!user) {
             sendError(response, HTTPCode.NotFound, "User does not exist.");
             return;
@@ -67,7 +65,7 @@ export const methods = {
         }
 
         const urlRut = idUrl.match(idUrlRegex)?.[1];
-        if (urlRut !== rut) {
+        if (urlRut !== authorizedUser.rut) {
             sendError(response, HTTPCode.BadRequest, "Invalid QR code contents.");
             return;
         }
