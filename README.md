@@ -335,13 +335,19 @@ DELETE /shipments
 
 ### Get User
 
-Returns a [user](#user-object) for the given `rut`, `email` or `phone` number.
+**Only usable while logged in as an admin.** Returns a [user](#user-object) for the given `rut`, `email` or `phone` number.
 
 #### URL
 
 ```
 GET /users
 ```
+
+#### Request Headers
+
+| Name | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Session token of the logged in admin. See [/admins/login](#login-as-admin). |
 
 #### Request Query Parameters
 
@@ -361,6 +367,7 @@ A [user](#user-object) object without the `password` and `salt` fields.
 | --- | --- |
 | 200 OK | Successfully retrieved the user. |
 | 400 Bad Request | Provided none or more than one kind of parameter, or the parameter is malformed. |
+| 401 Unauthorized | Not an admin. |
 | 404 Not Found | No user exists with the provided query. |
 
 ### Create User
@@ -387,13 +394,19 @@ A [user](#user-object) object without the `salt`, `verified`, `created_timestamp
 
 ### Delete User
 
-Delete the [user](#user-object) matching the provided `rut`.
+**Only usable while logged in as a user.** Delete the [user](#user-object)'s account.
 
 #### URL
 
 ```
 DELETE /users
 ```
+
+#### Request Headers
+
+| Name | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Session token of the logged in user. See [/users/login](#login-as-user). |
 
 #### Request Query Parameters
 
@@ -406,8 +419,8 @@ DELETE /users
 | HTTP Code | Description |
 | --- | --- |
 | 204 No Content | Successfully deleted the user. |
-| 400 Bad Request | Did not provide `rut`, or malformed `rut`. |
-| 404 Not Found | User with that `rut` does not exist. |
+| 401 Unauthorized | Not logged in. |
+| 404 Not Found | User does not exist. |
 
 ### Login as User
 
@@ -443,13 +456,19 @@ POST /users/login
 
 ### Verify User Identity
 
-Verify a user's ID by reading the QR code at the back of it. Will not process images bigger than 1MB.
+**Only usable while logged in as a user.** Verify a user's ID by reading the QR code at the back of it. Will not process images bigger than 1MB.
 
 #### URL
 
 ```
 POST /users/verify_id
 ```
+
+#### Request Headers
+
+| Name | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Session token of the logged in user. See [/users/login](#login-as-user). |
 
 #### Request Query Parameters
 
@@ -469,6 +488,7 @@ POST /users/verify_id
 | --- | --- |
 | 200 OK | Successfully verified the user's identity. |
 | 400 Bad Request | Malformed request or QR content. |
-| 404 Not Found | User with that `rut` does not exist. |
+| 401 Unauthorized | Not logged in. |
+| 404 Not Found | User does not exist. |
 | 409 Conflict | User is already verified. |
 | 413 Content Too Large | Image is bigger than 1MB. |
