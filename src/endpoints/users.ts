@@ -6,16 +6,24 @@ import { hasOneOfKeys, omit, replaceKeys } from "../util";
 export const methods = {
     /**
      * @name Get User
+     * @description **Only usable while logged in as an admin.**
      * @description Returns a {schema:User} for the given `rut`, `email` or `phone` number.
+     * @header Authorization | string | Session token of the logged in admin. See {endpoint:admins/login}.
      * @query rut | number | RUT of the user. `email` and `phone` cannot be present if this parameter is.
      * @query email | string | Email of the user. `rut` and `phone` cannot be present if this parameter is.
      * @query phone | number | Phone number of the user. `rut` and `email` cannot be present if this parameter is.
      * @response A {schema:User} object without the `password` and `salt` fields.
      * @code 200 Successfully retrieved the user.
      * @code 400 Provided none or more than one kind of parameter, or the parameter is malformed.
+     * @code 401 Not an admin.
      * @code 404 No user exists with the provided query.
      */
     async get(request, response): Promise<void> {
+        if (getAuthorizedUser(request)?.type !== "admin") {
+            sendError(response, HTTPCode.Unauthorized, "Not an admin.");
+            return;
+        }
+
         const { rut, email, phone } = request.query;
         if ((+!!rut) + (+!!email) + (+!!phone) !== 1) {
             sendError(response, HTTPCode.BadRequest, "Expected only one of either rut, email or phone in query.");
