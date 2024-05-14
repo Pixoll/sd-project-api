@@ -33,15 +33,18 @@ export const methods = {
         }
     },
 
+    /* eslint-disable max-len */
     /**
      * @name Create Shipment
      * @description **Only usable while logged in.**
      * @description Create a new {schema:Shipment}.
+     * @header Authorization | string | Session token of the logged in user or admin. See {endpoint:users/login} and {endpoint:admins/login}.
      * @body A {schema:Shipment} object without the `id`, `created_timestamp` and `updated_timestamp` fields.
      * @code 201 Successfully created new shipment.
      * @code 400 Malformed shipment structure.
      * @code 401 Not logged in.
      */
+    /* eslint-enable max-len */
     async post(request, response): Promise<void> {
         if (!getAuthorizedUser(request)) {
             sendError(response, HTTPCode.Unauthorized, "Not logged in.");

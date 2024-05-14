@@ -151,52 +151,6 @@ An [admin](#admin-object) object without the `password` and `salt` fields.
 | 400 Bad Request | Did not provide `rut` or it's malformed. |
 | 404 Not Found | No admin exists with that `rut`. |
 
-### Create Admin
-
-Create a new [admin](#admin-object).
-
-#### URL
-
-```
-POST /admins
-```
-
-#### Request Body
-
-An [admin](#admin-object) object without the `salt`, `created_timestamp` and `updated_timestamp` fields.
-
-#### Response Codes
-
-| HTTP Code | Description |
-| --- | --- |
-| 201 Created | Successfully created new admin. |
-| 400 Bad Request | Malformed admin structure. |
-| 409 Conflict | An admin with that `rut` already exists. |
-
-### Delete Admin
-
-Delete the [admin](#admin-object) matching the provided `rut`.
-
-#### URL
-
-```
-DELETE /admins
-```
-
-#### Request Query Parameters
-
-| Parameter | Type | Description |
-| --- | --- | --- |
-| rut | string | RUT of the admin. |
-
-#### Response Codes
-
-| HTTP Code | Description |
-| --- | --- |
-| 204 No Content | Successfully deleted the admin. |
-| 400 Bad Request | Did not provide `rut`, or malformed `rut`. |
-| 404 Not Found | Admin with that `rut` does not exist. |
-
 ### Login as Admin
 
 Verify admin login credentials.
@@ -315,13 +269,19 @@ A [shipment](#shipment-object) object.
 
 ### Create Shipment
 
-Create a new [shipment](#shipment-object).
+**Only usable while logged in.** Create a new [shipment](#shipment-object).
 
 #### URL
 
 ```
 POST /shipments
 ```
+
+#### Request Headers
+
+| Name | Type | Description |
+| --- | --- | --- |
+| Authorization | string | Session token of the logged in user or admin. See [/users/login](#login-as-user) and [/admins/login](#login-as-admin). |
 
 #### Request Body
 
@@ -333,10 +293,11 @@ A [shipment](#shipment-object) object without the `id`, `created_timestamp` and 
 | --- | --- |
 | 201 Created | Successfully created new shipment. |
 | 400 Bad Request | Malformed shipment structure. |
+| 401 Unauthorized | Not logged in. |
 
 ### Delete Shipment
 
-**Only usable by admins.** Delete the [shipment](#shipment-object) matching the provided tracking `id`.
+**Only usable while logged in as an admin.** Delete the [shipment](#shipment-object) matching the provided tracking `id`.
 
 #### URL
 
