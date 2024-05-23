@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { SchemaTypeOptions } from "./base";
-import { regions } from "../../endpoints/regions";
+import { RegionsEndpoint } from "../../endpoints/regions";
 
 export type JSON = {
     region: string;
@@ -17,7 +17,7 @@ export const Schema = new mongoose.Schema<JSON>({
         required: true,
         description: "The region.",
         validate: {
-            validator: (region: string): boolean => regions.some(r =>
+            validator: (region: string): boolean => RegionsEndpoint.regions.some(r =>
                 r.name.toLowerCase() === region.toLowerCase()
             ),
             message: "Invalid region name.",
@@ -30,7 +30,7 @@ export const Schema = new mongoose.Schema<JSON>({
         description: "The city or commune.",
         validate: {
             validator(this: { region: string }, commune: string): boolean {
-                return !!regions
+                return !!RegionsEndpoint.regions
                     .find(r => r.name.toLowerCase() === this.region.toLowerCase())?.communes
                     .some(c => c.toLowerCase() === commune.toLowerCase());
             },

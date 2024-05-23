@@ -1,8 +1,12 @@
+import { Endpoint } from "./base";
 import { User } from "../db";
-import { omit } from "../util";
-import { EndpointHandler, HTTPCode, getAuthorizedUser, sendError, sendOk } from "./base";
+import { Util } from "../util";
 
-export const methods = {
+export class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod {
+    public constructor() {
+        super("/users/me");
+    }
+
     /**
      * @name Get Current User
      * @description **Only usable while logged in as a user.**
@@ -13,23 +17,22 @@ export const methods = {
      * @code 401 Not logged in.
      * @code 404 User does not exist.
      */
-    async get(request, response): Promise<void> {
-        const authorizedUser = getAuthorizedUser(request);
+    public async get(
+        request: Endpoint.Request,
+        response: Endpoint.Response<Omit<User.JSON, "password" | "salt">>
+    ): Promise<void> {
+        const authorizedUser = Endpoint.getAuthorizedUser(request);
         if (authorizedUser?.type !== "user") {
-            sendError(response, HTTPCode.Unauthorized, "Not logged in.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.Unauthorized, "Not logged in.");
             return;
         }
 
         const user = await User.Model.findById(authorizedUser.rut);
         if (!user) {
-            sendError(response, HTTPCode.NotFound, "User does not exist.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.NotFound, "User does not exist.");
             return;
         }
 
-        sendOk(response, omit(User.toJSON(user), ["password", "salt"]));
-    },
-} satisfies EndpointHandler<{
-    get: {
-        responseData: Omit<User.JSON, "password" | "salt">;
-    };
-}>;
+        Endpoint.sendOk(response, Util.omit(User.toJSON(user), ["password", "salt"]));
+    }
+}

@@ -1,5 +1,5 @@
 import { Error, HydratedDocument, Model } from "mongoose";
-import { ReplaceKeys, intersectSets, subtractSets } from "../../util";
+import { Util } from "../../util";
 
 export * as Admin from "./Admin";
 export * as Shipment from "./Shipment";
@@ -23,7 +23,7 @@ type ValidationError = {
 
 export async function validateStructure<
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    A, B, C, D, F, J extends A extends ReplaceKeys<infer JSON, infer _1> ? JSON : A
+    A, B, C, D, F, J extends A extends Util.ReplaceKeys<infer JSON, infer _1> ? JSON : A
 >(
     object: object,
     Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>,
@@ -54,7 +54,7 @@ export async function validateStructure<
     }
 
     const givenKeys = new Set(Object.keys(temp));
-    const extraKeys = subtractSets(givenKeys, intersectSets(givenKeys, all));
+    const extraKeys = Util.subtractSets(givenKeys, Util.intersectSets(givenKeys, all));
     if (extraKeys.size > 0) {
         return {
             ok: false,
@@ -63,7 +63,7 @@ export async function validateStructure<
     }
 
     if (!partial) {
-        const missingKeys = subtractSets(subtractSets(all, givenKeys), new Set(exclude ?? []));
+        const missingKeys = Util.subtractSets(Util.subtractSets(all, givenKeys), new Set(exclude ?? []));
         if (missingKeys.size > 0) {
             return {
                 ok: false,

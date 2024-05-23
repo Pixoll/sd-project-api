@@ -105,6 +105,7 @@
     "@typescript-eslint/member-delimiter-style": "error",
     "@typescript-eslint/semi": "error",
     "@typescript-eslint/explicit-member-accessibility": "error",
-    "@typescript-eslint/no-explicit-any": "error"
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-namespace": "off"
   }
 }

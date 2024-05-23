@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { SchemaTypeOptions } from "./base";
-import { fees } from "../../endpoints/fees";
+import { FeesEndpoint } from "../../endpoints/fees";
 
 export type JSON = {
     type: string;
@@ -11,7 +11,7 @@ export type JSON = {
     weight: number;
 };
 
-const packageTypes = fees.package_type.map(p => p.id);
+const packageTypes = FeesEndpoint.fees.package_type.map(p => p.id);
 const packageTypesList = packageTypes.map(t => `\`${t}\``).join(", ").replace(/, ([^,]+)$/, " or $1");
 
 export const Schema = new mongoose.Schema<JSON>({

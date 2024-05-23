@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { DocumentFromModel, SchemaTypeOptions, Timestamps } from "./base";
 import { emailRegex, isValidRut } from "./User";
-import { ReplaceKeys, replaceKeys } from "../../util";
+import { Util } from "../../util";
 
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = {
@@ -17,7 +17,7 @@ export type JSON = {
 } & Timestamps;
 
 /* eslint-disable camelcase */
-export const Model = mongoose.model("admin", new mongoose.Schema<ReplaceKeys<JSON, {
+export const Model = mongoose.model("admin", new mongoose.Schema<Util.ReplaceKeys<JSON, {
     rut: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
@@ -104,7 +104,7 @@ export const Model = mongoose.model("admin", new mongoose.Schema<ReplaceKeys<JSO
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
-    return replaceKeys(document.toJSON(), {
+    return Util.replaceKeys(document.toJSON(), {
         _id: "rut",
         createdAt: "created_timestamp",
         updatedAt: "updated_timestamp",

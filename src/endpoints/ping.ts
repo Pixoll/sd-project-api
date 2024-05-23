@@ -1,12 +1,16 @@
-import { EndpointHandler, sendOk } from "./base";
+import { Endpoint } from "./base";
 
-export const methods = {
+export class PingEndpoint extends Endpoint implements Endpoint.GetMethod {
+    public constructor() {
+        super("/ping");
+    }
+
     /**
      * @name Send Ping
      * @description Check if the API is available.
      * @code 200 API is available.
      */
-    get(_, response): void {
-        sendOk(response);
-    },
-} satisfies EndpointHandler;
+    public get(_: Endpoint.Request, response: Endpoint.Response): void {
+        Endpoint.sendOk(response);
+    }
+}

@@ -1,9 +1,13 @@
 import { createHash, randomBytes } from "crypto";
-import { HTTPCode, EndpointHandler, sendOk, sendCreated, sendNoContent, sendError, getAuthorizedUser } from "./base";
+import { Endpoint } from "./base";
 import { User, validateStructure } from "../db";
-import { hasOneOfKeys, omit, replaceKeys } from "../util";
+import { Util } from "../util";
 
-export const methods = {
+export class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpoint.PostMethod, Endpoint.DeleteMethod {
+    public constructor() {
+        super("/users");
+    }
+
     /**
      * @name Get User
      * @description **Only usable while logged in as an admin.**
@@ -18,15 +22,22 @@ export const methods = {
      * @code 401 Not an admin.
      * @code 404 No user exists with the provided query.
      */
-    async get(request, response): Promise<void> {
-        if (getAuthorizedUser(request)?.type !== "admin") {
-            sendError(response, HTTPCode.Unauthorized, "Not an admin.");
+    public async get(
+        request: Endpoint.Request<NonNullable<unknown>, "rut" | "email" | "phone">,
+        response: Endpoint.Response<Omit<User.JSON, "password" | "salt">>
+    ): Promise<void> {
+        if (Endpoint.getAuthorizedUser(request)?.type !== "admin") {
+            Endpoint.sendError(response, Endpoint.HTTPCode.Unauthorized, "Not an admin.");
             return;
         }
 
         const { rut, email, phone } = request.query;
         if ((+!!rut) + (+!!email) + (+!!phone) !== 1) {
-            sendError(response, HTTPCode.BadRequest, "Expected only one of either rut, email or phone in query.");
+            Endpoint.sendError(
+                response,
+                Endpoint.HTTPCode.BadRequest,
+                "Expected only one of either rut, email or phone in query."
+            );
             return;
         }
 
@@ -37,23 +48,18 @@ export const methods = {
         };
         const validationResult = await validateStructure(search, User.Model, { partial: true });
         if (!validationResult.ok) {
-            sendError(response, HTTPCode.BadRequest, validationResult.message);
+            Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, validationResult.message);
             return;
         }
 
-        try {
-            const user = await User.Model.findOne(replaceKeys(search, { rut: "_id" } as const));
-            if (!user) {
-                sendError(response, HTTPCode.NotFound, "User does not exist.");
-                return;
-            }
-
-            sendOk(response, omit(User.toJSON(user), ["password", "salt"]));
-        } catch (error) {
-            console.error(error);
-            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to get user.");
+        const user = await User.Model.findOne(Util.replaceKeys(search, { rut: "_id" } as const));
+        if (!user) {
+            Endpoint.sendError(response, Endpoint.HTTPCode.NotFound, "User does not exist.");
+            return;
         }
-    },
+
+        Endpoint.sendOk(response, Util.omit(User.toJSON(user), ["password", "salt"]));
+    }
 
     /**
      * @name Create User
@@ -63,11 +69,11 @@ export const methods = {
      * @code 400 Malformed user structure.
      * @code 409 A user with that `rut`, `email` or `phone` number already exists.
      */
-    async post(request, response): Promise<void> {
-        if (hasOneOfKeys(request.body, ["salt", "verified", "created_timestamp", "updated_timestamp"])) {
-            sendError(
+    public async post(request: Endpoint.Request<User.JSON>, response: Endpoint.Response): Promise<void> {
+        if (Util.hasOneOfKeys(request.body, ["salt", "verified", "created_timestamp", "updated_timestamp"])) {
+            Endpoint.sendError(
                 response,
-                HTTPCode.BadRequest,
+                Endpoint.HTTPCode.BadRequest,
                 "Password 'salt', 'verified', 'created_timestamp' and 'updated_timestamp' fields"
                 + " may not be specified in the request."
             );
@@ -76,52 +82,41 @@ export const methods = {
 
         const validationResult = await validateStructure(request.body, User.Model, { exclude: ["salt", "verified"] });
         if (!validationResult.ok) {
-            sendError(response, HTTPCode.BadRequest, validationResult.message);
+            Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, validationResult.message);
             return;
         }
 
         const userJson = request.body;
         const { rut, email, phone } = userJson;
 
-        try {
-            const existingRut = await User.Model.findOne({ _id: rut });
-            if (existingRut) {
-                sendError(response, HTTPCode.Conflict, "User with specified RUT already exists.");
-                return;
-            }
+        const existingRut = await User.Model.findOne({ _id: rut });
+        if (existingRut) {
+            Endpoint.sendError(response, Endpoint.HTTPCode.Conflict, "User with specified RUT already exists.");
+            return;
+        }
 
-            const existingEmail = await User.Model.findOne({ email });
-            if (existingEmail) {
-                sendError(response, HTTPCode.Conflict, "User with specified email already exists.");
-                return;
-            }
+        const existingEmail = await User.Model.findOne({ email });
+        if (existingEmail) {
+            Endpoint.sendError(response, Endpoint.HTTPCode.Conflict, "User with specified email already exists.");
+            return;
+        }
 
-            const existingPhone = await User.Model.findOne({ phone });
-            if (existingPhone) {
-                sendError(response, HTTPCode.Conflict, "User with specified phone number already exists.");
-                return;
-            }
-        } catch (error) {
-            console.error(error);
-            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to find existing user.");
+        const existingPhone = await User.Model.findOne({ phone });
+        if (existingPhone) {
+            Endpoint.sendError(response, Endpoint.HTTPCode.Conflict, "User with specified phone number already exists.");
             return;
         }
 
         const salt = randomBytes(16).toString("hex");
 
-        try {
-            await new User.Model({
-                ...replaceKeys(omit(userJson, ["password"]), { rut: "_id" } as const),
-                password: hashPassword(userJson.password, salt),
-                salt,
-            }).save();
+        await new User.Model({
+            ...Util.replaceKeys(Util.omit(userJson, ["password"]), { rut: "_id" } as const),
+            password: UsersEndpoint.hashPassword(userJson.password, salt),
+            salt,
+        }).save();
 
-            sendCreated(response);
-        } catch (error) {
-            console.error(error);
-            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to create new user.");
-        }
-    },
+        Endpoint.sendCreated(response);
+    }
 
     /**
      * @name Delete User
@@ -133,40 +128,24 @@ export const methods = {
      * @code 401 Not logged in.
      * @code 404 User does not exist.
      */
-    async delete(request, response): Promise<void> {
-        const authorizedUser = getAuthorizedUser(request);
+    public async delete(request: Endpoint.Request, response: Endpoint.Response): Promise<void> {
+        const authorizedUser = Endpoint.getAuthorizedUser(request);
         if (authorizedUser?.type !== "user") {
-            sendError(response, HTTPCode.Unauthorized, "Not logged in.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.Unauthorized, "Not logged in.");
             return;
         }
 
-        try {
-            const user = await User.Model.findById(authorizedUser.rut);
-            if (!user) {
-                sendError(response, HTTPCode.NotFound, "User does not exist.");
-                return;
-            }
-
-            await user.deleteOne();
-            sendNoContent(response);
-        } catch (error) {
-            console.error(error);
-            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to delete the user.");
+        const user = await User.Model.findById(authorizedUser.rut);
+        if (!user) {
+            Endpoint.sendError(response, Endpoint.HTTPCode.NotFound, "User does not exist.");
+            return;
         }
-    },
-} satisfies EndpointHandler<{
-    get: {
-        queryKeys: "rut" | "email" | "phone";
-        responseData: Omit<User.JSON, "password" | "salt">;
-    };
-    post: {
-        body: User.JSON;
-    };
-    delete: {
-        queryKeys: "rut";
-    };
-}>;
 
-export function hashPassword(password: string, salt: string): string {
-    return createHash("sha256").update(password + salt).digest("hex");
+        await user.deleteOne();
+        Endpoint.sendNoContent(response);
+    }
+
+    public static hashPassword(password: string, salt: string): string {
+        return createHash("sha256").update(password + salt).digest("hex");
+    }
 }

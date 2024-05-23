@@ -1,4 +1,4 @@
-export { baseMiddleware, EndpointHandler } from "./base";
+export { Endpoint } from "./base";
 export * as admins from "./admins";
 export * as admins__login from "./admins__login";
 export * as fees from "./fees";

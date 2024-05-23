@@ -1,12 +1,16 @@
 import Jimp from "jimp";
 import jsQR from "jsqr";
-import { HTTPCode, EndpointHandler, sendError, sendOk, getAuthorizedUser } from "./base";
+import { Endpoint } from "./base";
 import { User } from "../db";
 
-// eslint-disable-next-line max-len
-const idUrlRegex = /^https:\/\/portal\.sidiv\.registrocivil\.cl\/docstatus\?RUN=(\d{7,}-[\dkK])&type=CEDULA&serial=\d{9}&mrz=\d{24}$/;
+export class UsersVerifyId extends Endpoint implements Endpoint.PostMethod {
+    // eslint-disable-next-line max-len
+    private static readonly idUrlRegex = /^https:\/\/portal\.sidiv\.registrocivil\.cl\/docstatus\?RUN=(\d{7,}-[\dkK])&type=CEDULA&serial=\d{9}&mrz=\d{24}$/;
 
-export const methods = {
+    public constructor() {
+        super("/users/verify_id");
+    }
+
     /**
      * @name Verify User Identity
      * @description **Only usable while logged in as a user.**
@@ -21,52 +25,56 @@ export const methods = {
      * @code 409 User is already verified.
      * @code 413 Image is bigger than 1MB.
      */
-    async post(request, response): Promise<void> {
-        const authorizedUser = getAuthorizedUser(request);
+    public async post(request: Endpoint.Request<{ data?: string }, "rut">, response: Endpoint.Response): Promise<void> {
+        const authorizedUser = Endpoint.getAuthorizedUser(request);
         if (authorizedUser?.type !== "user") {
-            sendError(response, HTTPCode.Unauthorized, "Not logged in.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.Unauthorized, "Not logged in.");
             return;
         }
 
         const user = await User.Model.findById(authorizedUser.rut);
         if (!user) {
-            sendError(response, HTTPCode.NotFound, "User does not exist.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.NotFound, "User does not exist.");
             return;
         }
 
         if (user.verified) {
-            sendError(response, HTTPCode.Conflict, "User has already verified their identity.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.Conflict, "User has already verified their identity.");
             return;
         }
 
         const { data } = request.body;
         if (!data) {
-            sendError(response, HTTPCode.BadRequest, "Expected data property in the request body.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, "Expected data property in the request body.");
             return;
         }
 
         const kBs = data.length * 0.00075;
         if (kBs > 1000) {
-            sendError(response, HTTPCode.ContentTooLarge, "Image is bigger than 1MB.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.ContentTooLarge, "Image is bigger than 1MB.");
             return;
         }
 
         const image = await Jimp.read(Buffer.from(data, "base64")).catch(() => null);
         if (!image) {
-            sendError(response, HTTPCode.BadRequest, "Could not resolve image from provided data.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, "Could not resolve image from provided data.");
             return;
         }
 
         const raw = new Uint8ClampedArray(image.bitmap.data.toJSON().data);
         const idUrl = jsQR(raw, image.bitmap.width, image.bitmap.height)?.data ?? null;
         if (!idUrl) {
-            sendError(response, HTTPCode.BadRequest, "Could not read contents from QR code, if there was any.");
+            Endpoint.sendError(
+                response,
+                Endpoint.HTTPCode.BadRequest,
+                "Could not read contents from QR code, if there was any."
+            );
             return;
         }
 
-        const urlRut = idUrl.match(idUrlRegex)?.[1];
+        const urlRut = idUrl.match(UsersVerifyId.idUrlRegex)?.[1];
         if (urlRut !== authorizedUser.rut) {
-            sendError(response, HTTPCode.BadRequest, "Invalid QR code contents.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, "Invalid QR code contents.");
             return;
         }
 
@@ -76,13 +84,6 @@ export const methods = {
         user.verified = true;
         await user.save();
 
-        sendOk(response);
-    },
-} satisfies EndpointHandler<{
-    post: {
-        body: {
-            data?: string;
-        };
-        queryKeys: "rut";
-    };
-}>;
+        Endpoint.sendOk(response);
+    }
+}

@@ -3,8 +3,8 @@ import { DocumentFromModel, SchemaTypeOptions, Timestamps } from "./base";
 import * as Address from "./Address";
 import * as Package from "./Package";
 import * as User from "./User";
-import { ReplaceKeys, replaceKeys } from "../../util";
-import { fees } from "../../endpoints/fees";
+import { Util } from "../../util";
+import { FeesEndpoint } from "../../endpoints/fees";
 
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = {
@@ -23,7 +23,7 @@ export type JSON = {
     packages: Package.JSON[];
 } & Timestamps;
 
-const shippingTypes = fees.shipping.map(p => p.id);
+const shippingTypes = FeesEndpoint.fees.shipping.map(p => p.id);
 const shippingTypesList = shippingTypes.map(t => `\`${t}\``).join(", ").replace(/, ([^,]+)$/, " or $1");
 const packageStatuses = ["pending", "pre-transit", "in_transit", "out_for_delivery", "delivered"] as const;
 const packageStatusesList = packageStatuses.map(s => `\`${s}\``).join(", ").replace(/, ([^,]+)$/, " or $1");
@@ -31,7 +31,7 @@ const packageStatusesList = packageStatuses.map(s => `\`${s}\``).join(", ").repl
 type PackageStatus = typeof packageStatuses[number];
 
 /* eslint-disable camelcase */
-export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKeys<JSON, {
+export const Model = mongoose.model("shipment", new mongoose.Schema<Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
@@ -143,7 +143,7 @@ export const Model = mongoose.model("shipment", new mongoose.Schema<ReplaceKeys<
 /* eslint-enable camelcase */
 
 export function toJSON(document: Document): JSON {
-    return replaceKeys(document.toJSON(), {
+    return Util.replaceKeys(document.toJSON(), {
         _id: "id",
         createdAt: "created_timestamp",
         updatedAt: "updated_timestamp",

@@ -1,8 +1,12 @@
-import { HTTPCode, EndpointHandler, sendCreated, sendError, sendNoContent, sendOk, getAuthorizedUser } from "./base";
+import { Endpoint } from "./base";
 import { Shipment, validateStructure } from "../db";
-import { hasOneOfKeys } from "../util";
+import { Util } from "../util";
 
-export const methods = {
+export class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, Endpoint.PostMethod, Endpoint.DeleteMethod {
+    public constructor() {
+        super("/shipments");
+    }
+
     /**
      * @name Get Shipment
      * @description Returns a {schema:Shipment} for the given tracking `id`.
@@ -12,26 +16,21 @@ export const methods = {
      * @code 400 Did not provide tracking `id`.
      * @code 404 Shipment with that tracking `id` does not exist.
      */
-    async get(request, response): Promise<void> {
+    public async get(request: Endpoint.Request<never, "id">, response: Endpoint.Response<Shipment.JSON>): Promise<void> {
         const { id } = request.query;
         if (!id) {
-            sendError(response, HTTPCode.BadRequest, "Expected shipment id in the query.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, "Expected shipment id in the query.");
             return;
         }
 
-        try {
-            const shipment = await Shipment.Model.findById(id);
-            if (!shipment) {
-                sendError(response, HTTPCode.NotFound, "Shipment does not exist.");
-                return;
-            }
-
-            sendOk(response, Shipment.toJSON(shipment));
-        } catch (error) {
-            console.error(error);
-            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to get shipment.");
+        const shipment = await Shipment.Model.findById(id);
+        if (!shipment) {
+            Endpoint.sendError(response, Endpoint.HTTPCode.NotFound, "Shipment does not exist.");
+            return;
         }
-    },
+
+        Endpoint.sendOk(response, Shipment.toJSON(shipment));
+    }
 
     /* eslint-disable max-len */
     /**
@@ -45,16 +44,16 @@ export const methods = {
      * @code 401 Not logged in.
      */
     /* eslint-enable max-len */
-    async post(request, response): Promise<void> {
-        if (!getAuthorizedUser(request)) {
-            sendError(response, HTTPCode.Unauthorized, "Not logged in.");
+    public async post(request: Endpoint.Request<Shipment.JSON>, response: Endpoint.Response): Promise<void> {
+        if (!Endpoint.getAuthorizedUser(request)) {
+            Endpoint.sendError(response, Endpoint.HTTPCode.Unauthorized, "Not logged in.");
             return;
         }
 
-        if (hasOneOfKeys(request.body, ["id", "created_timestamp", "updated_timestamp"])) {
-            sendError(
+        if (Util.hasOneOfKeys(request.body, ["id", "created_timestamp", "updated_timestamp"])) {
+            Endpoint.sendError(
                 response,
-                HTTPCode.BadRequest,
+                Endpoint.HTTPCode.BadRequest,
                 "Shipment 'id', 'created_timestamp' and 'updated_timestamp' fields may not be specified in the request."
             );
             return;
@@ -62,19 +61,13 @@ export const methods = {
 
         const validationResult = await validateStructure(request.body, Shipment.Model, { exclude: ["id"] });
         if (!validationResult.ok) {
-            sendError(response, HTTPCode.BadRequest, validationResult.message);
+            Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, validationResult.message);
             return;
         }
 
-        try {
-            await new Shipment.Model(request.body).save();
-
-            sendCreated(response);
-        } catch (error) {
-            console.error(error);
-            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to crate new shipment.");
-        }
-    },
+        await new Shipment.Model(request.body).save();
+        Endpoint.sendCreated(response);
+    }
 
     /**
      * @name Delete Shipment
@@ -87,41 +80,25 @@ export const methods = {
      * @code 401 Not an admin.
      * @code 404 Shipment with that tracking `id` does not exist.
      */
-    async delete(request, response): Promise<void> {
-        if (getAuthorizedUser(request)?.type !== "admin") {
-            sendError(response, HTTPCode.Unauthorized, "Not an admin.");
+    public async delete(request: Endpoint.Request<never, "id">, response: Endpoint.Response): Promise<void> {
+        if (Endpoint.getAuthorizedUser(request)?.type !== "admin") {
+            Endpoint.sendError(response, Endpoint.HTTPCode.Unauthorized, "Not an admin.");
             return;
         }
 
         const { id } = request.query;
         if (!id) {
-            sendError(response, HTTPCode.BadRequest, "Expected shipment id in the query.");
+            Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, "Expected shipment id in the query.");
             return;
         }
 
-        try {
-            const shipment = await Shipment.Model.findById(id);
-            if (!shipment) {
-                sendError(response, HTTPCode.NotFound, "Shipment does not exist.");
-                return;
-            }
-
-            await shipment.deleteOne();
-            sendNoContent(response);
-        } catch (error) {
-            console.error(error);
-            sendError(response, HTTPCode.ServerError, "Unexpected error while trying to get shipment.");
+        const shipment = await Shipment.Model.findById(id);
+        if (!shipment) {
+            Endpoint.sendError(response, Endpoint.HTTPCode.NotFound, "Shipment does not exist.");
+            return;
         }
-    },
-} satisfies EndpointHandler<{
-    get: {
-        queryKeys: "id";
-        responseData: Shipment.JSON;
-    };
-    post: {
-        body: Shipment.JSON;
-    };
-    delete: {
-        queryKeys: "id";
-    };
-}>;
+
+        await shipment.deleteOne();
+        Endpoint.sendNoContent(response);
+    }
+}

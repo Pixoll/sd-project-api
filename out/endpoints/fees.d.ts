@@ -1,25 +1,7 @@
-/// <reference types="express" />
-export declare const fees: {
-    readonly shipping: readonly {
-        readonly id: string;
-        readonly name: string;
-        readonly fee: number;
-    }[];
-    readonly extra: readonly {
-        readonly id: string;
-        readonly name: string;
-        readonly fee: number;
-    }[];
-    readonly package_type: readonly {
-        readonly id: string;
-        readonly name: string;
-        readonly fee: number;
-    }[];
-};
-export declare const methods: {
-    get(_: import("express").Request<Record<string, string>, unknown, unknown, {
-        [x: string]: string | undefined;
-    }, Record<string, any>>, response: import("express").Response<{
+import { Endpoint } from "./base";
+import fees from "../../static/fees.json";
+export declare class FeesEndpoint extends Endpoint implements Endpoint.GetMethod {
+    static readonly fees: {
         readonly shipping: readonly {
             readonly id: string;
             readonly name: string;
@@ -35,5 +17,7 @@ export declare const methods: {
             readonly name: string;
             readonly fee: number;
         }[];
-    }, Record<string, any>>): void;
-};
+    };
+    constructor();
+    get(_: Endpoint.Request, response: Endpoint.Response<typeof fees>): void;
+}

@@ -23,7 +23,7 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import { HydratedDocument, Model } from "mongoose";
-import { ReplaceKeys } from "../../util";
+import { Util } from "../../util";
 export * as Admin from "./Admin";
 export * as Shipment from "./Shipment";
 export * as User from "./User";
@@ -39,4 +39,4 @@ type ValidationError = {
     ok: false;
     message: string;
 };
-export declare function validateStructure<A, B, C, D, F, J extends A extends ReplaceKeys<infer JSON, infer _1> ? JSON : A>(object: object, Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>, options?: StructureValidationOptions<J>): Promise<ValidationResult>;
+export declare function validateStructure<A, B, C, D, F, J extends A extends Util.ReplaceKeys<infer JSON, infer _1> ? JSON : A>(object: object, Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>, options?: StructureValidationOptions<J>): Promise<ValidationResult>;

@@ -1,8 +1,6 @@
-/// <reference types="express" />
+import { Endpoint } from "./base";
 import { Admin } from "../db";
-export declare const methods: {
-    get(request: import("express").Request<Record<string, string>, unknown, unknown, {
-        rut?: string | undefined;
-    }, Record<string, any>>, response: import("express").Response<Omit<Admin.JSON, "password" | "salt">, Record<string, any>>): Promise<void>;
-};
-export declare function hashPassword(password: string, salt: string): string;
+export declare class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod {
+    constructor();
+    get(request: Endpoint.Request<never, "rut">, response: Endpoint.Response<Omit<Admin.JSON, "password" | "salt">>): Promise<void>;
+}

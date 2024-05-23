@@ -23,9 +23,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.users__verify_id = exports.users__me = exports.users__login = exports.users = exports.shipments = exports.regions = exports.ping = exports.fees = exports.admins__login = exports.admins = exports.baseMiddleware = void 0;
+exports.users__verify_id = exports.users__me = exports.users__login = exports.users = exports.shipments = exports.regions = exports.ping = exports.fees = exports.admins__login = exports.admins = exports.Endpoint = void 0;
 var base_1 = require("./base");
-Object.defineProperty(exports, "baseMiddleware", { enumerable: true, get: function () { return base_1.baseMiddleware; } });
+Object.defineProperty(exports, "Endpoint", { enumerable: true, get: function () { return base_1.Endpoint; } });
 exports.admins = __importStar(require("./admins"));
 exports.admins__login = __importStar(require("./admins__login"));
 exports.fees = __importStar(require("./fees"));
@@ -36,4 +36,4 @@ exports.users = __importStar(require("./users"));
 exports.users__login = __importStar(require("./users__login"));
 exports.users__me = __importStar(require("./users__me"));
 exports.users__verify_id = __importStar(require("./users__verify_id"));
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9zcmMvZW5kcG9pbnRzL2luZGV4LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQ0EsK0JBQXlEO0FBQWhELHNHQUFBLGNBQWMsT0FBQTtBQUN2QixtREFBbUM7QUFDbkMsaUVBQWlEO0FBQ2pELCtDQUErQjtBQUMvQiwrQ0FBK0I7QUFDL0IscURBQXFDO0FBQ3JDLHlEQUF5QztBQUN6QyxpREFBaUM7QUFDakMsK0RBQStDO0FBQy9DLHlEQUF5QztBQUN6Qyx1RUFBdUQifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9zcmMvZW5kcG9pbnRzL2luZGV4LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBQ0EsK0JBQWtDO0FBQXpCLGdHQUFBLFFBQVEsT0FBQTtBQUNqQixtREFBbUM7QUFDbkMsaUVBQWlEO0FBQ2pELCtDQUErQjtBQUMvQiwrQ0FBK0I7QUFDL0IscURBQXFDO0FBQ3JDLHlEQUF5QztBQUN6QyxpREFBaUM7QUFDakMsK0RBQStDO0FBQy9DLHlEQUF5QztBQUN6Qyx1RUFBdUQifQ==

@@ -1,21 +1,21 @@
-import { EndpointHandler, sendOk } from "./base";
-import { RecursiveReadonly } from "../util";
-import _fees from "../../static/fees.json";
+import { Endpoint } from "./base";
+import { Util } from "../util";
+import fees from "../../static/fees.json";
 
-export const fees = _fees as RecursiveReadonly<typeof _fees>;
+export class FeesEndpoint extends Endpoint implements Endpoint.GetMethod {
+    public static readonly fees = fees as Util.RecursiveReadonly<typeof fees>;
 
-export const methods = {
+    public constructor() {
+        super("/fees");
+    }
+
     /**
      * @name Get Fees
      * @description Get a list of all applicable fees.
      * @response Contents of {file:/static/fees.json}.
      * @code 200 Successfully retrieved the fees list.
      */
-    get(_, response): void {
-        sendOk(response, fees);
-    },
-} satisfies EndpointHandler<{
-    get: {
-        responseData: typeof fees;
-    };
-}>;
+    public get(_: Endpoint.Request, response: Endpoint.Response<typeof fees>): void {
+        Endpoint.sendOk(response, fees);
+    }
+}

@@ -1,41 +1,34 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hashPassword = exports.methods = void 0;
-const crypto_1 = require("crypto");
+exports.AdminsEndpoint = void 0;
 const base_1 = require("./base");
 const db_1 = require("../db");
 const util_1 = require("../util");
-exports.methods = {
+class AdminsEndpoint extends base_1.Endpoint {
+    constructor() {
+        super("/admins");
+    }
     async get(request, response) {
-        if ((0, base_1.getAuthorizedUser)(request)?.type !== "admin") {
-            (0, base_1.sendError)(response, base_1.HTTPCode.Unauthorized, "Not an admin.");
+        if (base_1.Endpoint.getAuthorizedUser(request)?.type !== "admin") {
+            base_1.Endpoint.sendError(response, base_1.Endpoint.HTTPCode.Unauthorized, "Not an admin.");
             return;
         }
         const { rut } = request.query;
         if (!rut) {
-            (0, base_1.sendError)(response, base_1.HTTPCode.BadRequest, "Expected rut in query.");
+            base_1.Endpoint.sendError(response, base_1.Endpoint.HTTPCode.BadRequest, "Expected rut in query.");
             return;
         }
         if (!db_1.User.isValidRut(rut)) {
-            (0, base_1.sendError)(response, base_1.HTTPCode.BadRequest, "Invalid RUT.");
+            base_1.Endpoint.sendError(response, base_1.Endpoint.HTTPCode.BadRequest, "Invalid RUT.");
             return;
         }
-        try {
-            const admin = await db_1.Admin.Model.findById(rut);
-            if (!admin) {
-                (0, base_1.sendError)(response, base_1.HTTPCode.NotFound, "Admin does not exist.");
-                return;
-            }
-            (0, base_1.sendOk)(response, (0, util_1.omit)(db_1.Admin.toJSON(admin), ["password", "salt"]));
+        const admin = await db_1.Admin.Model.findById(rut);
+        if (!admin) {
+            base_1.Endpoint.sendError(response, base_1.Endpoint.HTTPCode.NotFound, "Admin does not exist.");
+            return;
         }
-        catch (error) {
-            console.error(error);
-            (0, base_1.sendError)(response, base_1.HTTPCode.ServerError, "Unexpected error while trying to get admin.");
-        }
-    },
-};
-function hashPassword(password, salt) {
-    return (0, crypto_1.createHash)("sha256").update(password + salt).digest("hex");
+        base_1.Endpoint.sendOk(response, util_1.Util.omit(db_1.Admin.toJSON(admin), ["password", "salt"]));
+    }
 }
-exports.hashPassword = hashPassword;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYWRtaW5zLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2VuZHBvaW50cy9hZG1pbnMudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsbUNBQW9DO0FBQ3BDLGlDQUF5RjtBQUN6Riw4QkFBb0M7QUFDcEMsa0NBQStCO0FBRWxCLFFBQUEsT0FBTyxHQUFHO0lBYW5CLEtBQUssQ0FBQyxHQUFHLENBQUMsT0FBTyxFQUFFLFFBQVE7UUFDdkIsSUFBSSxJQUFBLHdCQUFpQixFQUFDLE9BQU8sQ0FBQyxFQUFFLElBQUksS0FBSyxPQUFPLEVBQUUsQ0FBQztZQUMvQyxJQUFBLGdCQUFTLEVBQUMsUUFBUSxFQUFFLGVBQVEsQ0FBQyxZQUFZLEVBQUUsZUFBZSxDQUFDLENBQUM7WUFDNUQsT0FBTztRQUNYLENBQUM7UUFFRCxNQUFNLEVBQUUsR0FBRyxFQUFFLEdBQUcsT0FBTyxDQUFDLEtBQUssQ0FBQztRQUM5QixJQUFJLENBQUMsR0FBRyxFQUFFLENBQUM7WUFDUCxJQUFBLGdCQUFTLEVBQUMsUUFBUSxFQUFFLGVBQVEsQ0FBQyxVQUFVLEVBQUUsd0JBQXdCLENBQUMsQ0FBQztZQUNuRSxPQUFPO1FBQ1gsQ0FBQztRQUVELElBQUksQ0FBQyxTQUFJLENBQUMsVUFBVSxDQUFDLEdBQUcsQ0FBQyxFQUFFLENBQUM7WUFDeEIsSUFBQSxnQkFBUyxFQUFDLFFBQVEsRUFBRSxlQUFRLENBQUMsVUFBVSxFQUFFLGNBQWMsQ0FBQyxDQUFDO1lBQ3pELE9BQU87UUFDWCxDQUFDO1FBRUQsSUFBSSxDQUFDO1lBQ0QsTUFBTSxLQUFLLEdBQUcsTUFBTSxVQUFLLENBQUMsS0FBSyxDQUFDLFFBQVEsQ0FBQyxHQUFHLENBQUMsQ0FBQztZQUM5QyxJQUFJLENBQUMsS0FBSyxFQUFFLENBQUM7Z0JBQ1QsSUFBQSxnQkFBUyxFQUFDLFFBQVEsRUFBRSxlQUFRLENBQUMsUUFBUSxFQUFFLHVCQUF1QixDQUFDLENBQUM7Z0JBQ2hFLE9BQU87WUFDWCxDQUFDO1lBRUQsSUFBQSxhQUFNLEVBQUMsUUFBUSxFQUFFLElBQUEsV0FBSSxFQUFDLFVBQUssQ0FBQyxNQUFNLENBQUMsS0FBSyxDQUFDLEVBQUUsQ0FBQyxVQUFVLEVBQUUsTUFBTSxDQUFDLENBQUMsQ0FBQyxDQUFDO1FBQ3RFLENBQUM7UUFBQyxPQUFPLEtBQUssRUFBRSxDQUFDO1lBQ2IsT0FBTyxDQUFDLEtBQUssQ0FBQyxLQUFLLENBQUMsQ0FBQztZQUNyQixJQUFBLGdCQUFTLEVBQUMsUUFBUSxFQUFFLGVBQVEsQ0FBQyxXQUFXLEVBQUUsNkNBQTZDLENBQUMsQ0FBQztRQUM3RixDQUFDO0lBQ0wsQ0FBQztDQU1ILENBQUM7QUFFSCxTQUFnQixZQUFZLENBQUMsUUFBZ0IsRUFBRSxJQUFZO0lBQ3ZELE9BQU8sSUFBQSxtQkFBVSxFQUFDLFFBQVEsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxRQUFRLEdBQUcsSUFBSSxDQUFDLENBQUMsTUFBTSxDQUFDLEtBQUssQ0FBQyxDQUFDO0FBQ3RFLENBQUM7QUFGRCxvQ0FFQyJ9
+exports.AdminsEndpoint = AdminsEndpoint;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYWRtaW5zLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL2VuZHBvaW50cy9hZG1pbnMudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0FBQUEsaUNBQWtDO0FBQ2xDLDhCQUFvQztBQUNwQyxrQ0FBK0I7QUFFL0IsTUFBYSxjQUFlLFNBQVEsZUFBUTtJQUN4QztRQUNJLEtBQUssQ0FBQyxTQUFTLENBQUMsQ0FBQztJQUNyQixDQUFDO0lBY00sS0FBSyxDQUFDLEdBQUcsQ0FDWixPQUF1QyxFQUN2QyxRQUFrRTtRQUVsRSxJQUFJLGVBQVEsQ0FBQyxpQkFBaUIsQ0FBQyxPQUFPLENBQUMsRUFBRSxJQUFJLEtBQUssT0FBTyxFQUFFLENBQUM7WUFDeEQsZUFBUSxDQUFDLFNBQVMsQ0FBQyxRQUFRLEVBQUUsZUFBUSxDQUFDLFFBQVEsQ0FBQyxZQUFZLEVBQUUsZUFBZSxDQUFDLENBQUM7WUFDOUUsT0FBTztRQUNYLENBQUM7UUFFRCxNQUFNLEVBQUUsR0FBRyxFQUFFLEdBQUcsT0FBTyxDQUFDLEtBQUssQ0FBQztRQUM5QixJQUFJLENBQUMsR0FBRyxFQUFFLENBQUM7WUFDUCxlQUFRLENBQUMsU0FBUyxDQUFDLFFBQVEsRUFBRSxlQUFRLENBQUMsUUFBUSxDQUFDLFVBQVUsRUFBRSx3QkFBd0IsQ0FBQyxDQUFDO1lBQ3JGLE9BQU87UUFDWCxDQUFDO1FBRUQsSUFBSSxDQUFDLFNBQUksQ0FBQyxVQUFVLENBQUMsR0FBRyxDQUFDLEVBQUUsQ0FBQztZQUN4QixlQUFRLENBQUMsU0FBUyxDQUFDLFFBQVEsRUFBRSxlQUFRLENBQUMsUUFBUSxDQUFDLFVBQVUsRUFBRSxjQUFjLENBQUMsQ0FBQztZQUMzRSxPQUFPO1FBQ1gsQ0FBQztRQUVELE1BQU0sS0FBSyxHQUFHLE1BQU0sVUFBSyxDQUFDLEtBQUssQ0FBQyxRQUFRLENBQUMsR0FBRyxDQUFDLENBQUM7UUFDOUMsSUFBSSxDQUFDLEtBQUssRUFBRSxDQUFDO1lBQ1QsZUFBUSxDQUFDLFNBQVMsQ0FBQyxRQUFRLEVBQUUsZUFBUSxDQUFDLFFBQVEsQ0FBQyxRQUFRLEVBQUUsdUJBQXVCLENBQUMsQ0FBQztZQUNsRixPQUFPO1FBQ1gsQ0FBQztRQUVELGVBQVEsQ0FBQyxNQUFNLENBQUMsUUFBUSxFQUFFLFdBQUksQ0FBQyxJQUFJLENBQUMsVUFBSyxDQUFDLE1BQU0sQ0FBQyxLQUFLLENBQUMsRUFBRSxDQUFDLFVBQVUsRUFBRSxNQUFNLENBQUMsQ0FBQyxDQUFDLENBQUM7SUFDcEYsQ0FBQztDQUNKO0FBN0NELHdDQTZDQyJ9

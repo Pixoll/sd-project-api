@@ -26,7 +26,7 @@ import mongoose from "mongoose";
 import { DocumentFromModel, Timestamps } from "./base";
 import * as Address from "./Address";
 import * as Package from "./Package";
-import { ReplaceKeys } from "../../util";
+import { Util } from "../../util";
 export type Document = DocumentFromModel<typeof Model>;
 export type JSON = {
     id: string;
@@ -45,47 +45,47 @@ export type JSON = {
 } & Timestamps;
 declare const packageStatuses: readonly ["pending", "pre-transit", "in_transit", "out_for_delivery", "delivered"];
 type PackageStatus = typeof packageStatuses[number];
-export declare const Model: mongoose.Model<ReplaceKeys<JSON, {
+export declare const Model: mongoose.Model<Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
-}>, {}, {}, {}, mongoose.Document<unknown, {}, ReplaceKeys<JSON, {
+}>, {}, {}, {}, mongoose.Document<unknown, {}, Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
-}>> & Omit<JSON, "created_timestamp" | "updated_timestamp" | "id"> & {
+}>> & Omit<JSON, "id" | "created_timestamp" | "updated_timestamp"> & {
     _id: string;
     createdAt: number;
     updatedAt: number;
 } & Required<{
     _id: string;
-}>, mongoose.Schema<ReplaceKeys<JSON, {
+}>, mongoose.Schema<Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
-}>, mongoose.Model<ReplaceKeys<JSON, {
+}>, mongoose.Model<Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
-}>, any, any, any, mongoose.Document<unknown, any, ReplaceKeys<JSON, {
+}>, any, any, any, mongoose.Document<unknown, any, Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
-}>> & Omit<JSON, "created_timestamp" | "updated_timestamp" | "id"> & {
+}>> & Omit<JSON, "id" | "created_timestamp" | "updated_timestamp"> & {
     _id: string;
     createdAt: number;
     updatedAt: number;
 } & Required<{
     _id: string;
-}>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, ReplaceKeys<JSON, {
+}>, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
-}>, mongoose.Document<unknown, {}, mongoose.FlatRecord<ReplaceKeys<JSON, {
+}>, mongoose.Document<unknown, {}, mongoose.FlatRecord<Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
-}>>> & mongoose.FlatRecord<ReplaceKeys<JSON, {
+}>>> & mongoose.FlatRecord<Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";

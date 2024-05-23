@@ -1,13 +1,8 @@
-/// <reference types="express" />
+import { Endpoint } from "./base";
 import { Shipment } from "../db";
-export declare const methods: {
-    get(request: import("express").Request<Record<string, string>, unknown, unknown, {
-        id?: string | undefined;
-    }, Record<string, any>>, response: import("express").Response<Shipment.JSON, Record<string, any>>): Promise<void>;
-    post(request: import("express").Request<Record<string, string>, unknown, Shipment.JSON, {
-        [x: string]: string | undefined;
-    }, Record<string, any>>, response: import("express").Response<unknown, Record<string, any>>): Promise<void>;
-    delete(request: import("express").Request<Record<string, string>, unknown, unknown, {
-        id?: string | undefined;
-    }, Record<string, any>>, response: import("express").Response<unknown, Record<string, any>>): Promise<void>;
-};
+export declare class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, Endpoint.PostMethod, Endpoint.DeleteMethod {
+    constructor();
+    get(request: Endpoint.Request<never, "id">, response: Endpoint.Response<Shipment.JSON>): Promise<void>;
+    post(request: Endpoint.Request<Shipment.JSON>, response: Endpoint.Response): Promise<void>;
+    delete(request: Endpoint.Request<never, "id">, response: Endpoint.Response): Promise<void>;
+}
