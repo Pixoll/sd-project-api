@@ -53,7 +53,7 @@ export declare const Model: mongoose.Model<Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
-}>> & Omit<JSON, "created_timestamp" | "updated_timestamp" | "id"> & {
+}>> & Omit<JSON, "id" | "created_timestamp" | "updated_timestamp"> & {
     _id: string;
     createdAt: number;
     updatedAt: number;
@@ -71,7 +71,7 @@ export declare const Model: mongoose.Model<Util.ReplaceKeys<JSON, {
     id: "_id";
     created_timestamp: "createdAt";
     updated_timestamp: "updatedAt";
-}>> & Omit<JSON, "created_timestamp" | "updated_timestamp" | "id"> & {
+}>> & Omit<JSON, "id" | "created_timestamp" | "updated_timestamp"> & {
     _id: string;
     createdAt: number;
     updatedAt: number;
