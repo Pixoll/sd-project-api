@@ -22,17 +22,21 @@
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
-import mongoose from "mongoose";
-export type JSON = {
-    type: string;
-    description: string;
-    length: number;
-    width: number;
-    height: number;
-    weight: number;
+import { HydratedDocument, Model } from "mongoose";
+import { Util } from "../util";
+export declare class StructureValidator extends null {
+    static run<A, B, C, D, F, J extends A extends Util.ReplaceKeys<infer JSON, infer _1> ? JSON : A>(object: object, Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>, options?: StructureValidationOptions<J>): Promise<ValidationResult>;
+}
+type StructureValidationOptions<JSON> = {
+    partial?: boolean;
+    exclude?: Array<keyof JSON & string>;
 };
-export declare const Schema: mongoose.Schema<JSON, mongoose.Model<JSON, any, any, any, mongoose.Document<unknown, any, JSON> & JSON & {
-    _id: mongoose.Types.ObjectId;
-}, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, JSON, mongoose.Document<unknown, {}, mongoose.FlatRecord<JSON>> & mongoose.FlatRecord<JSON> & {
-    _id: mongoose.Types.ObjectId;
-}>;
+type ValidationResult = ValidationSuccess | ValidationError;
+type ValidationSuccess = {
+    ok: true;
+};
+type ValidationError = {
+    ok: false;
+    message: string;
+};
+export {};

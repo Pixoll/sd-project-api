@@ -1,6 +1,7 @@
 import { Endpoint } from "./base";
 import { UsersEndpoint } from "./users";
-import { User, validateStructure } from "../db";
+import { StructureValidator } from "../schemas/validator";
+import { User } from "../schemas/user";
 import { TokenManager } from "../tokens";
 
 export class UsersLoginEndpoint extends Endpoint implements Endpoint.PostMethod {
@@ -33,7 +34,7 @@ export class UsersLoginEndpoint extends Endpoint implements Endpoint.PostMethod 
             return;
         }
 
-        const validationResult = await validateStructure({ email, password }, User.Model, { partial: true });
+        const validationResult = await StructureValidator.run({ email, password }, User.Model, { partial: true });
         if (!validationResult.ok) {
             Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, validationResult.message);
             return;

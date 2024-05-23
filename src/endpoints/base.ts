@@ -66,7 +66,7 @@ export namespace Endpoint {
         ContentTooLarge = 413,
     }
 
-    export type Request<Body extends object = NonNullable<unknown>, QueryKeys extends string = never> = ERequest<
+    export type Request<Body extends object = {}, QueryKeys extends string = never> = ERequest<
         Record<string, string>,
         unknown,
         Body,

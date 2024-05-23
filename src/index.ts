@@ -1,8 +1,8 @@
 import { config as dotenvConfig } from "dotenv";
 import express from "express";
-import { connect } from "./db";
 import { EndpointRegistry } from "./endpoints/registry";
 import { TokenManager } from "./tokens";
+import mongoose from "mongoose";
 
 dotenvConfig();
 
@@ -20,7 +20,17 @@ if (!MONGO_URI) throw new Error("env.MONGO_URI must be specified");
 
 void async function (): Promise<void> {
     TokenManager.loadTokens();
-    await connect(MONGO_URI);
+
+    console.log("Connecting to MongoDB...");
+    await mongoose.connect(MONGO_URI, {
+        serverApi: {
+            version: "1",
+            strict: true,
+            deprecationErrors: true,
+        },
+    });
+    await mongoose.connection.db.admin().command({ ping: 1 });
+    console.log("Connected to MongoDB");
 
     app.listen(PORT, () => {
         console.log("Server listening on port:", PORT);

@@ -21,7 +21,7 @@ export declare namespace Endpoint {
         Conflict = 409,
         ContentTooLarge = 413
     }
-    type Request<Body extends object = NonNullable<unknown>, QueryKeys extends string = never> = ERequest<Record<string, string>, unknown, Body, {
+    type Request<Body extends object = {}, QueryKeys extends string = never> = ERequest<Record<string, string>, unknown, Body, {
         [K in QueryKeys]?: string;
     }>;
     type Response<Data = unknown> = EResponse<Data>;

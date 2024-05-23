@@ -1,7 +1,3 @@
-type TokensFile = {
-    user: Record<string, string>;
-    admin: Record<string, string>;
-};
 export declare class TokenManager extends null {
     private static readonly tokensFilePath;
     private static readonly tokens;
@@ -14,4 +10,8 @@ export declare class TokenManager extends null {
 export declare namespace TokenManager {
     type TokenType = keyof TokensFile;
 }
+type TokensFile = {
+    user: Record<string, string>;
+    admin: Record<string, string>;
+};
 export {};

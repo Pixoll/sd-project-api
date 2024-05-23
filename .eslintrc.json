@@ -64,7 +64,12 @@
         ],
         "eqeqeq": "error",
         "prefer-const": "error",
-        "camelcase": "warn",
+        "camelcase": [
+            "warn",
+            {
+                "properties": "never"
+            }
+        ],
         "object-property-newline": [
             "error",
             {
@@ -112,6 +117,15 @@
         "@typescript-eslint/semi": "error",
         "@typescript-eslint/explicit-member-accessibility": "error",
         "@typescript-eslint/no-explicit-any": "error",
-        "@typescript-eslint/no-namespace": "off"
+        "@typescript-eslint/no-namespace": "off",
+        "@typescript-eslint/ban-types": [
+            "error",
+            {
+                "types": {
+                    "{}": false
+                },
+                "extendDefaults": true
+            }
+        ]
     }
 }

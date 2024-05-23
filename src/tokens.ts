@@ -3,14 +3,6 @@ import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { Util } from "./util";
 
-/**
- * Stores both `<rut, token>` and `<token, rut>`
- */
-type TokensFile = {
-    user: Record<string, string>;
-    admin: Record<string, string>;
-};
-
 export class TokenManager extends null {
     private static readonly tokensFilePath = path.join(__dirname, "../data/tokens.json");
     private static readonly tokens: TokensFile = {
@@ -83,3 +75,11 @@ export class TokenManager extends null {
 export namespace TokenManager {
     export type TokenType = keyof TokensFile;
 }
+
+/**
+ * Stores both `<rut, token>` and `<token, rut>`
+ */
+type TokensFile = {
+    user: Record<string, string>;
+    admin: Record<string, string>;
+};

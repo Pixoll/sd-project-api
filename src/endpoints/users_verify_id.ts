@@ -1,7 +1,7 @@
 import Jimp from "jimp";
 import jsQR from "jsqr";
 import { Endpoint } from "./base";
-import { User } from "../db";
+import { User } from "../schemas/user";
 
 export class UsersVerifyId extends Endpoint implements Endpoint.PostMethod {
     // eslint-disable-next-line max-len

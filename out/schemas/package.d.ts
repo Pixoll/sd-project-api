@@ -22,21 +22,23 @@
 /// <reference types="mongoose/types/validation" />
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
-import { HydratedDocument, Model } from "mongoose";
-import { Util } from "../../util";
-export * as Admin from "./Admin";
-export * as Shipment from "./Shipment";
-export * as User from "./User";
-type StructureValidationOptions<JSON> = {
-    partial?: boolean;
-    exclude?: Array<keyof JSON & string>;
-};
-type ValidationResult = ValidationSuccess | ValidationError;
-type ValidationSuccess = {
-    ok: true;
-};
-type ValidationError = {
-    ok: false;
-    message: string;
-};
-export declare function validateStructure<A, B, C, D, F, J extends A extends Util.ReplaceKeys<infer JSON, infer _1> ? JSON : A>(object: object, Model: Model<A, B, C, D, HydratedDocument<A, D & C, B>, F>, options?: StructureValidationOptions<J>): Promise<ValidationResult>;
+import mongoose from "mongoose";
+export declare class Package extends null {
+    private static readonly types;
+    private static readonly typesList;
+    static readonly Schema: mongoose.Schema<Package.JSON, mongoose.Model<Package.JSON, any, any, any, mongoose.Document<unknown, any, Package.JSON> & Package.JSON & {
+        _id: mongoose.Types.ObjectId;
+    }, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, Package.JSON, mongoose.Document<unknown, {}, mongoose.FlatRecord<Package.JSON>> & mongoose.FlatRecord<Package.JSON> & {
+        _id: mongoose.Types.ObjectId;
+    }>;
+}
+export declare namespace Package {
+    type JSON = {
+        type: string;
+        description: string;
+        length: number;
+        width: number;
+        height: number;
+        weight: number;
+    };
+}

@@ -1,5 +1,6 @@
 import { Endpoint } from "./base";
-import { Shipment, validateStructure } from "../db";
+import { Shipment } from "../schemas/shipment";
+import { StructureValidator } from "../schemas/validator";
 import { Util } from "../util";
 
 export class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, Endpoint.PostMethod, Endpoint.DeleteMethod {
@@ -59,7 +60,7 @@ export class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
             return;
         }
 
-        const validationResult = await validateStructure(request.body, Shipment.Model, { exclude: ["id"] });
+        const validationResult = await StructureValidator.run(request.body, Shipment.Model, { exclude: ["id"] });
         if (!validationResult.ok) {
             Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, validationResult.message);
             return;

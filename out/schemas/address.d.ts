@@ -23,15 +23,19 @@
 /// <reference types="mongoose/types/virtuals" />
 /// <reference types="mongoose/types/inferschematype" />
 import mongoose from "mongoose";
-export type JSON = {
-    region: string;
-    city: string;
-    street: string;
-    number: number;
-    secondary?: string | null | undefined;
-};
-export declare const Schema: mongoose.Schema<JSON, mongoose.Model<JSON, any, any, any, mongoose.Document<unknown, any, JSON> & JSON & {
-    _id: mongoose.Types.ObjectId;
-}, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, JSON, mongoose.Document<unknown, {}, mongoose.FlatRecord<JSON>> & mongoose.FlatRecord<JSON> & {
-    _id: mongoose.Types.ObjectId;
-}>;
+export declare class Address extends null {
+    static readonly Schema: mongoose.Schema<Address.JSON, mongoose.Model<Address.JSON, any, any, any, mongoose.Document<unknown, any, Address.JSON> & Address.JSON & {
+        _id: mongoose.Types.ObjectId;
+    }, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, Address.JSON, mongoose.Document<unknown, {}, mongoose.FlatRecord<Address.JSON>> & mongoose.FlatRecord<Address.JSON> & {
+        _id: mongoose.Types.ObjectId;
+    }>;
+}
+export declare namespace Address {
+    type JSON = {
+        region: string;
+        city: string;
+        street: string;
+        number: number;
+        secondary?: string | null | undefined;
+    };
+}

@@ -1,5 +1,6 @@
 import { Endpoint } from "./base";
-import { Admin, User } from "../db";
+import { Admin } from "../schemas/admin";
+import { User } from "../schemas/user";
 import { Util } from "../util";
 
 export class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod {

@@ -1,5 +1,5 @@
 import { Endpoint } from "./base";
-import { User } from "../db";
+import { User } from "../schemas/user";
 import { Util } from "../util";
 
 export class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod {

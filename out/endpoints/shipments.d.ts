@@ -1,5 +1,5 @@
 import { Endpoint } from "./base";
-import { Shipment } from "../db";
+import { Shipment } from "../schemas/shipment";
 export declare class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, Endpoint.PostMethod, Endpoint.DeleteMethod {
     constructor();
     get(request: Endpoint.Request<never, "id">, response: Endpoint.Response<Shipment.JSON>): Promise<void>;

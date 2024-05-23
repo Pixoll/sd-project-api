@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from "crypto";
 import { Endpoint } from "./base";
-import { User, validateStructure } from "../db";
+import { User } from "../schemas/user";
+import { StructureValidator } from "../schemas/validator";
 import { Util } from "../util";
 
 export class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpoint.PostMethod, Endpoint.DeleteMethod {
@@ -23,7 +24,7 @@ export class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
      * @code 404 No user exists with the provided query.
      */
     public async get(
-        request: Endpoint.Request<NonNullable<unknown>, "rut" | "email" | "phone">,
+        request: Endpoint.Request<{}, "rut" | "email" | "phone">,
         response: Endpoint.Response<Omit<User.JSON, "password" | "salt">>
     ): Promise<void> {
         if (Endpoint.getAuthorizedUser(request)?.type !== "admin") {
@@ -46,7 +47,7 @@ export class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
             ...email && { email },
             ...phone && { phone: parseInt(phone) },
         };
-        const validationResult = await validateStructure(search, User.Model, { partial: true });
+        const validationResult = await StructureValidator.run(search, User.Model, { partial: true });
         if (!validationResult.ok) {
             Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, validationResult.message);
             return;
@@ -80,7 +81,7 @@ export class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
             return;
         }
 
-        const validationResult = await validateStructure(request.body, User.Model, { exclude: ["salt", "verified"] });
+        const validationResult = await StructureValidator.run(request.body, User.Model, { exclude: ["salt", "verified"] });
         if (!validationResult.ok) {
             Endpoint.sendError(response, Endpoint.HTTPCode.BadRequest, validationResult.message);
             return;
