@@ -26,7 +26,7 @@ void async function (): Promise<void> {
         console.log("Server listening on port:", PORT);
     });
 
-    EndpointRegistry.registerEndpoints(router);
+    await EndpointRegistry.registerEndpoints(router);
 
     app.use("/api/v1", router);
 }();

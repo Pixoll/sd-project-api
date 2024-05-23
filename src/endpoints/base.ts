@@ -1,13 +1,10 @@
 import { NextFunction, Request as ERequest, Response as EResponse } from "express";
 import { TokenManager } from "../tokens";
 import { Util } from "../util";
-import { EndpointRegistry } from "./registry";
 
 export abstract class Endpoint {
     public constructor(public readonly path: string) {
         this.path = path[0] === "/" ? path : "/" + path;
-
-        EndpointRegistry.registerEndpoint(this);
     }
 
     public static baseMiddleware(request: ERequest, response: EResponse, next: NextFunction): void {
