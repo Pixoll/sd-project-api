@@ -1,22 +1,21 @@
 package org.sdproject.api.structures;
 
-import org.jetbrains.annotations.Nullable;
 import org.sdproject.api.documentation.FieldDoc;
 import org.sdproject.api.json.JSONObject;
 
 public record Package(
         @FieldDoc(description = "Type of the package.")
-        @Nullable Type type,
+        Type type,
         @FieldDoc(description = "Brief description of what the package contains.")
-        @Nullable String description,
+        String description,
         @FieldDoc(description = "Length of the package in mm.")
-        @Nullable Float length,
+        Float length,
         @FieldDoc(description = "Width of the package in mm.")
-        @Nullable Float width,
+        Float width,
         @FieldDoc(description = "Height of the package in mm.")
-        @Nullable Float height,
+        Float height,
         @FieldDoc(description = "Weight of the package in kg.")
-        @Nullable Float weight
+        Float weight
 ) implements Structure {
     public Package(JSONObject requestBody) {
         this(

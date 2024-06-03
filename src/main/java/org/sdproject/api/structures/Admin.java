@@ -5,6 +5,7 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.codecs.pojo.annotations.BsonRepresentation;
 import org.jetbrains.annotations.Nullable;
+import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 import org.sdproject.api.json.JSONObject;
 
@@ -13,31 +14,31 @@ import java.util.Date;
 public record Admin(
         @BsonId() @BsonRepresentation(BsonType.STRING)
         @FieldDoc(description = "The admin's RUT.")
-        @Nullable String rut,
+        String rut,
         @BsonProperty("first_name")
         @FieldDoc(jsonKey = "first_name", description = "The admin's first name.")
-        @Nullable String firstName,
+        String firstName,
         @BsonProperty("second_name")
         @FieldDoc(jsonKey = "second_name", description = "The admin's second name.", optional = true, defaultIsNull = true)
         @Nullable String secondName,
         @BsonProperty("first_last_name")
         @FieldDoc(jsonKey = "first_last_name", description = "The admin's first last name.")
-        @Nullable String firstLastName,
+        String firstLastName,
         @BsonProperty("second_last_name")
         @FieldDoc(jsonKey = "second_last_name", description = "The admin's second last name.", optional = true, defaultIsNull = true)
         @Nullable String secondLastName,
         @FieldDoc(description = "The admin's email address.")
-        @Nullable String email,
+        String email,
         @FieldDoc(description = "The admin's phone number.")
-        @Nullable Integer phone,
+        Integer phone,
         @FieldDoc(description = "The admin's password.")
-        @Nullable String password,
+        String password,
         @FieldDoc(description = "The admin's salt for the password.")
-        @Nullable String salt,
+        String salt,
         @FieldDoc(isCreatedTimestamp = true)
-        @Nullable Date createdAt,
+        Date createdAt,
         @FieldDoc(isUpdatedTimestamp = true)
-        @Nullable Date updatedAt
+        Date updatedAt
 ) implements Structure {
     public Admin(JSONObject json) {
         this(
@@ -91,13 +92,13 @@ public record Admin(
                 .put(Field.SECOND_LAST_NAME.name, this.secondLastName != null ? this.secondLastName : JSONObject.NULL)
                 .put(Field.EMAIL.name, this.email)
                 .put(Field.PHONE.name, this.phone)
-                .put(Field.CREATED_TIMESTAMP.name, this.createdAt != null ? this.createdAt.getTime() : null)
-                .put(Field.UPDATED_TIMESTAMP.name, this.updatedAt != null ? this.updatedAt.getTime() : null);
+                .put(Field.CREATED_TIMESTAMP.name, this.createdAt.getTime())
+                .put(Field.UPDATED_TIMESTAMP.name, this.updatedAt.getTime());
     }
 
     @Override
     public void validate() throws ValidationException {
-        if (this.rut == null) {
+        if (this.rut == null || this.rut.isEmpty()) {
             throw new ValidationException("Rut cannot be empty.");
         }
 
@@ -111,7 +112,7 @@ public record Admin(
             throw new ValidationException("First last name cannot be empty.");
         }
 
-        if (this.email == null) {
+        if (this.email == null || this.email.isEmpty()) {
             throw new ValidationException("Email cannot be empty.");
         }
 

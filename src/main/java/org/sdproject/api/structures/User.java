@@ -13,35 +13,35 @@ import java.util.Date;
 public record User(
         @BsonId() @BsonRepresentation(BsonType.STRING)
         @FieldDoc(description = "The user's RUT.")
-        @Nullable String rut,
+        String rut,
         @BsonProperty("first_name")
         @FieldDoc(jsonKey = "first_name", description = "The user's first name.")
-        @Nullable String firstName,
+        String firstName,
         @BsonProperty("second_name")
         @FieldDoc(jsonKey = "second_name", description = "The user's second name.", optional = true, defaultIsNull = true)
         @Nullable String secondName,
         @BsonProperty("first_last_name")
         @FieldDoc(jsonKey = "first_last_name", description = "The user's first last name.")
-        @Nullable String firstLastName,
+        String firstLastName,
         @BsonProperty("second_last_name")
         @FieldDoc(jsonKey = "second_last_name", description = "The user's second last name.", optional = true, defaultIsNull = true)
         @Nullable String secondLastName,
         @FieldDoc(description = "The user's email address.")
-        @Nullable String email,
+        String email,
         @FieldDoc(description = "The user's phone number.")
-        @Nullable Integer phone,
+        Integer phone,
         @FieldDoc(description = "The user's address.")
-        @Nullable Address address,
+        Address address,
         @FieldDoc(description = "The user's password.")
-        @Nullable String password,
+        String password,
         @FieldDoc(description = "The user's salt for the password.")
-        @Nullable String salt,
+        String salt,
         @FieldDoc(description = "Whether the user has verified their identity or not.")
         boolean verified,
         @FieldDoc(isCreatedTimestamp = true)
-        @Nullable Date createdAt,
+        Date createdAt,
         @FieldDoc(isUpdatedTimestamp = true)
-        @Nullable Date updatedAt
+        Date updatedAt
 ) implements Structure {
     private static final int[] RUT_VALIDATION_SEQUENCE = {2, 3, 4, 5, 6, 7};
     public static final String EMAIL_REGEX = "^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";

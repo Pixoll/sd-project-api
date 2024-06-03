@@ -17,19 +17,19 @@ import java.util.*;
 public record Shipment(
         @BsonId() @BsonRepresentation(BsonType.STRING)
         @FieldDoc(description = "The shipment id. Used for tracking.")
-        @Nullable String id,
+        String id,
         @BsonProperty("rut_sender")
         @FieldDoc(jsonKey = "rut_sender", description = "RUT of the sender. Must be of an existing {structure:User}.")
-        @Nullable String rutSender,
+        String rutSender,
         @BsonProperty("rut_recipient")
         @FieldDoc(jsonKey = "rut_recipient", description = "RUT of the recipient. Must be of an existing {structure:User}.")
-        @Nullable String rutRecipient,
+        String rutRecipient,
         @BsonProperty("source_address")
         @FieldDoc(jsonKey = "source_address", description = "Address where the packages are being shipped from.")
-        @Nullable Address sourceAddress,
+        Address sourceAddress,
         @BsonProperty("destination_address")
         @FieldDoc(jsonKey = "destination_address", description = "Address where the packages are being shipped to.")
-        @Nullable Address destinationAddress,
+        Address destinationAddress,
         @BsonProperty("dispatch_timestamp")
         @FieldDoc(jsonKey = "dispatch_timestamp", description = "When the shipment was picked up from the source address.")
         @Nullable Long dispatchTimestamp,
@@ -37,25 +37,25 @@ public record Shipment(
         @FieldDoc(jsonKey = "delivery_timestamp", description = "When the shipment arrived to the destination address.")
         @Nullable Long deliveryTimestamp,
         @FieldDoc(description = "Status of the shipment.")
-        @Nullable Status status,
+        Status status,
         @BsonProperty("shipping_type")
         @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.")
-        @Nullable Type shippingType,
+        Type shippingType,
         @BsonProperty("pending_payment")
         @FieldDoc(jsonKey = "pending_payment", description = "Whether the shipment is going to be paid by the recipient or not.")
-        @Nullable Boolean pendingPayment,
+        Boolean pendingPayment,
         @BsonProperty("home_pickup")
         @FieldDoc(jsonKey = "home_pickup", description = "Whether the packages are being picked up at the sender's address.")
-        @Nullable Boolean homePickup,
+        Boolean homePickup,
         @BsonProperty("home_delivery")
         @FieldDoc(jsonKey = "home_delivery", description = "Whether the packages are being shipped to the recipient's address.")
-        @Nullable Boolean homeDelivery,
+        Boolean homeDelivery,
         @FieldDoc(description = "All the packages being shipped.")
-        @Nullable List<Package> packages,
+        List<Package> packages,
         @FieldDoc(isCreatedTimestamp = true)
-        @Nullable Date createdAt,
+        Date createdAt,
         @FieldDoc(isUpdatedTimestamp = true)
-        @Nullable Date updatedAt
+        Date updatedAt
 ) implements Structure {
     public Shipment(JSONObject requestBody) {
         this(
@@ -152,20 +152,18 @@ public record Shipment(
                 .put(Field.ID.name, this.id)
                 .put(Field.RUT_SENDER.name, this.rutSender)
                 .put(Field.RUT_RECIPIENT.name, this.rutRecipient)
-                .put(Field.SOURCE_ADDRESS.name, this.sourceAddress != null ? this.sourceAddress.toJSON() : null)
-                .put(Field.DESTINATION_ADDRESS.name, this.destinationAddress != null ? this.destinationAddress.toJSON() : null)
+                .put(Field.SOURCE_ADDRESS.name, this.sourceAddress.toJSON())
+                .put(Field.DESTINATION_ADDRESS.name, this.destinationAddress.toJSON())
                 .put(Field.DISPATCH_TIMESTAMP.name, this.dispatchTimestamp)
                 .put(Field.DELIVERY_TIMESTAMP.name, this.deliveryTimestamp)
-                .put(Field.STATUS.name, this.status != null ? this.status.name : null)
-                .put(Field.SHIPPING_TYPE.name, this.shippingType != null ? this.shippingType.name : null)
+                .put(Field.STATUS.name, this.status.name)
+                .put(Field.SHIPPING_TYPE.name, this.shippingType.name)
                 .put(Field.PENDING_PAYMENT.name, this.pendingPayment)
                 .put(Field.HOME_PICKUP.name, this.homePickup)
                 .put(Field.HOME_DELIVERY.name, this.homeDelivery)
-                .put(Field.PACKAGES.name, this.packages != null
-                        ? new JSONArray(this.packages.stream().map(Package::toJSON).toList())
-                        : null)
-                .put(Field.CREATED_TIMESTAMP.name, this.createdAt != null ? this.createdAt.getTime() : null)
-                .put(Field.UPDATED_TIMESTAMP.name, this.updatedAt != null ? this.updatedAt.getTime() : null);
+                .put(Field.PACKAGES.name, new JSONArray(this.packages.stream().map(Package::toJSON).toList()))
+                .put(Field.CREATED_TIMESTAMP.name, this.createdAt.getTime())
+                .put(Field.UPDATED_TIMESTAMP.name, this.updatedAt.getTime());
     }
 
     @Override

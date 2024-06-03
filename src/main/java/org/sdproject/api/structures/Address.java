@@ -1,19 +1,20 @@
 package org.sdproject.api.structures;
 
 import org.jetbrains.annotations.Nullable;
+import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 import org.sdproject.api.json.JSONObject;
 import org.sdproject.api.endpoints.RegionsEndpoint;
 
 public record Address(
         @FieldDoc(description = "The region.")
-        @Nullable String region,
+        String region,
         @FieldDoc(description = "The city or commune.")
-        @Nullable String city,
+        String city,
         @FieldDoc(description = "The street name.")
-        @Nullable String street,
+        String street,
         @FieldDoc(description = "The street number.")
-        @Nullable Integer number,
+        Integer number,
         @FieldDoc(description = "Secondary information like apartment building.", optional = true, defaultIsNull = true)
         @Nullable String secondary
 ) implements Structure {
@@ -66,7 +67,7 @@ public record Address(
             throw new ValidationException("Invalid address region name.");
         }
 
-        if (this.city == null || city.isEmpty()) {
+        if (this.city == null || this.city.isEmpty()) {
             throw new ValidationException("Address city or commune name cannot be empty.");
         }
 
@@ -86,7 +87,7 @@ public record Address(
         }
 
         if (this.number <= 0) {
-            throw new ValidationException("Address street number must be >= 0.");
+            throw new ValidationException("Address street number must be positive.");
         }
     }
 }
