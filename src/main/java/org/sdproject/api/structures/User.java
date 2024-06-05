@@ -163,7 +163,14 @@ public record User(
         final String[] rutParts = rut.split("-");
         final String digits = rutParts[0];
         final String expectedVerificationDigit = rutParts[1];
+        final String verificationDigit = calculateVerificationCode(digits);
 
+        if (!expectedVerificationDigit.equals(verificationDigit)) {
+            throw new ValidationException("Invalid rut.");
+        }
+    }
+
+    private static String calculateVerificationCode(String digits) throws ValidationException {
         if (Integer.parseInt(digits) < 1e6) {
             throw new ValidationException("Invalid rut.");
         }
@@ -175,10 +182,6 @@ public record User(
         }
 
         final int verificationNumber = 11 - sum + (sum / 11 * 11);
-        final String verificationDigit = verificationNumber == 10 ? "K" : String.valueOf(verificationNumber % 11);
-
-        if (!expectedVerificationDigit.equals(verificationDigit)) {
-            throw new ValidationException("Invalid rut.");
-        }
+        return verificationNumber == 10 ? "K" : String.valueOf(verificationNumber % 11);
     }
 }
