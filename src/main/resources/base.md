@@ -39,8 +39,8 @@ Error messages are given in a JSON format with both the `code` and a human-reada
 
 Resource fields that may contain a null value have types that are prefixed with a question mark. Resource fields that are optional have names that are suffixed with a question mark.
 
-| Field | Type |
-| --- | --- |
-| optional_field? | string |
-| nullable_field | ?string |
+| Field                        | Type    |
+|------------------------------|---------|
+| optional_field?              | string  |
+| nullable_field               | ?string |
 | optional_and_nullable_field? | ?string |
