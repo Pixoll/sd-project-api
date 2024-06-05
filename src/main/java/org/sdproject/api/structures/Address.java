@@ -1,7 +1,6 @@
 package org.sdproject.api.structures;
 
 import org.jetbrains.annotations.Nullable;
-import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 import org.sdproject.api.json.JSONObject;
 import org.sdproject.api.endpoints.RegionsEndpoint;
