@@ -446,7 +446,7 @@ DELETE /users
 
 ### Get Current User
 
-Returns the information of the current logged in [user](#user-object).
+Returns the information of the current logged-in [user](#user-object).
 
 #### URL
 

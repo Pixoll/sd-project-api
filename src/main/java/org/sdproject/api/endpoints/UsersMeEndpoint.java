@@ -16,7 +16,7 @@ public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod {
         super("/users/me");
     }
 
-    @MethodDoc(name = "Get Current User", description = "Returns the information of the current logged in {structure:User}.")
+    @MethodDoc(name = "Get Current User", description = "Returns the information of the current logged-in {structure:User}.")
     @HeaderDoc(
             name = "Authorization",
             type = String.class,
