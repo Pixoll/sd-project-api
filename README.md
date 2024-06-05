@@ -73,34 +73,34 @@ Resource fields that may contain a null value have types that are prefixed with 
 
 ### Package Object
 
-| Field       | Type   | Description                                         |
-|-------------|--------|-----------------------------------------------------|
-| type        | string | Type of the package. One of: `document`, `package`. |
-| description | string | Brief description of what the package contains.     |
-| length      | float  | Length of the package in mm.                        |
-| width       | float  | Width of the package in mm.                         |
-| height      | float  | Height of the package in mm.                        |
-| weight      | float  | Weight of the package in kg.                        |
+| Field       | Type   | Description                                           |
+|-------------|--------|-------------------------------------------------------|
+| type        | string | Type of the package. One of: `document` or `package`. |
+| description | string | Brief description of what the package contains.       |
+| length      | float  | Length of the package in mm.                          |
+| width       | float  | Width of the package in mm.                           |
+| height      | float  | Height of the package in mm.                          |
+| weight      | float  | Weight of the package in kg.                          |
 
 ### Shipment Object
 
-| Field               | Type                                                         | Description                                                                                              |
-|---------------------|--------------------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| id                  | string                                                       | The shipment id. Used for tracking.                                                                      |
-| rut_sender          | string                                                       | RUT of the sender. Must be of an existing [user](#user-object).                                          |
-| rut_recipient       | string                                                       | RUT of the recipient. Must be of an existing [user](#user-object).                                       |
-| source_address      | [address](#address-object) object                            | Address where the packages are being shipped from.                                                       |
-| destination_address | [address](#address-object) object                            | Address where the packages are being shipped to.                                                         |
-| dispatch_timestamp  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address.                                                 |
-| delivery_timestamp  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address.                                                    |
-| status              | string                                                       | Status of the shipment. One of: `pending`, `pre-transit`, `in_transit`, `out_for_delivery`, `delivered`. |
-| shipping_type       | string                                                       | Type of the shipping. One of: `same_day`, `fast`, `regular`.                                             |
-| pending_payment     | boolean                                                      | Whether the shipment is going to be paid by the recipient or not.                                        |
-| home_pickup         | boolean                                                      | Whether the packages are being picked up at the sender's address.                                        |
-| home_delivery       | boolean                                                      | Whether the packages are being shipped to the recipient's address.                                       |
-| packages            | array of [package](#package-object) objects                  | All the packages being shipped.                                                                          |
-| created_timestamp   | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                                                                             |
-| updated_timestamp   | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                                                                        |
+| Field               | Type                                                         | Description                                                                                                |
+|---------------------|--------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| id                  | string                                                       | The shipment id. Used for tracking.                                                                        |
+| rut_sender          | string                                                       | RUT of the sender. Must be of an existing [user](#user-object).                                            |
+| rut_recipient       | string                                                       | RUT of the recipient. Must be of an existing [user](#user-object).                                         |
+| source_address      | [address](#address-object) object                            | Address where the packages are being shipped from.                                                         |
+| destination_address | [address](#address-object) object                            | Address where the packages are being shipped to.                                                           |
+| dispatch_timestamp  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address.                                                   |
+| delivery_timestamp  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address.                                                      |
+| status              | string                                                       | Status of the shipment. One of: `pending`, `pre-transit`, `in_transit`, `out_for_delivery` or `delivered`. |
+| shipping_type       | string                                                       | Type of the shipping. One of: `same_day`, `fast` or `regular`.                                             |
+| pending_payment     | boolean                                                      | Whether the shipment is going to be paid by the recipient or not.                                          |
+| home_pickup         | boolean                                                      | Whether the packages are being picked up at the sender's address.                                          |
+| home_delivery       | boolean                                                      | Whether the packages are being shipped to the recipient's address.                                         |
+| packages            | array of [package](#package-object) objects                  | All the packages being shipped.                                                                            |
+| created_timestamp   | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                                                                               |
+| updated_timestamp   | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                                                                          |
 
 ### User Object
 

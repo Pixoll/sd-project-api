@@ -113,7 +113,7 @@ public class GenerateApiDocs {
                     description += " One of: " + String.join(
                             ", ",
                             Arrays.stream(field.getType().getEnumConstants()).map(e -> "`" + e + "`").toList()
-                    ) + ".";
+                    ).replaceFirst(", ([^,]+)$", " or $1") + ".";
                 }
 
                 table.addRow(
