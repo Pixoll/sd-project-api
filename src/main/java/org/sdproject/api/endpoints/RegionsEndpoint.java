@@ -11,7 +11,7 @@ import org.sdproject.api.Util;
 import java.util.ArrayList;
 
 public class RegionsEndpoint extends Endpoint implements Endpoint.GetMethod {
-    public static final ArrayList<JSONObject> REGIONS = Util.readJSONArrayFile("static/regions-communes.json");
+    public static final ArrayList<JSONObject> REGIONS = Util.readJSONArrayFile("static/regions_communes.json");
 
     public RegionsEndpoint() {
         super("/regions");
