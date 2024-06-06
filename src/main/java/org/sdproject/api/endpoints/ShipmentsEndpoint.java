@@ -83,13 +83,13 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
     @QueryDoc(key = "id", type = String.class, description = "The shipment's tracking id.")
     @CodeDoc(code = HttpStatus.NO_CONTENT, reason = "Successfully deleted the shipment.")
     @CodeDoc(code = HttpStatus.BAD_REQUEST, reason = "Did not provide tracking `id`.")
-    @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not an admin.")
+    @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in as an admin.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "Shipment does not exist.")
     @Override
     public void delete(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
         if (authData == null || authData.type() != SessionTokenManager.TokenType.ADMIN) {
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not an admin.");
+            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
             return;
         }
 

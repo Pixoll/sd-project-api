@@ -23,13 +23,13 @@ public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod {
     @ResponseDoc("An {structure:Admin} object without the `password` and `salt` fields.")
     @CodeDoc(code = HttpStatus.OK, reason = "Successfully retrieved the admin.")
     @CodeDoc(code = HttpStatus.BAD_REQUEST, reason = "Did not provide `rut` or it's malformed.")
-    @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not an admin.")
+    @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in as an admin.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "Admin does not exist.")
     @Override
     public void get(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
         if (authData == null || authData.type() != SessionTokenManager.TokenType.ADMIN) {
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not an admin.");
+            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
             return;
         }
 

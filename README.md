@@ -154,7 +154,7 @@ An [admin](#admin-object) object without the `password` and `salt` fields.
 |------------------|------------------------------------------|
 | 200 OK           | Successfully retrieved the admin.        |
 | 400 Bad Request  | Did not provide `rut` or it's malformed. |
-| 401 Unauthorized | Not an admin.                            |
+| 401 Unauthorized | Not logged in as an admin.               |
 | 404 Not Found    | Admin does not exist.                    |
 
 ### Login as Admin
@@ -352,7 +352,7 @@ DELETE /shipments
 |------------------|------------------------------------|
 | 204 No Content   | Successfully deleted the shipment. |
 | 400 Bad Request  | Did not provide tracking `id`.     |
-| 401 Unauthorized | Not an admin.                      |
+| 401 Unauthorized | Not logged in as an admin.         |
 | 404 Not Found    | Shipment does not exist.           |
 
 ### Get User
@@ -389,7 +389,7 @@ A [user](#user-object) object without the `password` and `salt` fields.
 |------------------|----------------------------------------------------------------------------------|
 | 200 OK           | Successfully retrieved the user.                                                 |
 | 400 Bad Request  | Provided none or more than one kind of parameter, or the parameter is malformed. |
-| 401 Unauthorized | Not an admin.                                                                    |
+| 401 Unauthorized | Not logged in as an admin.                                                       |
 | 404 Not Found    | User does not exist.                                                             |
 
 ### Create User

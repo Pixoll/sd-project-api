@@ -44,13 +44,13 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
             code = HttpStatus.BAD_REQUEST,
             reason = "Provided none or more than one kind of parameter, or the parameter is malformed."
     )
-    @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not an admin.")
+    @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in as an admin.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "User does not exist.")
     @Override
     public void get(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
         if (authData == null || authData.type() != SessionTokenManager.TokenType.ADMIN) {
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not an admin.");
+            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
             return;
         }
 
