@@ -42,13 +42,13 @@ public class UsersSessionEndpoint extends Endpoint implements Endpoint.PostMetho
             return;
         }
 
-        if (!Util.hashPassword(password, user.salt()).equals(user.password())) {
+        if (!Util.hashPassword(password, user.salt).equals(user.password)) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Wrong password.");
             return;
         }
 
         ctx.status(HttpStatus.OK).json(new JSONObject().put("session_token",
-                SessionTokenManager.generateSessionToken(SessionTokenManager.TokenType.USER, user.rut())
+                SessionTokenManager.generateSessionToken(SessionTokenManager.TokenType.USER, user.rut)
         ));
     }
 

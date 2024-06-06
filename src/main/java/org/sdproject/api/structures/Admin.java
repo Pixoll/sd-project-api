@@ -1,84 +1,71 @@
 package org.sdproject.api.structures;
 
-import org.bson.BsonType;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.bson.codecs.pojo.annotations.BsonRepresentation;
 import org.jetbrains.annotations.Nullable;
 import org.sdproject.api.documentation.FieldDoc;
 import org.sdproject.api.json.JSONObject;
 
 import java.util.Date;
 
-public record Admin(
-        @BsonId() @BsonRepresentation(BsonType.STRING)
-        @FieldDoc(description = "The admin's RUT.")
-        String rut,
-        @BsonProperty("first_name")
-        @FieldDoc(jsonKey = "first_name", description = "The admin's first name.")
-        String firstName,
-        @BsonProperty("second_name")
-        @FieldDoc(jsonKey = "second_name", description = "The admin's second name.", optional = true, defaultIsNull = true)
-        @Nullable String secondName,
-        @BsonProperty("first_last_name")
-        @FieldDoc(jsonKey = "first_last_name", description = "The admin's first last name.")
-        String firstLastName,
-        @BsonProperty("second_last_name")
-        @FieldDoc(jsonKey = "second_last_name", description = "The admin's second last name.", optional = true, defaultIsNull = true)
-        @Nullable String secondLastName,
-        @FieldDoc(description = "The admin's email address.")
-        String email,
-        @FieldDoc(description = "The admin's phone number.")
-        Integer phone,
-        @FieldDoc(description = "The admin's password.")
-        String password,
-        @FieldDoc(description = "The admin's salt for the password.")
-        String salt,
-        @FieldDoc(isCreatedTimestamp = true)
-        Date createdAt,
-        @FieldDoc(isUpdatedTimestamp = true)
-        Date updatedAt
-) implements Structure {
-    public Admin(JSONObject json) {
-        this(
-                json.optString(Field.RUT.name, null),
-                json.optString(Field.FIRST_NAME.name, null),
-                json.optString(Field.SECOND_NAME.name, null),
-                json.optString(Field.FIRST_LAST_NAME.name, null),
-                json.optString(Field.SECOND_LAST_NAME.name, null),
-                json.optString(Field.EMAIL.name, null),
-                json.optIntegerObject(Field.PHONE.name, null),
-                json.optString(Field.PASSWORD.name, null),
-                json.optString(Field.SALT.name, null),
-                new Date(),
-                new Date()
-        );
+public class Admin implements Structure {
+    @BsonId()
+    @FieldDoc(description = "The admin's RUT.")
+    public String rut;
+
+    @BsonProperty("first_name")
+    @FieldDoc(jsonKey = "first_name", description = "The admin's first name.")
+    public String firstName;
+
+    @BsonProperty("second_name")
+    @FieldDoc(jsonKey = "second_name", description = "The admin's second name.", optional = true, defaultIsNull = true)
+    public @Nullable String secondName;
+
+    @BsonProperty("first_last_name")
+    @FieldDoc(jsonKey = "first_last_name", description = "The admin's first last name.")
+    public String firstLastName;
+
+    @BsonProperty("second_last_name")
+    @FieldDoc(jsonKey = "second_last_name", description = "The admin's second last name.", optional = true, defaultIsNull = true)
+    public @Nullable String secondLastName;
+
+    @FieldDoc(description = "The admin's email address.")
+    public String email;
+
+    @FieldDoc(description = "The admin's phone number.")
+    public Integer phone;
+
+    @FieldDoc(description = "The admin's password.")
+    public String password;
+
+    @FieldDoc(description = "The admin's salt for the password.")
+    public String salt;
+
+    @BsonProperty("created_at")
+    @FieldDoc(isCreatedTimestamp = true)
+    public Date createdAt;
+
+    @BsonProperty("updated_at")
+    @FieldDoc(isUpdatedTimestamp = true)
+    public Date updatedAt;
+
+    public Admin() {
     }
 
-    public enum Field {
-        RUT("rut", "_id"),
-        FIRST_NAME("first_name"),
-        SECOND_NAME("second_name"),
-        FIRST_LAST_NAME("first_last_name"),
-        SECOND_LAST_NAME("second_last_name"),
-        EMAIL("email"),
-        PHONE("phone"),
-        PASSWORD("password"),
-        SALT("salt"),
-        CREATED_TIMESTAMP("created_timestamp", "createdAt"),
-        UPDATED_TIMESTAMP("updated_timestamp", "updatedAt");
+    public Admin(JSONObject json) throws ValidationException {
+        this.rut = json.optString(Field.RUT.name, null);
+        this.firstName = json.optString(Field.FIRST_NAME.name, null);
+        this.secondName = json.optString(Field.SECOND_NAME.name, null);
+        this.firstLastName = json.optString(Field.FIRST_LAST_NAME.name, null);
+        this.secondLastName = json.optString(Field.SECOND_LAST_NAME.name, null);
+        this.email = json.optString(Field.EMAIL.name, null);
+        this.phone = json.optIntegerObject(Field.PHONE.name, null);
+        this.password = json.optString(Field.PASSWORD.name, null);
+        this.salt = json.optString(Field.SALT.name, null);
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
 
-        public final String name;
-        public final String raw;
-
-        Field(String name, String raw) {
-            this.name = name;
-            this.raw = raw;
-        }
-
-        Field(String name) {
-            this(name, name);
-        }
+        this.validate();
     }
 
     @Override
@@ -133,6 +120,37 @@ public record Admin(
 
         if (this.password.length() < 8) {
             throw new ValidationException("Password must be at least 8 characters long.");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return Admin.class.getSimpleName() + " " + this.toJSON().toString(2);
+    }
+
+    public enum Field {
+        RUT("rut", "_id"),
+        FIRST_NAME("first_name"),
+        SECOND_NAME("second_name"),
+        FIRST_LAST_NAME("first_last_name"),
+        SECOND_LAST_NAME("second_last_name"),
+        EMAIL("email"),
+        PHONE("phone"),
+        PASSWORD("password"),
+        SALT("salt"),
+        CREATED_TIMESTAMP("created_at", "createdAt"),
+        UPDATED_TIMESTAMP("updated_at", "updatedAt");
+
+        public final String name;
+        public final String raw;
+
+        Field(String name, String raw) {
+            this.name = name;
+            this.raw = raw;
+        }
+
+        Field(String name) {
+            this(name, name);
         }
     }
 }

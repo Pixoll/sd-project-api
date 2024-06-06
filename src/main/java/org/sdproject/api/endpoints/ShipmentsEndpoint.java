@@ -59,10 +59,10 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
         }
 
         final JSONObject body = ctx.bodyAsClass(JSONObject.class);
-        final Shipment newShipment = new Shipment(body);
+        final Shipment newShipment;
 
         try {
-            newShipment.validate();
+            newShipment = new Shipment(body);
         } catch (ValidationException e) {
             sendError(ctx, HttpStatus.BAD_REQUEST, e.getMessage());
             return;
@@ -70,7 +70,7 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
 
         DatabaseConnection.getShipmentsCollection().insertOne(newShipment);
         ctx.status(HttpStatus.CREATED).json(new JSONObject()
-                .put(Shipment.Field.ID.name, newShipment.id())
+                .put(Shipment.Field.ID.name, newShipment.id)
         );
     }
 

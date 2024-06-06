@@ -1,10 +1,8 @@
 package org.sdproject.api.structures;
 
 import com.mongodb.client.model.Filters;
-import org.bson.BsonType;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.bson.codecs.pojo.annotations.BsonRepresentation;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.Nullable;
 import org.sdproject.api.DatabaseConnection;
@@ -12,138 +10,99 @@ import org.sdproject.api.documentation.FieldDoc;
 import org.sdproject.api.json.JSONArray;
 import org.sdproject.api.json.JSONObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
-public record Shipment(
-        @BsonId() @BsonRepresentation(BsonType.STRING)
-        @FieldDoc(description = "The shipment id. Used for tracking.")
-        String id,
-        @BsonProperty("rut_sender")
-        @FieldDoc(jsonKey = "rut_sender", description = "RUT of the sender. Must be of an existing {structure:User}.")
-        String rutSender,
-        @BsonProperty("rut_recipient")
-        @FieldDoc(jsonKey = "rut_recipient", description = "RUT of the recipient. Must be of an existing {structure:User}.")
-        String rutRecipient,
-        @BsonProperty("source_address")
-        @FieldDoc(jsonKey = "source_address", description = "Address where the packages are being shipped from.")
-        Address sourceAddress,
-        @BsonProperty("destination_address")
-        @FieldDoc(jsonKey = "destination_address", description = "Address where the packages are being shipped to.")
-        Address destinationAddress,
-        @BsonProperty("dispatch_timestamp")
-        @FieldDoc(jsonKey = "dispatch_timestamp", description = "When the shipment was picked up from the source address.")
-        @Nullable Long dispatchTimestamp,
-        @BsonProperty("delivery_timestamp")
-        @FieldDoc(jsonKey = "delivery_timestamp", description = "When the shipment arrived to the destination address.")
-        @Nullable Long deliveryTimestamp,
-        @FieldDoc(description = "Status of the shipment.")
-        Status status,
-        @BsonProperty("shipping_type")
-        @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.")
-        Type shippingType,
-        @BsonProperty("pending_payment")
-        @FieldDoc(jsonKey = "pending_payment", description = "Whether the shipment is going to be paid by the recipient or not.")
-        Boolean pendingPayment,
-        @BsonProperty("home_pickup")
-        @FieldDoc(jsonKey = "home_pickup", description = "Whether the packages are being picked up at the sender's address.")
-        Boolean homePickup,
-        @BsonProperty("home_delivery")
-        @FieldDoc(jsonKey = "home_delivery", description = "Whether the packages are being shipped to the recipient's address.")
-        Boolean homeDelivery,
-        @FieldDoc(description = "All the packages being shipped.")
-        List<Package> packages,
-        @FieldDoc(isCreatedTimestamp = true)
-        Date createdAt,
-        @FieldDoc(isUpdatedTimestamp = true)
-        Date updatedAt
-) implements Structure {
-    public Shipment(JSONObject requestBody) {
-        this(
-                new ObjectId().toHexString(),
-                requestBody.optString(Field.RUT_SENDER.name, null),
-                requestBody.optString(Field.RUT_RECIPIENT.name, null),
-                new Address(requestBody.optJSONObject(Field.SOURCE_ADDRESS.name, new JSONObject())),
-                new Address(requestBody.optJSONObject(Field.DESTINATION_ADDRESS.name, new JSONObject())),
-                requestBody.optLongObject(Field.DISPATCH_TIMESTAMP.name, null),
-                requestBody.optLongObject(Field.DELIVERY_TIMESTAMP.name, null),
-                requestBody.optEnum(Status.class, Field.STATUS.name, null),
-                requestBody.optEnum(Type.class, Field.SHIPPING_TYPE.name, null),
-                requestBody.optBooleanObject(Field.PENDING_PAYMENT.name, null),
-                requestBody.optBooleanObject(Field.HOME_PICKUP.name, null),
-                requestBody.optBooleanObject(Field.HOME_DELIVERY.name, null),
-                requestBody.optJSONArray(Field.PACKAGES.name, new JSONArray()).toList(JSONObject.class)
-                        .stream()
-                        .map(Package::new)
-                        .toList(),
-                new Date(),
-                new Date()
-        );
+public class Shipment implements Structure {
+    @BsonId()
+    @FieldDoc(description = "The shipment id. Used for tracking.")
+    public String id;
+
+    @BsonProperty("rut_sender")
+    @FieldDoc(jsonKey = "rut_sender", description = "RUT of the sender. Must be of an existing {structure:User}.")
+    public String rutSender;
+
+    @BsonProperty("rut_recipient")
+    @FieldDoc(jsonKey = "rut_recipient", description = "RUT of the recipient. Must be of an existing {structure:User}.")
+    public String rutRecipient;
+
+    @BsonProperty("source_address")
+    @FieldDoc(jsonKey = "source_address", description = "Address where the packages are being shipped from.")
+    public Address sourceAddress;
+
+    @BsonProperty("destination_address")
+    @FieldDoc(jsonKey = "destination_address", description = "Address where the packages are being shipped to.")
+    public Address destinationAddress;
+
+    @BsonProperty("dispatch_timestamp")
+    @FieldDoc(jsonKey = "dispatch_timestamp", description = "When the shipment was picked up from the source address.")
+    public @Nullable Long dispatchTimestamp;
+
+    @BsonProperty("delivery_timestamp")
+    @FieldDoc(jsonKey = "delivery_timestamp", description = "When the shipment arrived to the destination address.")
+    public @Nullable Long deliveryTimestamp;
+
+    @FieldDoc(description = "Status of the shipment.")
+    public Status status;
+
+    @BsonProperty("shipping_type")
+    @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.")
+    public Type shippingType;
+
+    @BsonProperty("pending_payment")
+    @FieldDoc(jsonKey = "pending_payment", description = "Whether the shipment is going to be paid by the recipient or not.")
+    public Boolean pendingPayment;
+
+    @BsonProperty("home_pickup")
+    @FieldDoc(jsonKey = "home_pickup", description = "Whether the packages are being picked up at the sender's address.")
+    public Boolean homePickup;
+
+    @BsonProperty("home_delivery")
+    @FieldDoc(jsonKey = "home_delivery", description = "Whether the packages are being shipped to the recipient's address.")
+    public Boolean homeDelivery;
+
+    @FieldDoc(description = "All the packages being shipped.")
+    public List<Package> packages;
+
+    @BsonProperty("created_at")
+    @FieldDoc(isCreatedTimestamp = true)
+    public Date createdAt;
+
+    @BsonProperty("updated_at")
+    @FieldDoc(isUpdatedTimestamp = true)
+    public Date updatedAt;
+
+    public Shipment() {
     }
 
-    public enum Field {
-        ID("id", "_id"),
-        RUT_SENDER("rut_sender"),
-        RUT_RECIPIENT("rut_recipient"),
-        SOURCE_ADDRESS("source_address"),
-        DESTINATION_ADDRESS("destination_address"),
-        DISPATCH_TIMESTAMP("dispatch_timestamp"),
-        DELIVERY_TIMESTAMP("delivery_timestamp"),
-        STATUS("status"),
-        SHIPPING_TYPE("shipping_type"),
-        PENDING_PAYMENT("pending_payment"),
-        HOME_PICKUP("home_pickup"),
-        HOME_DELIVERY("home_delivery"),
-        PACKAGES("packages"),
-        CREATED_TIMESTAMP("created_timestamp", "createdAt"),
-        UPDATED_TIMESTAMP("updated_timestamp", "updatedAt");
+    public Shipment(JSONObject json) throws ValidationException {
+        this.id = new ObjectId().toHexString();
+        this.rutSender = json.optString(Field.RUT_SENDER.name, null);
+        this.rutRecipient = json.optString(Field.RUT_RECIPIENT.name, null);
+        this.sourceAddress = new Address(json.optJSONObject(Field.SOURCE_ADDRESS.name, new JSONObject()));
+        this.destinationAddress = new Address(json.optJSONObject(Field.DESTINATION_ADDRESS.name, new JSONObject()));
+        this.dispatchTimestamp = json.optLongObject(Field.DISPATCH_TIMESTAMP.name, null);
+        this.deliveryTimestamp = json.optLongObject(Field.DELIVERY_TIMESTAMP.name, null);
+        this.status = json.optEnum(Status.class, Field.STATUS.name, null);
+        this.shippingType = json.optEnum(Type.class, Field.SHIPPING_TYPE.name, null);
+        this.pendingPayment = json.optBooleanObject(Field.PENDING_PAYMENT.name, null);
+        this.homePickup = json.optBooleanObject(Field.HOME_PICKUP.name, null);
+        this.homeDelivery = json.optBooleanObject(Field.HOME_DELIVERY.name, null);
 
-        public final String name;
-        public final String raw;
+        this.packages = new ArrayList<>();
+        final List<JSONObject> jsonPackages = json.optJSONArray(Field.PACKAGES.name, new JSONArray())
+                .toList(JSONObject.class);
 
-        Field(String name, String raw) {
-            this.name = name;
-            this.raw = raw;
+        for (final JSONObject jsonPackage : jsonPackages) {
+            packages.add(new Package(jsonPackage));
         }
 
-        Field(String name) {
-            this(name, name);
-        }
-    }
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
 
-    public enum Status {
-        PENDING("pending"),
-        PRE_TRANSIT("pre-transit"),
-        IN_TRANSIT("in_transit"),
-        OUT_FOR_DELIVERY("out_for_delivery"),
-        DELIVERED("delivered");
-
-        public final String name;
-
-        Status(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return this.name;
-        }
-    }
-
-    public enum Type {
-        SAME_DAY("same_day"),
-        FAST("fast"),
-        REGULAR("regular");
-
-        public final String name;
-
-        Type(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return this.name;
-        }
+        this.validate();
     }
 
     @Override
@@ -236,6 +195,77 @@ public record Shipment(
 
         for (final Package pkg : this.packages) {
             pkg.validate();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return Shipment.class.getSimpleName() + " " + this.toJSON().toString(2);
+    }
+
+    public enum Field {
+        ID("id", "_id"),
+        RUT_SENDER("rut_sender"),
+        RUT_RECIPIENT("rut_recipient"),
+        SOURCE_ADDRESS("source_address"),
+        DESTINATION_ADDRESS("destination_address"),
+        DISPATCH_TIMESTAMP("dispatch_timestamp"),
+        DELIVERY_TIMESTAMP("delivery_timestamp"),
+        STATUS("status"),
+        SHIPPING_TYPE("shipping_type"),
+        PENDING_PAYMENT("pending_payment"),
+        HOME_PICKUP("home_pickup"),
+        HOME_DELIVERY("home_delivery"),
+        PACKAGES("packages"),
+        CREATED_TIMESTAMP("created_at", "createdAt"),
+        UPDATED_TIMESTAMP("updated_at", "updatedAt");
+
+        public final String name;
+        public final String raw;
+
+        Field(String name, String raw) {
+            this.name = name;
+            this.raw = raw;
+        }
+
+        Field(String name) {
+            this(name, name);
+        }
+    }
+
+    public enum Status {
+        PENDING("pending"),
+        PRE_TRANSIT("pre-transit"),
+        IN_TRANSIT("in_transit"),
+        OUT_FOR_DELIVERY("out_for_delivery"),
+        DELIVERED("delivered");
+
+        public final String name;
+
+        Status(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return this.name;
+        }
+    }
+
+    public enum Type {
+        SAME_DAY("same_day"),
+        FAST("fast"),
+        REGULAR("regular");
+
+        public final String name;
+
+        Type(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return this.name;
         }
     }
 }

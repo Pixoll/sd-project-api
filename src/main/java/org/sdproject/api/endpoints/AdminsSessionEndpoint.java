@@ -42,13 +42,13 @@ public class AdminsSessionEndpoint extends Endpoint implements Endpoint.PostMeth
             return;
         }
 
-        if (!Util.hashPassword(password, admin.salt()).equals(admin.password())) {
+        if (!Util.hashPassword(password, admin.salt).equals(admin.password)) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Wrong password.");
             return;
         }
 
         ctx.status(HttpStatus.OK).json(new JSONObject().put("session_token",
-                SessionTokenManager.generateSessionToken(SessionTokenManager.TokenType.ADMIN, admin.rut())
+                SessionTokenManager.generateSessionToken(SessionTokenManager.TokenType.ADMIN, admin.rut)
         ));
     }
 

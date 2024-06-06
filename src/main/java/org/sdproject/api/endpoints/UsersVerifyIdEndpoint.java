@@ -61,7 +61,7 @@ public class UsersVerifyIdEndpoint extends Endpoint implements Endpoint.PostMeth
             return;
         }
 
-        if (user.verified()) {
+        if (user.verified) {
             sendError(ctx, HttpStatus.CONFLICT, "User has already verified their identity.");
             return;
         }
@@ -108,7 +108,7 @@ public class UsersVerifyIdEndpoint extends Endpoint implements Endpoint.PostMeth
         // there's no API to actually check this
 
         usersCollection.updateOne(
-                Filters.eq(User.Field.RUT.raw, user.rut()),
+                Filters.eq(User.Field.RUT.raw, user.rut),
                 Updates.set(User.Field.VERIFIED.raw, true)
         );
 

@@ -2,53 +2,46 @@ package org.sdproject.api.structures;
 
 import org.jetbrains.annotations.Nullable;
 import org.sdproject.api.documentation.FieldDoc;
-import org.sdproject.api.json.JSONObject;
 import org.sdproject.api.endpoints.RegionsEndpoint;
+import org.sdproject.api.json.JSONObject;
 
-public record Address(
-        @FieldDoc(description = "The region.")
-        String region,
-        @FieldDoc(description = "The city or commune.")
-        String city,
-        @FieldDoc(description = "The street name.")
-        String street,
-        @FieldDoc(description = "The street number.")
-        Integer number,
-        @FieldDoc(description = "Secondary information like apartment building.", optional = true, defaultIsNull = true)
-        @Nullable String secondary
-) implements Structure {
-    public Address(JSONObject requestBody) {
-        this(
-                requestBody.optString(Field.REGION.name, null),
-                requestBody.optString(Field.CITY.name, null),
-                requestBody.optString(Field.STREET.name, null),
-                requestBody.optIntegerObject(Field.NUMBER.name, null),
-                requestBody.optString(Field.SECONDARY.name, null)
-        );
+public class Address implements Structure {
+    @FieldDoc(description = "The region.")
+    public String region;
+
+    @FieldDoc(description = "The city or commune.")
+    public String city;
+
+    @FieldDoc(description = "The street name.")
+    public String street;
+
+    @FieldDoc(description = "The street number.")
+    public Integer number;
+
+    @FieldDoc(description = "Secondary information like apartment building.", optional = true, defaultIsNull = true)
+    public @Nullable String secondary;
+
+    public Address() {
     }
 
-    public enum Field {
-        REGION("region"),
-        CITY("city"),
-        STREET("street"),
-        NUMBER("number"),
-        SECONDARY("secondary");
+    public Address(JSONObject json) throws ValidationException {
+        this.region = json.optString(Address.Field.REGION.name, null);
+        this.city = json.optString(Address.Field.CITY.name, null);
+        this.street = json.optString(Address.Field.STREET.name, null);
+        this.number = json.optIntegerObject(Address.Field.NUMBER.name, null);
+        this.secondary = json.optString(Address.Field.SECONDARY.name, null);
 
-        public final String name;
-
-        Field(String name) {
-            this.name = name;
-        }
+        this.validate();
     }
 
     @Override
     public JSONObject toJSON() {
         return new JSONObject()
-                .put(Field.REGION.name, this.region)
-                .put(Field.CITY.name, this.city)
-                .put(Field.STREET.name, this.street)
-                .put(Field.NUMBER.name, this.number)
-                .put(Field.SECONDARY.name, this.secondary != null ? this.secondary : JSONObject.NULL);
+                .put(Address.Field.REGION.name, this.region)
+                .put(Address.Field.CITY.name, this.city)
+                .put(Address.Field.STREET.name, this.street)
+                .put(Address.Field.NUMBER.name, this.number)
+                .put(Address.Field.SECONDARY.name, this.secondary != null ? this.secondary : JSONObject.NULL);
     }
 
     @Override
@@ -87,6 +80,25 @@ public record Address(
 
         if (this.number <= 0) {
             throw new ValidationException("Address street number must be positive.");
+        }
+    }
+
+    @Override
+    public String toString() {
+        return Address.class.getSimpleName() + " " + this.toJSON().toString(2);
+    }
+
+    public enum Field {
+        REGION("region"),
+        CITY("city"),
+        STREET("street"),
+        NUMBER("number"),
+        SECONDARY("secondary");
+
+        public final String name;
+
+        Field(String name) {
+            this.name = name;
         }
     }
 }

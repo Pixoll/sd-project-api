@@ -5,10 +5,10 @@ import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import org.sdproject.api.DatabaseConnection;
-import org.sdproject.api.documentation.*;
-import org.sdproject.api.json.JSONObject;
 import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.Util;
+import org.sdproject.api.documentation.*;
+import org.sdproject.api.json.JSONObject;
 import org.sdproject.api.structures.User;
 import org.sdproject.api.structures.ValidationException;
 
@@ -89,40 +89,39 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
     @Override
     public void post(Context ctx) {
         final JSONObject body = ctx.bodyAsClass(JSONObject.class);
-        final User newUser = new User(body);
+        final User newUser;
 
         try {
-            newUser.validate();
+            newUser = new User(body);
         } catch (ValidationException e) {
             sendError(ctx, HttpStatus.BAD_REQUEST, e.getMessage());
             return;
         }
 
         final MongoCollection<User> usersCollection = DatabaseConnection.getUsersCollection();
-        final User matchingRutUser = usersCollection.find(Filters.eq(User.Field.RUT.raw, newUser.rut())).first();
+        final User matchingRutUser = usersCollection.find(Filters.eq(User.Field.RUT.raw, newUser.rut)).first();
         if (matchingRutUser != null) {
             sendError(ctx, HttpStatus.CONFLICT, "User with the same RUT already exists.");
             return;
         }
 
-        final User matchingEmailUser = usersCollection.find(Filters.eq(User.Field.EMAIL.raw, newUser.email())).first();
+        final User matchingEmailUser = usersCollection.find(Filters.eq(User.Field.EMAIL.raw, newUser.email)).first();
         if (matchingEmailUser != null) {
             sendError(ctx, HttpStatus.CONFLICT, "User with the same email already exists.");
             return;
         }
 
-        final User matchingPhoneUser = usersCollection.find(Filters.eq(User.Field.PHONE.raw, newUser.phone())).first();
+        final User matchingPhoneUser = usersCollection.find(Filters.eq(User.Field.PHONE.raw, newUser.phone)).first();
         if (matchingPhoneUser != null) {
             sendError(ctx, HttpStatus.CONFLICT, "User with the same phone number already exists.");
             return;
         }
 
         final String salt = Util.generateSalt();
+        newUser.password = Util.hashPassword(newUser.password, salt);
+        newUser.salt = salt;
 
-        body.put(User.Field.PASSWORD.name, Util.hashPassword(newUser.password(), salt))
-                .put(User.Field.SALT.name, salt);
-
-        usersCollection.insertOne(new User(body));
+        usersCollection.insertOne(newUser);
 
         ctx.status(HttpStatus.CREATED);
     }
