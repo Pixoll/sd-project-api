@@ -43,7 +43,8 @@ public class DatabaseConnection {
     }
 
     public static void create() {
-        INSTANCE = new DatabaseConnection();
+        if (INSTANCE == null)
+            INSTANCE = new DatabaseConnection();
     }
 
     public static MongoCollection<Admin> getAdminsCollection() {
