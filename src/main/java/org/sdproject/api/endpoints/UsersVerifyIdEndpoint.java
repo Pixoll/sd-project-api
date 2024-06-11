@@ -59,11 +59,11 @@ public class UsersVerifyIdEndpoint extends Endpoint implements Endpoint.PostMeth
         }
 
         final JSONObject body = ctx.bodyAsClass(JSONObject.class);
-        if (!body.has("data")) {
+        final String data = body.optString("data");
+        if (data.isEmpty()) {
             throw new EndpointException(HttpStatus.BAD_REQUEST, "Expected data property in the request body.");
         }
 
-        final String data = body.getString("data");
         final float kBs = data.length() * 0.00075f;
         if (kBs > 1000) {
             throw new EndpointException(HttpStatus.CONTENT_TOO_LARGE, "Image is bigger than 1MB.");

@@ -73,8 +73,7 @@ public class SessionTokenManager {
     }
 
     public static @Nullable String getRutFromToken(@NotNull TokenType type, @NotNull String token) {
-        final JSONObject source = TOKENS.getJSONObject(type.toString());
-        return source.has(token) ? source.getString(token) : null;
+        return TOKENS.getJSONObject(type.toString()).optString(token, null);
     }
 
     public static void revokeToken(@NotNull TokenType type, @NotNull String rut) {

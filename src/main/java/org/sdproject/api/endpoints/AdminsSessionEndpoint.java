@@ -26,13 +26,12 @@ public class AdminsSessionEndpoint extends Endpoint implements Endpoint.PostMeth
     @Override
     public void post(Context ctx) throws EndpointException {
         final JSONObject body = ctx.bodyAsClass(JSONObject.class);
+        final String email = body.optString("email");
+        final String password = body.optString("password");
 
-        if (!body.has("email") || !body.has("password")) {
+        if (email.isEmpty() || password.isEmpty()) {
             throw new EndpointException(HttpStatus.BAD_REQUEST, "Expected both email and password in the request body.");
         }
-
-        final String email = body.getString("email");
-        final String password = body.getString("password");
 
         final Admin admin = DatabaseConnection.getAdminsCollection()
                 .find(Filters.eq(Admin.Field.EMAIL.raw, email))

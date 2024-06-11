@@ -25,13 +25,13 @@ public class UsersSessionEndpoint extends Endpoint implements Endpoint.PostMetho
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "User does not exist.")
     @Override
     public void post(Context ctx) throws EndpointException {
-        final JSONObject body= ctx.bodyAsClass(JSONObject.class);
-        if (!body.has("email") || !body.has("password")) {
+        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
+        final String email = body.optString("email");
+        final String password = body.optString("password");
+
+        if (email.isEmpty() || password.isEmpty()) {
             throw new EndpointException(HttpStatus.BAD_REQUEST, "Expected both email and password in the request body.");
         }
-
-        final String email = body.getString("email");
-        final String password = body.getString("password");
 
         final User user = DatabaseConnection.getUsersCollection()
                 .find(Filters.eq(User.Field.EMAIL.raw, email))
