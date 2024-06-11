@@ -4,6 +4,8 @@ import org.json.JSONObject;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
+import javax.annotation.Nonnull;
+
 public class StatusHistory implements Structure {
     @FieldDoc(description = "Status of the shipment.")
     public Status status;
@@ -14,11 +16,11 @@ public class StatusHistory implements Structure {
     public StatusHistory() {
     }
 
-    public StatusHistory(JSONObject json) throws ValidationException {
+    public StatusHistory(JSONObject json, @Nonnull String parentName) throws ValidationException {
         this.status = Util.stringToEnum(json.optString(Field.STATUS.name, null), Status.class);
         this.timestamp = json.optLongObject(Field.TIMESTAMP.name, null);
 
-        this.validate();
+        this.validate(parentName);
     }
 
     @Override
@@ -29,13 +31,18 @@ public class StatusHistory implements Structure {
     }
 
     @Override
-    public void validate() throws ValidationException {
+    public void validate(@Nonnull String parentName) throws ValidationException {
+        final String keyPrefix = parentName.isEmpty() ? "" : parentName + ".";
+
         if (this.status == null) {
-            throw new ValidationException("Status in shipment history cannot be empty.");
+            throw new ValidationException(keyPrefix + Field.STATUS.name, "Status in shipment history cannot be empty.");
         }
 
         if (this.timestamp == null) {
-            throw new ValidationException("Timestamp in shipment history cannot be empty.");
+            throw new ValidationException(
+                    keyPrefix + Field.TIMESTAMP.name,
+                    "Timestamp in shipment history cannot be empty."
+            );
         }
     }
 

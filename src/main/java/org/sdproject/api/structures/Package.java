@@ -4,6 +4,8 @@ import org.json.JSONObject;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
+import javax.annotation.Nonnull;
+
 public class Package implements Structure {
     @FieldDoc(description = "Type of the package.")
     public Type type;
@@ -26,7 +28,7 @@ public class Package implements Structure {
     public Package() {
     }
 
-    public Package(JSONObject json) throws ValidationException {
+    public Package(JSONObject json, @Nonnull String parentName) throws ValidationException {
         this.type = Util.stringToEnum(json.optString(Field.TYPE.name, null), Type.class);
         this.description = json.optString(Field.DESCRIPTION.name, null);
         this.length = json.optFloatObject(Field.LENGTH.name, null);
@@ -34,7 +36,7 @@ public class Package implements Structure {
         this.height = json.optFloatObject(Field.HEIGHT.name, null);
         this.weight = json.optFloatObject(Field.WEIGHT.name, null);
 
-        this.validate();
+        this.validate(parentName);
     }
 
     @Override
@@ -49,45 +51,48 @@ public class Package implements Structure {
     }
 
     @Override
-    public void validate() throws ValidationException {
+    public void validate(@Nonnull String parentName) throws ValidationException {
+        //noinspection ExtractMethodRecommender
+        final String keyPrefix = parentName.isEmpty() ? "" : parentName + ".";
+
         if (this.type == null) {
-            throw new ValidationException("Package type cannot be empty.");
+            throw new ValidationException(keyPrefix + Field.TYPE.name, "Package type cannot be empty.");
         }
 
         if (this.description == null || this.description.isEmpty()) {
-            throw new ValidationException("Package description cannot be empty.");
+            throw new ValidationException(keyPrefix + Field.DESCRIPTION.name, "Package description cannot be empty.");
         }
 
         if (this.length == null) {
-            throw new ValidationException("Package length cannot be empty.");
+            throw new ValidationException(keyPrefix + Field.LENGTH.name, "Package length cannot be empty.");
         }
 
         if (this.length <= 0) {
-            throw new ValidationException("Package length cannot be zero or negative.");
+            throw new ValidationException(keyPrefix + Field.LENGTH.name, "Package length cannot be zero or negative.");
         }
 
         if (this.width == null) {
-            throw new ValidationException("Package width cannot be empty.");
+            throw new ValidationException(keyPrefix + Field.WIDTH.name, "Package width cannot be empty.");
         }
 
         if (this.width <= 0) {
-            throw new ValidationException("Package width cannot be zero or negative.");
+            throw new ValidationException(keyPrefix + Field.WIDTH.name, "Package width cannot be zero or negative.");
         }
 
         if (this.height == null) {
-            throw new ValidationException("Package height cannot be empty.");
+            throw new ValidationException(keyPrefix + Field.HEIGHT.name, "Package height cannot be empty.");
         }
 
         if (this.height <= 0) {
-            throw new ValidationException("Package height cannot be zero or negative.");
+            throw new ValidationException(keyPrefix + Field.HEIGHT.name, "Package height cannot be zero or negative.");
         }
 
         if (this.weight == null) {
-            throw new ValidationException("Package weight cannot be empty.");
+            throw new ValidationException(keyPrefix + Field.WEIGHT.name, "Package weight cannot be empty.");
         }
 
         if (this.weight <= 0) {
-            throw new ValidationException("Package weight cannot be zero or negative.");
+            throw new ValidationException(keyPrefix + Field.WEIGHT.name, "Package weight cannot be zero or negative.");
         }
     }
 

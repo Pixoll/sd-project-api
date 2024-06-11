@@ -3,15 +3,14 @@ package org.sdproject.api.structures;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.json.JSONObject;
+import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 
 public class User implements Structure {
-    public static final String EMAIL_REGEX = "^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
-    private static final int[] RUT_VALIDATION_SEQUENCE = {2, 3, 4, 5, 6, 7};
-
     @BsonId()
     @FieldDoc(description = "The user's RUT.")
     public String rut;
@@ -62,16 +61,18 @@ public class User implements Structure {
     }
 
     public User(JSONObject json) throws ValidationException {
-        this.rut = json.optString(User.Field.RUT.name, null);
-        this.firstName = json.optString(User.Field.FIRST_NAME.name, null);
-        this.secondName = json.optString(User.Field.SECOND_NAME.name, null);
-        this.firstLastName = json.optString(User.Field.FIRST_LAST_NAME.name, null);
-        this.secondLastName = json.optString(User.Field.SECOND_LAST_NAME.name, null);
-        this.email = json.optString(User.Field.EMAIL.name, null);
-        this.phone = json.optIntegerObject(User.Field.PHONE.name, null);
-        this.address = new Address(json.optJSONObject(User.Field.ADDRESS.name, new JSONObject()));
-        this.password = json.optString(User.Field.PASSWORD.name, null);
-        this.salt = json.optString(User.Field.SALT.name, null);
+        this.rut = json.optString(Field.RUT.name, null);
+        this.firstName = json.optString(Field.FIRST_NAME.name, null);
+        this.secondName = json.optString(Field.SECOND_NAME.name, null);
+        this.firstLastName = json.optString(Field.FIRST_LAST_NAME.name, null);
+        this.secondLastName = json.optString(Field.SECOND_LAST_NAME.name, null);
+        this.email = json.optString(Field.EMAIL.name, null);
+        this.phone = json.optIntegerObject(Field.PHONE.name, null);
+        this.address = json.has(Field.ADDRESS.name)
+                ? new Address(json.optJSONObject(Field.ADDRESS.name, new JSONObject()), Field.ADDRESS.name)
+                : null;
+        this.password = json.optString(Field.PASSWORD.name, null);
+        this.salt = json.optString(Field.SALT.name, null);
         this.verified = false;
         this.createdAt = new Date();
         this.updatedAt = new Date();
@@ -79,96 +80,68 @@ public class User implements Structure {
         this.validate();
     }
 
-    public static void validateRut(String rut) throws ValidationException {
-        if (!rut.matches("^\\d{7,}-[\\dkK]$")) {
-            throw new ValidationException("Invalid rut.");
-        }
-
-        final String[] rutParts = rut.split("-");
-        final String digits = rutParts[0];
-        final String expectedVerificationDigit = rutParts[1];
-        final String verificationDigit = calculateVerificationCode(digits);
-
-        if (!expectedVerificationDigit.equals(verificationDigit)) {
-            throw new ValidationException("Invalid rut.");
-        }
-    }
-
-    private static String calculateVerificationCode(String digits) throws ValidationException {
-        if (Integer.parseInt(digits) < 1e6) {
-            throw new ValidationException("Invalid rut.");
-        }
-
-        int sum = 0;
-        for (int i = 0; i < digits.length(); i++) {
-            sum += Integer.parseInt(digits.charAt(digits.length() - i - 1) + "")
-                    * RUT_VALIDATION_SEQUENCE[i % RUT_VALIDATION_SEQUENCE.length];
-        }
-
-        final int verificationNumber = 11 - sum + (sum / 11 * 11);
-        return verificationNumber == 10 ? "K" : String.valueOf(verificationNumber % 11);
-    }
-
     @Override
     public JSONObject toJSON() {
         return new JSONObject()
-                .put(User.Field.RUT.name, this.rut)
-                .put(User.Field.FIRST_NAME.name, this.firstName)
-                .put(User.Field.SECOND_NAME.name, this.secondName != null ? this.secondName : JSONObject.NULL)
-                .put(User.Field.FIRST_LAST_NAME.name, this.firstLastName)
-                .put(User.Field.SECOND_LAST_NAME.name, this.secondLastName != null ? this.secondLastName : JSONObject.NULL)
-                .put(User.Field.EMAIL.name, this.email)
-                .put(User.Field.PHONE.name, this.phone)
-                .put(User.Field.ADDRESS.name, this.address.toJSON())
-                .put(User.Field.VERIFIED.name, this.verified)
-                .put(User.Field.CREATED_TIMESTAMP.name, this.createdAt.getTime())
-                .put(User.Field.UPDATED_TIMESTAMP.name, this.updatedAt.getTime());
+                .put(Field.RUT.name, this.rut)
+                .put(Field.FIRST_NAME.name, this.firstName)
+                .put(Field.SECOND_NAME.name, this.secondName != null ? this.secondName : JSONObject.NULL)
+                .put(Field.FIRST_LAST_NAME.name, this.firstLastName)
+                .put(Field.SECOND_LAST_NAME.name, this.secondLastName != null ? this.secondLastName : JSONObject.NULL)
+                .put(Field.EMAIL.name, this.email)
+                .put(Field.PHONE.name, this.phone)
+                .put(Field.ADDRESS.name, this.address.toJSON())
+                .put(Field.VERIFIED.name, this.verified)
+                .put(Field.CREATED_TIMESTAMP.name, this.createdAt.getTime())
+                .put(Field.UPDATED_TIMESTAMP.name, this.updatedAt.getTime());
     }
 
     @Override
-    public void validate() throws ValidationException {
+    public void validate(@Nonnull String parentName) throws ValidationException {
         if (this.rut == null) {
-            throw new ValidationException("Rut cannot be empty.");
+            throw new ValidationException(Field.RUT.name, "Rut cannot be empty.");
         }
 
-        validateRut(this.rut);
+        if (!Util.isValidRut(this.rut)) {
+            throw new ValidationException(Field.RUT.name, "Invalid rut.");
+        }
 
         if (this.firstName == null || this.firstName.isEmpty()) {
-            throw new ValidationException("First name cannot be empty.");
+            throw new ValidationException(Field.FIRST_NAME.name, "First name cannot be empty.");
         }
 
         if (this.firstLastName == null || this.firstLastName.isEmpty()) {
-            throw new ValidationException("First last name cannot be empty.");
+            throw new ValidationException(Field.FIRST_LAST_NAME.name, "First last name cannot be empty.");
         }
 
         if (this.email == null) {
-            throw new ValidationException("Email cannot be empty.");
+            throw new ValidationException(Field.EMAIL.name, "Email cannot be empty.");
         }
 
-        if (!this.email.matches(EMAIL_REGEX)) {
-            throw new ValidationException("Invalid email.");
+        if (!this.email.matches(Util.EMAIL_REGEX)) {
+            throw new ValidationException(Field.EMAIL.name, "Invalid email.");
         }
 
         if (this.phone == null) {
-            throw new ValidationException("Phone number cannot be empty.");
+            throw new ValidationException(Field.PHONE.name, "Phone number cannot be empty.");
         }
 
         if (String.valueOf(this.phone).length() != 9) {
-            throw new ValidationException("Invalid phone number.");
+            throw new ValidationException(Field.PHONE.name, "Invalid phone number.");
         }
 
         if (this.address == null) {
-            throw new ValidationException("Address cannot be empty.");
+            throw new ValidationException(Field.ADDRESS.name, "Address cannot be empty.");
         }
 
-        this.address.validate();
+        this.address.validate(Field.ADDRESS.name);
 
         if (this.password == null || this.password.isEmpty()) {
-            throw new ValidationException("Password cannot be empty.");
+            throw new ValidationException(Field.PASSWORD.name, "Password cannot be empty.");
         }
 
         if (this.password.length() < 8) {
-            throw new ValidationException("Password must be at least 8 characters long.");
+            throw new ValidationException(Field.PASSWORD.name, "Password must be at least 8 characters long.");
         }
     }
 

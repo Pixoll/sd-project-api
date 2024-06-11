@@ -1,7 +1,7 @@
 package org.sdproject.api.structures;
 
 public class ValidationException extends Exception {
-    public ValidationException(String message) {
-        super(message);
+    public ValidationException(String key, String message) {
+        super("Validation error at '" + key + "': " + message);
     }
 }

@@ -3,8 +3,10 @@ package org.sdproject.api.structures;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.json.JSONObject;
+import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 
@@ -83,43 +85,45 @@ public class Admin implements Structure {
     }
 
     @Override
-    public void validate() throws ValidationException {
+    public void validate(@Nonnull String parentName) throws ValidationException {
         if (this.rut == null || this.rut.isEmpty()) {
-            throw new ValidationException("Rut cannot be empty.");
+            throw new ValidationException(Field.RUT.name, "Rut cannot be empty.");
         }
 
-        User.validateRut(this.rut);
+        if (!Util.isValidRut(this.rut)) {
+            throw new ValidationException(Field.RUT.name, "Invalid rut.");
+        }
 
         if (this.firstName == null || this.firstName.isEmpty()) {
-            throw new ValidationException("First name cannot be empty.");
+            throw new ValidationException(Field.FIRST_NAME.name, "First name cannot be empty.");
         }
 
         if (this.firstLastName == null || this.firstLastName.isEmpty()) {
-            throw new ValidationException("First last name cannot be empty.");
+            throw new ValidationException(Field.FIRST_LAST_NAME.name, "First last name cannot be empty.");
         }
 
         if (this.email == null || this.email.isEmpty()) {
-            throw new ValidationException("Email cannot be empty.");
+            throw new ValidationException(Field.EMAIL.name, "Email cannot be empty.");
         }
 
-        if (!this.email.matches(User.EMAIL_REGEX)) {
-            throw new ValidationException("Invalid email.");
+        if (!this.email.matches(Util.EMAIL_REGEX)) {
+            throw new ValidationException(Field.EMAIL.name, "Invalid email.");
         }
 
         if (this.phone == null) {
-            throw new ValidationException("Phone number cannot be empty.");
+            throw new ValidationException(Field.PHONE.name, "Phone number cannot be empty.");
         }
 
         if (String.valueOf(this.phone).length() != 9) {
-            throw new ValidationException("Invalid phone number.");
+            throw new ValidationException(Field.PHONE.name, "Invalid phone number.");
         }
 
         if (this.password == null || this.password.isEmpty()) {
-            throw new ValidationException("Password cannot be empty.");
+            throw new ValidationException(Field.PASSWORD.name, "Password cannot be empty.");
         }
 
         if (this.password.length() < 8) {
-            throw new ValidationException("Password must be at least 8 characters long.");
+            throw new ValidationException(Field.PASSWORD.name, "Password must be at least 8 characters long.");
         }
     }
 

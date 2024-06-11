@@ -10,6 +10,7 @@ import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
@@ -80,8 +81,14 @@ public class Shipment implements Structure {
         this.id = new ObjectId().toHexString();
         this.rutSender = json.optString(Field.RUT_SENDER.name, null);
         this.rutRecipient = json.optString(Field.RUT_RECIPIENT.name, null);
-        this.sourceAddress = new Address(json.optJSONObject(Field.SOURCE_ADDRESS.name, new JSONObject()));
-        this.destinationAddress = new Address(json.optJSONObject(Field.DESTINATION_ADDRESS.name, new JSONObject()));
+        this.sourceAddress = json.has(Field.SOURCE_ADDRESS.name) ? new Address(
+                json.optJSONObject(Field.SOURCE_ADDRESS.name, new JSONObject()),
+                Field.SOURCE_ADDRESS.name
+        ) : null;
+        this.destinationAddress = json.has(Field.DESTINATION_ADDRESS.name) ? new Address(
+                json.optJSONObject(Field.DESTINATION_ADDRESS.name, new JSONObject()),
+                Field.DESTINATION_ADDRESS.name
+        ) : null;
         this.dispatchTimestamp = json.optLongObject(Field.DISPATCH_TIMESTAMP.name, null);
         this.deliveryTimestamp = json.optLongObject(Field.DELIVERY_TIMESTAMP.name, null);
 
@@ -91,8 +98,12 @@ public class Shipment implements Structure {
                 JSONObject.class
         );
 
-        for (final JSONObject jsonStatusHistory : jsonStatusHistories) {
-            this.statusHistory.add(new StatusHistory(jsonStatusHistory));
+        for (int i = 0; i < jsonStatusHistories.size(); i++) {
+            final JSONObject jsonStatusHistory = jsonStatusHistories.get(i);
+            this.statusHistory.add(new StatusHistory(
+                    jsonStatusHistory,
+                    Field.STATUS_HISTORY.name + "[" + i + "]"
+            ));
         }
 
         this.shippingType = Util.stringToEnum(json.optString(Field.SHIPPING_TYPE.name, null), Type.class);
@@ -106,8 +117,9 @@ public class Shipment implements Structure {
                 JSONObject.class
         );
 
-        for (final JSONObject jsonPackage : jsonPackages) {
-            this.packages.add(new Package(jsonPackage));
+        for (int i = 0; i < jsonPackages.size(); i++) {
+            final JSONObject jsonPackage = jsonPackages.get(i);
+            this.packages.add(new Package(jsonPackage, Field.PACKAGES.name + "[" + i + "]"));
         }
 
         this.createdAt = new Date();
@@ -156,89 +168,101 @@ public class Shipment implements Structure {
     }
 
     @Override
-    public void validate() throws ValidationException {
+    public void validate(@Nonnull String parentName) throws ValidationException {
         if (this.rutSender == null) {
-            throw new ValidationException("Sender rut cannot be empty.");
+            throw new ValidationException(Field.RUT_SENDER.name, "Sender rut cannot be empty.");
         }
 
         if (Objects.equals(this.rutSender, this.rutRecipient)) {
-            throw new ValidationException("Sender and recipient cannot be the same.");
+            throw new ValidationException(Field.RUT_RECIPIENT.name, "Sender and recipient cannot be the same.");
         }
 
-        User.validateRut(this.rutSender);
+        if (!Util.isValidRut(this.rutSender)) {
+            throw new ValidationException(Field.RUT_SENDER.name, "Invalid rut.");
+        }
 
         final User sender = DatabaseConnection.getUsersCollection()
                 .find(Filters.eq(User.Field.RUT.raw, this.rutSender))
                 .first();
         if (sender == null) {
-            throw new ValidationException("User with rut " + this.rutSender + " does not exist.");
+            throw new ValidationException(Field.RUT_SENDER.name, "User with rut " + this.rutSender + " does not exist.");
         }
 
         if (this.rutRecipient == null) {
-            throw new ValidationException("Recipient rut cannot be empty.");
+            throw new ValidationException(Field.RUT_RECIPIENT.name, "Recipient rut cannot be empty.");
         }
 
-        User.validateRut(this.rutRecipient);
+        if (!Util.isValidRut(this.rutSender)) {
+            throw new ValidationException(Field.RUT_RECIPIENT.name, "Invalid rut.");
+        }
 
         final User recipient = DatabaseConnection.getUsersCollection()
                 .find(Filters.eq(User.Field.RUT.raw, this.rutRecipient))
                 .first();
         if (recipient == null) {
-            throw new ValidationException("User with rut " + this.rutRecipient + " does not exist.");
+            throw new ValidationException(Field.RUT_RECIPIENT.name, "User with rut " + this.rutRecipient + " does not exist.");
         }
 
         if (this.sourceAddress == null) {
-            throw new ValidationException("Source address cannot be empty.");
+            throw new ValidationException(Field.SOURCE_ADDRESS.name, "Source address cannot be empty.");
         }
 
-        this.sourceAddress.validate();
+        this.sourceAddress.validate(Field.SOURCE_ADDRESS.name);
 
         if (this.destinationAddress == null) {
-            throw new ValidationException("Destination address cannot be empty.");
+            throw new ValidationException(Field.DESTINATION_ADDRESS.name, "Destination address cannot be empty.");
         }
 
-        this.destinationAddress.validate();
+        this.destinationAddress.validate(Field.DESTINATION_ADDRESS.name);
 
         if (this.statusHistory == null || this.statusHistory.isEmpty()) {
-            throw new ValidationException("Shipment status history cannot be empty.");
+            throw new ValidationException(Field.STATUS_HISTORY.name, "Shipment status history cannot be empty.");
         }
 
         if (this.statusHistory.size() > StatusHistory.Status.values().length) {
-            throw new ValidationException("Shipment status history contains more statuses than there are possible ones.");
+            throw new ValidationException(
+                    Field.STATUS_HISTORY.name,
+                    "Shipment status history contains more statuses than there are possible ones."
+            );
         }
 
         final HashSet<StatusHistory.Status> statuses = new HashSet<>();
-        for (final StatusHistory statusHistory : this.statusHistory) {
-            statusHistory.validate();
+        for (int i = 0; i < this.statusHistory.size(); i++) {
+            final StatusHistory statusHistory = this.statusHistory.get(i);
+            statusHistory.validate(Field.STATUS_HISTORY.name + "[" + i + "]");
             statuses.add(statusHistory.status);
         }
 
         if (statuses.size() != this.statusHistory.size()) {
-            throw new ValidationException("Shipment status history cannot contain repeated statuses.");
+            throw new ValidationException(
+                    Field.STATUS_HISTORY.name,
+                    "Shipment status history cannot contain repeated statuses."
+            );
         }
 
         if (this.shippingType == null) {
-            throw new ValidationException("Shipping type cannot be empty.");
+            throw new ValidationException(Field.SHIPPING_TYPE.name, "Shipping type cannot be empty.");
         }
 
         if (this.pendingPayment == null) {
-            throw new ValidationException("Pending payment cannot be empty.");
+            throw new ValidationException(Field.PENDING_PAYMENT.name, "Pending payment cannot be empty.");
         }
 
         if (this.homePickup == null) {
-            throw new ValidationException("Home pickup cannot be empty.");
+            throw new ValidationException(Field.HOME_PICKUP.name, "Home pickup cannot be empty.");
         }
 
         if (this.homeDelivery == null) {
-            throw new ValidationException("Home delivery cannot be empty.");
+            throw new ValidationException(Field.HOME_DELIVERY.name, "Home delivery cannot be empty.");
         }
 
         if (this.packages == null || this.packages.isEmpty()) {
-            throw new ValidationException("Packages cannot be empty.");
+            throw new ValidationException(Field.PACKAGES.name, "Packages cannot be empty.");
         }
 
-        for (final Package pkg : this.packages) {
-            pkg.validate();
+        for (int i = 0; i < this.packages.size(); i++) {
+            final Package pkg = this.packages.get(i);
+            pkg.validate(Field.PACKAGES.name + "[" + i + "]");
         }
     }
 
