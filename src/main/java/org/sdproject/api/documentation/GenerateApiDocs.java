@@ -3,16 +3,12 @@ package org.sdproject.api.documentation;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.Resources;
-import org.sdproject.api.endpoints.*;
-import org.sdproject.api.structures.*;
-import org.sdproject.api.structures.Package;
+import org.sdproject.api.endpoints.Endpoint;
+import org.sdproject.api.structures.Structure;
+import org.sdproject.api.structures.ValidationException;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.io.*;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,28 +20,18 @@ public class GenerateApiDocs {
     private static final String ISO_TIMESTAMP = "[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp";
     private static final Pattern LINKS_REGEX = Pattern.compile("\\{(?:structure:(\\w+)|file:([^}]+)|endpoint:([^}]+))}");
     private static final String BASE_DOCS;
-    private static final Endpoint[] ENDPOINTS = new Endpoint[]{
-            new AdminsEndpoint(),
-            new AdminsSessionEndpoint(),
-            new FeesEndpoint(),
-            new PingEndpoint(),
-            new RegionsEndpoint(),
-            new ShipmentsEndpoint(),
-            new UsersEndpoint(),
-            new UsersMeEndpoint(),
-            new UsersSessionEndpoint(),
-            new UsersVerifyIdEndpoint(),
-    };
+    private static final List<Class<Endpoint>> ENDPOINTS = getClasses(
+            "org.sdproject.api.endpoints",
+            Endpoint.class,
+            List.of(Endpoint.class)
+    );
     private static final List<String> POSSIBLE_ENDPOINTS = Arrays.stream(Endpoint.AllMethods.class.getMethods())
             .map(Method::getName)
             .toList();
-    private static final List<Class<?>> STRUCTURES = Arrays.asList(
-            Address.class,
-            Admin.class,
-            Package.class,
-            Shipment.class,
-            StatusHistory.class,
-            User.class
+    private static final List<Class<Structure>> STRUCTURES = getClasses(
+            "org.sdproject.api.structures",
+            Structure.class,
+            List.of(Structure.class, ValidationException.class)
     );
     private static final HashMap<String, String> ENDPOINT_PATH_TO_LINK = new HashMap<>();
     private static final ArrayList<Method> ALL_ENDPOINT_METHODS = new ArrayList<>();
@@ -58,10 +44,17 @@ public class GenerateApiDocs {
             throw new RuntimeException(e);
         }
 
-        for (final Endpoint endpoint : ENDPOINTS) {
+        for (final Class<Endpoint> endpointClass : ENDPOINTS) {
+            final Endpoint endpoint;
+            try {
+                endpoint = endpointClass.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
             final Method[] methods = new Method[POSSIBLE_ENDPOINTS.size()];
 
-            for (final Method method : endpoint.getClass().getDeclaredMethods()) {
+            for (final Method method : endpointClass.getDeclaredMethods()) {
                 if (!POSSIBLE_ENDPOINTS.contains(method.getName())) continue;
 
                 final MethodDoc methodDoc = method.getAnnotation(MethodDoc.class);
@@ -344,6 +337,34 @@ public class GenerateApiDocs {
             }
 
             return tableString.toString();
+        }
+    }
+
+    private static <T> ArrayList<Class<T>> getClasses(String packageName, Class<T> of, List<Class<?>> exclude) {
+        final InputStream stream = ClassLoader.getSystemClassLoader()
+                .getResourceAsStream(packageName.replaceAll("[.]", "/"));
+        assert stream != null;
+
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        final ArrayList<Class<T>> classes = new ArrayList<>();
+
+        for (final String line : reader.lines().filter(line -> line.endsWith(".class")).toList()) {
+            final Class<?> clazz = getClass(line, packageName);
+            if (!of.isAssignableFrom(clazz) || exclude.contains(clazz) || clazz.getTypeName().contains("$")) continue;
+
+            //noinspection unchecked
+            classes.add((Class<T>) clazz);
+        }
+
+        return classes;
+    }
+
+    private static Class<?> getClass(String className, String packageName) {
+        try {
+            return Class.forName(packageName + "."
+                    + className.substring(0, className.lastIndexOf('.')));
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 }
