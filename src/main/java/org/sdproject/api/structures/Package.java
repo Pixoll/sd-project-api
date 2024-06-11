@@ -1,7 +1,8 @@
 package org.sdproject.api.structures;
 
+import org.json.JSONObject;
+import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
-import org.sdproject.api.json.JSONObject;
 
 public class Package implements Structure {
     @FieldDoc(description = "Type of the package.")
@@ -26,7 +27,7 @@ public class Package implements Structure {
     }
 
     public Package(JSONObject json) throws ValidationException {
-        this.type = json.optEnum(Type.class, Field.TYPE.name, null);
+        this.type = Util.stringToEnum(json.optString(Field.TYPE.name, null), Type.class);
         this.description = json.optString(Field.DESCRIPTION.name, null);
         this.length = json.optFloatObject(Field.LENGTH.name, null);
         this.width = json.optFloatObject(Field.WIDTH.name, null);

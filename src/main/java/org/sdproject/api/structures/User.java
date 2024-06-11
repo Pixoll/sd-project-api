@@ -3,8 +3,8 @@ package org.sdproject.api.structures;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 import org.sdproject.api.documentation.FieldDoc;
-import org.sdproject.api.json.JSONObject;
 
 import java.util.Date;
 

@@ -5,7 +5,7 @@ import io.javalin.http.HandlerType;
 import io.javalin.http.Header;
 import io.javalin.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
-import org.sdproject.api.json.JSONObject;
+import org.json.JSONObject;
 import org.sdproject.api.SessionTokenManager;
 
 import java.time.LocalDateTime;

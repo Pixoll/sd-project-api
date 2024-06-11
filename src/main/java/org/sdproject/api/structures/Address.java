@@ -1,9 +1,10 @@
 package org.sdproject.api.structures;
 
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
+import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 import org.sdproject.api.endpoints.RegionsEndpoint;
-import org.sdproject.api.json.JSONObject;
 
 public class Address implements Structure {
     @FieldDoc(description = "The region.")
@@ -63,7 +64,7 @@ public class Address implements Structure {
             throw new ValidationException("Address city or commune name cannot be empty.");
         }
 
-        final boolean invalidCity = region.getJSONArray("communes").toList(String.class)
+        final boolean invalidCity = Util.jsonArrayToList(region.getJSONArray("communes"), String.class)
                 .stream()
                 .noneMatch(c -> c.equalsIgnoreCase(this.city));
         if (invalidCity) {

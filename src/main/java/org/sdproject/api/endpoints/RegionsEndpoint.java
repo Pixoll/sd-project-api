@@ -2,10 +2,10 @@ package org.sdproject.api.endpoints;
 
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import org.json.JSONObject;
 import org.sdproject.api.documentation.CodeDoc;
 import org.sdproject.api.documentation.MethodDoc;
 import org.sdproject.api.documentation.ResponseDoc;
-import org.sdproject.api.json.JSONObject;
 import org.sdproject.api.Util;
 
 import java.util.ArrayList;

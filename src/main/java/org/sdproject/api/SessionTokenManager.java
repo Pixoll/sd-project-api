@@ -2,7 +2,7 @@ package org.sdproject.api;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.sdproject.api.json.JSONObject;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileWriter;

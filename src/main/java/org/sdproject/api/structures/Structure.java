@@ -1,6 +1,6 @@
 package org.sdproject.api.structures;
 
-import org.sdproject.api.json.JSONObject;
+import org.json.JSONObject;
 
 public interface Structure {
     JSONObject toJSON();

@@ -5,10 +5,11 @@ import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
+import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
-import org.sdproject.api.json.JSONArray;
-import org.sdproject.api.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -85,15 +86,17 @@ public class Shipment implements Structure {
         this.destinationAddress = new Address(json.optJSONObject(Field.DESTINATION_ADDRESS.name, new JSONObject()));
         this.dispatchTimestamp = json.optLongObject(Field.DISPATCH_TIMESTAMP.name, null);
         this.deliveryTimestamp = json.optLongObject(Field.DELIVERY_TIMESTAMP.name, null);
-        this.status = json.optEnum(Status.class, Field.STATUS.name, null);
-        this.shippingType = json.optEnum(Type.class, Field.SHIPPING_TYPE.name, null);
+        this.status = Util.stringToEnum(json.optString(Field.STATUS.name, null), Status.class);
+        this.shippingType = Util.stringToEnum(json.optString(Field.SHIPPING_TYPE.name, null), Type.class);
         this.pendingPayment = json.optBooleanObject(Field.PENDING_PAYMENT.name, null);
         this.homePickup = json.optBooleanObject(Field.HOME_PICKUP.name, null);
         this.homeDelivery = json.optBooleanObject(Field.HOME_DELIVERY.name, null);
 
         this.packages = new ArrayList<>();
-        final List<JSONObject> jsonPackages = json.optJSONArray(Field.PACKAGES.name, new JSONArray())
-                .toList(JSONObject.class);
+        final List<JSONObject> jsonPackages = Util.jsonArrayToList(
+                json.optJSONArray(Field.PACKAGES.name, new JSONArray()),
+                JSONObject.class
+        );
 
         for (final JSONObject jsonPackage : jsonPackages) {
             packages.add(new Package(jsonPackage));

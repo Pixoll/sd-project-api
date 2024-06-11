@@ -4,7 +4,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
 import org.sdproject.api.endpoints.*;
-import org.sdproject.api.json.JSONMapper;
 
 public class Api {
     public static final Dotenv DOTENV = Dotenv.load();

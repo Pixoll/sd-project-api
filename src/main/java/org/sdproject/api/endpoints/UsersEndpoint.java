@@ -4,11 +4,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.*;
-import org.sdproject.api.json.JSONObject;
 import org.sdproject.api.structures.User;
 import org.sdproject.api.structures.ValidationException;
 

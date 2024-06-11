@@ -1,7 +1,9 @@
-package org.sdproject.api.json;
+package org.sdproject.api;
 
 import io.javalin.json.JsonMapper;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.sdproject.api.structures.Structure;
 
 import java.lang.reflect.Type;
