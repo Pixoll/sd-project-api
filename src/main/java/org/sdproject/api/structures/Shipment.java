@@ -220,8 +220,8 @@ public class Shipment implements Structure {
         HOME_PICKUP("home_pickup"),
         HOME_DELIVERY("home_delivery"),
         PACKAGES("packages"),
-        CREATED_TIMESTAMP("created_at", "createdAt"),
-        UPDATED_TIMESTAMP("updated_at", "updatedAt");
+        CREATED_TIMESTAMP("created_at"),
+        UPDATED_TIMESTAMP("updated_at");
 
         public final String name;
         public final String raw;
