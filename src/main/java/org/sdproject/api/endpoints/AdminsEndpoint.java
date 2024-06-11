@@ -25,25 +25,22 @@ public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod {
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in as an admin.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "Admin does not exist.")
     @Override
-    public void get(Context ctx) {
+    public void get(Context ctx) throws EndpointException {
         final AuthorizationData authData = getAuthorizationData(ctx);
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
-            return;
         if (authData == null || !authData.isAdmin()) {
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
         }
 
         final String rut = ctx.queryParam("rut");
         if (rut == null) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Expected rut in query.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Expected rut in query.");
         }
 
         final Admin admin = DatabaseConnection.getAdminsCollection()
                 .find(Filters.eq(Admin.Field.RUT.raw, rut))
                 .first();
         if (admin == null) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Admin does not exist.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Admin does not exist.");
         }
 
         ctx.status(HttpStatus.OK).json(admin);

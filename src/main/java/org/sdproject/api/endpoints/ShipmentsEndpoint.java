@@ -3,7 +3,6 @@ package org.sdproject.api.endpoints;
 import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
@@ -22,19 +21,17 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
     @CodeDoc(code = HttpStatus.BAD_REQUEST, reason = "Did not provide tracking `id`.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "Shipment does not exist.")
     @Override
-    public void get(Context ctx) {
+    public void get(Context ctx) throws EndpointException {
         final String id = ctx.queryParam("id");
         if (id == null || id.isEmpty()) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Expected shipment id in the query.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Expected shipment id in the query.");
         }
 
         final Shipment shipment = DatabaseConnection.getShipmentsCollection()
                 .find(Filters.eq(Shipment.Field.ID.raw, id))
                 .first();
         if (shipment == null) {
-            sendError(ctx, HttpStatus.NOT_FOUND, "Shipment does not exist.");
-            return;
+            throw new EndpointException(HttpStatus.NOT_FOUND, "Shipment does not exist.");
         }
 
         ctx.status(HttpStatus.OK).json(shipment);
@@ -52,27 +49,18 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
     @CodeDoc(code = HttpStatus.BAD_REQUEST, reason = "Malformed shipment structure.")
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in.")
     @Override
-    public void post(Context ctx) {
+    public void post(Context ctx) throws EndpointException {
         if (getAuthorizationData(ctx) == null) {
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in.");
-            return;
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in.");
         }
 
-        final JSONObject body;
-        try {
-            body = ctx.bodyAsClass(JSONObject.class);
-        } catch (JSONException e) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Invalid request body: " + e.getMessage());
-            return;
-        }
-
+        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
         final Shipment newShipment;
 
         try {
             newShipment = new Shipment(body);
         } catch (ValidationException e) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, e.getMessage());
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
         DatabaseConnection.getShipmentsCollection().insertOne(newShipment);
@@ -93,24 +81,21 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in as an admin.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "Shipment does not exist.")
     @Override
-    public void delete(Context ctx) {
+    public void delete(Context ctx) throws EndpointException {
         final AuthorizationData authData = getAuthorizationData(ctx);
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
-            return;
         if (authData == null || !authData.isAdmin()) {
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
         }
 
         final String id = ctx.queryParam("id");
         if (id == null || id.isEmpty()) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Expected shipment id in the query.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Expected shipment id in the query.");
         }
 
         final Shipment shipment = DatabaseConnection.getShipmentsCollection()
                 .findOneAndDelete(Filters.eq(Shipment.Field.ID.raw, id));
         if (shipment == null) {
-            sendError(ctx, HttpStatus.NOT_FOUND, "Shipment does not exist.");
-            return;
+            throw new EndpointException(HttpStatus.NOT_FOUND, "Shipment does not exist.");
         }
 
         ctx.status(HttpStatus.NO_CONTENT);

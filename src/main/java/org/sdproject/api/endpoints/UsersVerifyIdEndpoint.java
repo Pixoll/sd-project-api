@@ -10,7 +10,6 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
@@ -47,43 +46,31 @@ public class UsersVerifyIdEndpoint extends Endpoint implements Endpoint.PostMeth
     @CodeDoc(code = HttpStatus.CONFLICT, reason = "User is already verified.")
     @CodeDoc(code = HttpStatus.CONTENT_TOO_LARGE, reason = "Image is bigger than 1MB.")
     @Override
-    public void post(Context ctx) {
+    public void post(Context ctx) throws EndpointException {
         final AuthorizationData authData = getAuthorizationData(ctx);
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in.");
-            return;
         if (authData == null || !authData.isUser()) {
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in.");
         }
 
         final MongoCollection<User> usersCollection = DatabaseConnection.getUsersCollection();
         final User user = usersCollection.find(Filters.eq("_id", authData.rut())).first();
         if (user == null) {
-            sendError(ctx, HttpStatus.NOT_FOUND, "User does not exist.");
-            return;
+            throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
 
         if (user.verified) {
-            sendError(ctx, HttpStatus.CONFLICT, "User has already verified their identity.");
-            return;
+            throw new EndpointException(HttpStatus.CONFLICT, "User has already verified their identity.");
         }
 
-        final JSONObject body;
-        try {
-            body = ctx.bodyAsClass(JSONObject.class);
-        } catch (JSONException e) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Invalid request body: " + e.getMessage());
-            return;
-        }
-
+        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
         if (!body.has("data")) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Expected data property in the request body.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Expected data property in the request body.");
         }
 
         final String data = body.getString("data");
         final float kBs = data.length() * 0.00075f;
         if (kBs > 1000) {
-            sendError(ctx, HttpStatus.CONTENT_TOO_LARGE, "Image is bigger than 1MB.");
-            return;
+            throw new EndpointException(HttpStatus.CONTENT_TOO_LARGE, "Image is bigger than 1MB.");
         }
 
         final String qrContent;
@@ -93,22 +80,18 @@ public class UsersVerifyIdEndpoint extends Endpoint implements Endpoint.PostMeth
                     new BufferedImageLuminanceSource(image)
             ))).getText();
         } catch (IOException e) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Could not resolve image from provided data.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Could not resolve image from provided data.");
         } catch (NotFoundException e) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Could not read contents from QR code, if there were any.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Could not read contents from QR code, if there were any.");
         }
 
         if (!qrContent.matches(ID_URL_REGEX)) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Invalid QR code contents.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Invalid QR code contents.");
         }
 
         final String rut = qrContent.replaceFirst(ID_URL_REGEX, "$1");
         if (!rut.equals(authData.rut())) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Invalid QR code contents.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Invalid QR code contents.");
         }
 
         // we'll just assume everything else is correct from here

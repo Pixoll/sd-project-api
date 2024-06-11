@@ -4,7 +4,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.Util;
@@ -47,11 +46,10 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in as an admin.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "User does not exist.")
     @Override
-    public void get(Context ctx) {
+    public void get(Context ctx) throws EndpointException {
         final AuthorizationData authData = getAuthorizationData(ctx);
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
-            return;
         if (authData == null || !authData.isAdmin()) {
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
         }
 
         final String rut = ctx.queryParam("rut");
@@ -59,8 +57,7 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
         final Integer phone = ctx.queryParamAsClass("phone", int.class).allowNullable().get();
 
         if ((rut != null ? 1 : 0) + (email != null ? 1 : 0) + (phone != null ? 1 : 0) != 1) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Expected only one of either rut, email or phone in query.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Expected only one of either rut, email or phone in query.");
         }
 
         final User user = DatabaseConnection.getUsersCollection()
@@ -71,8 +68,7 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
                 ))
                 .first();
         if (user == null) {
-            sendError(ctx, HttpStatus.NOT_FOUND, "User does not exist.");
-            return;
+            throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
 
         ctx.status(HttpStatus.OK).json(user);
@@ -87,41 +83,30 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
     @CodeDoc(code = HttpStatus.BAD_REQUEST, reason = "Malformed user structure.")
     @CodeDoc(code = HttpStatus.CONFLICT, reason = "A user with that `rut`, `email` or `phone` number already exists.")
     @Override
-    public void post(Context ctx) {
-        final JSONObject body;
-        try {
-            body = ctx.bodyAsClass(JSONObject.class);
-        } catch (JSONException e) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Invalid request body: " + e.getMessage());
-            return;
-        }
-
+    public void post(Context ctx) throws EndpointException {
+        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
         final User newUser;
 
         try {
             newUser = new User(body);
         } catch (ValidationException e) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, e.getMessage());
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
         final MongoCollection<User> usersCollection = DatabaseConnection.getUsersCollection();
         final User matchingRutUser = usersCollection.find(Filters.eq(User.Field.RUT.raw, newUser.rut)).first();
         if (matchingRutUser != null) {
-            sendError(ctx, HttpStatus.CONFLICT, "User with the same RUT already exists.");
-            return;
+            throw new EndpointException(HttpStatus.CONFLICT, "User with the same RUT already exists.");
         }
 
         final User matchingEmailUser = usersCollection.find(Filters.eq(User.Field.EMAIL.raw, newUser.email)).first();
         if (matchingEmailUser != null) {
-            sendError(ctx, HttpStatus.CONFLICT, "User with the same email already exists.");
-            return;
+            throw new EndpointException(HttpStatus.CONFLICT, "User with the same email already exists.");
         }
 
         final User matchingPhoneUser = usersCollection.find(Filters.eq(User.Field.PHONE.raw, newUser.phone)).first();
         if (matchingPhoneUser != null) {
-            sendError(ctx, HttpStatus.CONFLICT, "User with the same phone number already exists.");
-            return;
+            throw new EndpointException(HttpStatus.CONFLICT, "User with the same phone number already exists.");
         }
 
         final String salt = Util.generateSalt();
@@ -144,18 +129,16 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "User does not exist.")
     @Override
-    public void delete(Context ctx) {
+    public void delete(Context ctx) throws EndpointException {
         final AuthorizationData authData = getAuthorizationData(ctx);
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in.");
-            return;
         if (authData == null || !authData.isUser()) {
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in.");
         }
 
         final User user = DatabaseConnection.getUsersCollection()
                 .findOneAndDelete(Filters.eq(User.Field.RUT.raw, authData.rut()));
         if (user == null) {
-            sendError(ctx, HttpStatus.NOT_FOUND, "User does not exist.");
-            return;
+            throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
 
         ctx.status(HttpStatus.NO_CONTENT);

@@ -5,7 +5,6 @@ import io.javalin.http.HandlerType;
 import io.javalin.http.Header;
 import io.javalin.http.HttpStatus;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONObject;
 import org.sdproject.api.SessionTokenManager;
 
 import java.time.LocalDateTime;
@@ -20,29 +19,29 @@ public abstract class Endpoint {
     }
 
     public interface GetMethod {
-        void get(Context ctx);
+        void get(Context ctx) throws EndpointException;
     }
 
     public interface PostMethod {
-        void post(Context ctx);
+        void post(Context ctx) throws EndpointException;
     }
 
     public interface PutMethod {
-        void put(Context ctx);
+        void put(Context ctx) throws EndpointException;
     }
 
     public interface PatchMethod {
-        void patch(Context ctx);
+        void patch(Context ctx) throws EndpointException;
     }
 
     public interface DeleteMethod {
-        void delete(Context ctx);
+        void delete(Context ctx) throws EndpointException;
     }
 
     public interface AllMethods extends GetMethod, PostMethod, PutMethod, PatchMethod, DeleteMethod {
     }
 
-    public static void beforeMatched(Context ctx) {
+    public static void beforeMatched(Context ctx) throws EndpointException {
         final String now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                 .replaceAll("T|\\.\\d+$", " ")
                 .stripTrailing();
@@ -54,15 +53,8 @@ public abstract class Endpoint {
         );
 
         if (method == HandlerType.POST && !Objects.equals(ctx.header(Header.CONTENT_TYPE), "application/json")) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Content-Type header must be 'application/json'.");
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Content-Type header must be 'application/json'.");
         }
-    }
-
-    protected static void sendError(Context ctx, HttpStatus code, String message) {
-        final JSONObject obj = new JSONObject();
-        obj.put("status", code.getCode());
-        obj.put("message", message);
-        ctx.status(code).json(obj);
     }
 
     protected static @Nullable AuthorizationData getAuthorizationData(Context ctx) {

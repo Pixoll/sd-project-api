@@ -3,7 +3,6 @@ package org.sdproject.api.endpoints;
 import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
@@ -25,18 +24,11 @@ public class AdminsSessionEndpoint extends Endpoint implements Endpoint.PostMeth
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Wrong password.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "Admin does not exist.")
     @Override
-    public void post(Context ctx) {
-        final JSONObject body;
-        try {
-            body = ctx.bodyAsClass(JSONObject.class);
-        } catch (JSONException e) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Invalid request body: " + e.getMessage());
-            return;
-        }
+    public void post(Context ctx) throws EndpointException {
+        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
 
         if (!body.has("email") || !body.has("password")) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Expected both email and password in the request body.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Expected both email and password in the request body.");
         }
 
         final String email = body.getString("email");
@@ -46,13 +38,11 @@ public class AdminsSessionEndpoint extends Endpoint implements Endpoint.PostMeth
                 .find(Filters.eq(Admin.Field.EMAIL.raw, email))
                 .first();
         if (admin == null) {
-            sendError(ctx, HttpStatus.BAD_REQUEST, "Admin does not exist.");
-            return;
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Admin does not exist.");
         }
 
         if (!Util.hashPassword(password, admin.salt).equals(admin.password)) {
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Wrong password.");
-            return;
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Wrong password.");
         }
 
         ctx.status(HttpStatus.OK).json(new JSONObject().put("session_token",
@@ -69,11 +59,10 @@ public class AdminsSessionEndpoint extends Endpoint implements Endpoint.PostMeth
     @CodeDoc(code = HttpStatus.NO_CONTENT, reason = "Successfully revoked session token.")
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in.")
     @Override
-    public void delete(Context ctx) {
+    public void delete(Context ctx) throws EndpointException {
         final AuthorizationData authData = getAuthorizationData(ctx);
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in.");
-            return;
         if (authData == null || !authData.isAdmin()) {
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in.");
         }
 
         SessionTokenManager.revokeToken(SessionTokenManager.TokenType.ADMIN, authData.rut());

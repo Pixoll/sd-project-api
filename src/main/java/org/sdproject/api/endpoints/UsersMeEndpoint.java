@@ -26,19 +26,17 @@ public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod {
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "User does not exist.")
     @Override
-    public void get(Context ctx) {
+    public void get(Context ctx) throws EndpointException {
         final AuthorizationData authData = getAuthorizationData(ctx);
-            sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in.");
-            return;
         if (authData == null || !authData.isUser()) {
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in.");
         }
 
         final User user = DatabaseConnection.getUsersCollection()
                 .find(Filters.eq(User.Field.RUT.raw, authData.rut()))
                 .first();
         if (user == null) {
-            sendError(ctx, HttpStatus.NOT_FOUND, "User does not exist.");
-            return;
+            throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
 
         ctx.status(HttpStatus.OK).json(user);
