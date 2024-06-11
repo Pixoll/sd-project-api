@@ -3,6 +3,7 @@ package org.sdproject.api;
 import io.javalin.json.JsonMapper;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.structures.Structure;
 
@@ -28,6 +29,6 @@ public class JSONMapper implements JsonMapper {
     @NotNull
     @Override
     public <T> T fromJsonString(@NotNull String json, @NotNull Type targetType) {
-        return (T) new JSONObject(json.startsWith("{") ? json : "{}");
+        return (T) new JSONObject(json);
     }
 }

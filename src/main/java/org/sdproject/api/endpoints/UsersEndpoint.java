@@ -4,6 +4,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.SessionTokenManager;
@@ -88,7 +89,14 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
     @CodeDoc(code = HttpStatus.CONFLICT, reason = "A user with that `rut`, `email` or `phone` number already exists.")
     @Override
     public void post(Context ctx) {
-        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
+        final JSONObject body;
+        try {
+            body = ctx.bodyAsClass(JSONObject.class);
+        } catch (JSONException e) {
+            sendError(ctx, HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
+            return;
+        }
+
         final User newUser;
 
         try {

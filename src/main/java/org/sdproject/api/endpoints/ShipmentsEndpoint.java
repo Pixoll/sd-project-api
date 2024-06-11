@@ -3,6 +3,7 @@ package org.sdproject.api.endpoints;
 import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
@@ -58,7 +59,14 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
             return;
         }
 
-        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
+        final JSONObject body;
+        try {
+            body = ctx.bodyAsClass(JSONObject.class);
+        } catch (JSONException e) {
+            sendError(ctx, HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
+            return;
+        }
+
         final Shipment newShipment;
 
         try {

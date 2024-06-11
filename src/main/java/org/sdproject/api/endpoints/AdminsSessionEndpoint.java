@@ -3,6 +3,7 @@ package org.sdproject.api.endpoints;
 import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
@@ -25,7 +26,14 @@ public class AdminsSessionEndpoint extends Endpoint implements Endpoint.PostMeth
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "Admin does not exist.")
     @Override
     public void post(Context ctx) {
-        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
+        final JSONObject body;
+        try {
+            body = ctx.bodyAsClass(JSONObject.class);
+        } catch (JSONException e) {
+            sendError(ctx, HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
+            return;
+        }
+
         if (!body.has("email") || !body.has("password")) {
             sendError(ctx, HttpStatus.BAD_REQUEST, "Expected both email and password in the request body.");
             return;

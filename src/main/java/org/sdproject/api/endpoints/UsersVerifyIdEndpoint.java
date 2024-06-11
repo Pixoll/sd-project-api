@@ -10,6 +10,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
@@ -66,7 +67,14 @@ public class UsersVerifyIdEndpoint extends Endpoint implements Endpoint.PostMeth
             return;
         }
 
-        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
+        final JSONObject body;
+        try {
+            body = ctx.bodyAsClass(JSONObject.class);
+        } catch (JSONException e) {
+            sendError(ctx, HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
+            return;
+        }
+
         if (!body.has("data")) {
             sendError(ctx, HttpStatus.BAD_REQUEST, "Expected data property in the request body.");
             return;
