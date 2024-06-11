@@ -30,7 +30,7 @@ public class UsersSessionEndpoint extends Endpoint implements Endpoint.PostMetho
         try {
             body = ctx.bodyAsClass(JSONObject.class);
         } catch (JSONException e) {
-            sendError(ctx, HttpStatus.UNPROCESSABLE_CONTENT, "Invalid request body: " + e.getMessage());
+            sendError(ctx, HttpStatus.BAD_REQUEST, "Invalid request body: " + e.getMessage());
             return;
         }
 

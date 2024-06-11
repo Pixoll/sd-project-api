@@ -30,7 +30,7 @@ public class AdminsSessionEndpoint extends Endpoint implements Endpoint.PostMeth
         try {
             body = ctx.bodyAsClass(JSONObject.class);
         } catch (JSONException e) {
-            sendError(ctx, HttpStatus.UNPROCESSABLE_CONTENT, "Invalid request body: " + e.getMessage());
+            sendError(ctx, HttpStatus.BAD_REQUEST, "Invalid request body: " + e.getMessage());
             return;
         }
 

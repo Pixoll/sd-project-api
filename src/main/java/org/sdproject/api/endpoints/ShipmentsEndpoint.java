@@ -63,7 +63,7 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
         try {
             body = ctx.bodyAsClass(JSONObject.class);
         } catch (JSONException e) {
-            sendError(ctx, HttpStatus.UNPROCESSABLE_CONTENT, "Invalid request body: " + e.getMessage());
+            sendError(ctx, HttpStatus.BAD_REQUEST, "Invalid request body: " + e.getMessage());
             return;
         }
 
