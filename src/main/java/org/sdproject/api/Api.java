@@ -22,6 +22,7 @@ public class Api {
                             new PingEndpoint(),
                             new RegionsEndpoint(),
                             new ShipmentsEndpoint(),
+                            new ShipmentsStatusEndpoint(),
                             new UsersEndpoint(),
                             new UsersMeEndpoint(),
                             new UsersSessionEndpoint(),

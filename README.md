@@ -362,6 +362,44 @@ DELETE /shipments
 | 401 Unauthorized | Not logged in as an admin.         |
 | 404 Not Found    | Shipment does not exist.           |
 
+### Update Shipment Status
+
+Update the specified [shipment](#shipment-object)'s status. Must follow the same order provided by [status history](#status-history-object).
+
+#### URL
+
+```
+POST /shipments/status
+```
+
+#### Request Headers
+
+| Name          | Type   | Description                                                                        |
+|---------------|--------|------------------------------------------------------------------------------------|
+| Authorization | string | Session token of the logged in admin. See [POST /admins/session](#login-as-admin). |
+
+#### Request Query Parameters
+
+| Name | Type   | Description                 |
+|------|--------|-----------------------------|
+| id   | string | The shipment's tracking id. |
+
+#### Request Body
+
+| Field      | Type   | Description                                                              |
+|------------|--------|--------------------------------------------------------------------------|
+| new_status | string | The shipment's new status. See [status history](#status-history-object). |
+
+#### Response Codes
+
+| HTTP Code        | Reason                                                                                     |
+|------------------|--------------------------------------------------------------------------------------------|
+| 200 OK           | Successfully updated the shipment's status.                                                |
+| 400 Bad Request  | Malformed request query or body.                                                           |
+| 401 Unauthorized | Not logged in as an admin.                                                                 |
+| 404 Not Found    | Shipment does not exist.                                                                   |
+| 409 Conflict     | New status does not follow the order provided by [status history](#status-history-object). |
+
 ### Get User
 
 Returns a [user](#user-object) for the given `rut`, `email` or `phone` number.

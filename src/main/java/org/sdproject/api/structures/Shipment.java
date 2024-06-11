@@ -116,6 +116,21 @@ public class Shipment implements Structure {
         this.validate();
     }
 
+    public StatusHistory.Status currentStatus() {
+        this.statusHistory.sort((sh1, sh2) -> Math.toIntExact(sh1.timestamp - sh2.timestamp));
+        return this.statusHistory.get(this.statusHistory.size() - 1).status;
+    }
+
+    public boolean updateStatus(StatusHistory.Status status) {
+        //noinspection ComparatorResultComparison
+        if (status.compareTo(this.currentStatus()) != 1) return false;
+
+        final StatusHistory newStatus = new StatusHistory();
+        newStatus.status = status;
+        newStatus.timestamp = new Date().getTime();
+        return this.statusHistory.add(newStatus);
+    }
+
     @Override
     public JSONObject toJSON() {
         return new JSONObject()
