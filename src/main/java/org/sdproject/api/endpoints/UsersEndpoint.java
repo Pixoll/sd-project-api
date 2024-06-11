@@ -93,7 +93,7 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
         try {
             body = ctx.bodyAsClass(JSONObject.class);
         } catch (JSONException e) {
-            sendError(ctx, HttpStatus.UNPROCESSABLE_CONTENT, e.getMessage());
+            sendError(ctx, HttpStatus.UNPROCESSABLE_CONTENT, "Invalid request body: " + e.getMessage());
             return;
         }
 
