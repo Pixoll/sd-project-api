@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class Shipment implements Structure {
+public class Shipment extends Structure {
     @BsonId()
     @FieldDoc(description = "The shipment id. Used for tracking.")
     public String id;
@@ -214,6 +214,13 @@ public class Shipment implements Structure {
         }
 
         this.destinationAddress.validate(Field.DESTINATION_ADDRESS.name);
+
+        if (this.sourceAddress.jsonEquals(this.destinationAddress)) {
+            throw new ValidationException(
+                    Field.DESTINATION_ADDRESS.name,
+                    "Source and destination addresses cannot be the same."
+            );
+        }
 
         if (this.statusHistory == null || this.statusHistory.isEmpty()) {
             throw new ValidationException(Field.STATUS_HISTORY.name, "Shipment status history cannot be empty.");

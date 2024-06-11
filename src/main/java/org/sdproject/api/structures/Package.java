@@ -6,7 +6,7 @@ import org.sdproject.api.documentation.FieldDoc;
 
 import javax.annotation.Nonnull;
 
-public class Package implements Structure {
+public class Package extends Structure {
     @FieldDoc(description = "Type of the package.")
     public Type type;
 

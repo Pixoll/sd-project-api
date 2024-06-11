@@ -4,14 +4,18 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 
-public interface Structure {
-    JSONObject toJSON();
+public abstract class Structure {
+    public abstract JSONObject toJSON();
 
-    default void validate() throws ValidationException {
+    public abstract void validate(@Nonnull String parentName) throws ValidationException;
+
+    public abstract String toString();
+
+    void validate() throws ValidationException {
         this.validate("");
     }
 
-    void validate(@Nonnull String parentName) throws ValidationException;
-
-    String toString();
+    boolean jsonEquals(@Nonnull Structure other) {
+        return other.toJSON().toString().equals(this.toJSON().toString());
+    }
 }

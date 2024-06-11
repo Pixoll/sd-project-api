@@ -8,7 +8,7 @@ import org.sdproject.api.endpoints.RegionsEndpoint;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class Address implements Structure {
+public class Address extends Structure {
     @FieldDoc(description = "The region.")
     public String region;
 

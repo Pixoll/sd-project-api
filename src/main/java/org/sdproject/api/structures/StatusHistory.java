@@ -6,7 +6,7 @@ import org.sdproject.api.documentation.FieldDoc;
 
 import javax.annotation.Nonnull;
 
-public class StatusHistory implements Structure {
+public class StatusHistory extends Structure {
     @FieldDoc(description = "Status of the shipment.")
     public Status status;
 

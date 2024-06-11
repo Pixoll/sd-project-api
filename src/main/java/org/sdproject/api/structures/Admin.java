@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 
-public class Admin implements Structure {
+public class Admin extends Structure {
     @BsonId()
     @FieldDoc(description = "The admin's RUT.")
     public String rut;
