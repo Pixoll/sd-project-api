@@ -1,10 +1,11 @@
 package org.sdproject.api.structures;
 
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 import org.sdproject.api.endpoints.RegionsEndpoint;
+
+import javax.annotation.Nullable;
 
 public class Address implements Structure {
     @FieldDoc(description = "The region.")

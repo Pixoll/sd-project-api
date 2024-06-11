@@ -2,19 +2,19 @@ package org.sdproject.api;
 
 import io.javalin.http.HttpStatus;
 import io.javalin.json.JsonMapper;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.endpoints.EndpointException;
 import org.sdproject.api.structures.Structure;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Type;
 
 public class JSONMapper implements JsonMapper {
-    @NotNull
+    @Nonnull
     @Override
-    public String toJsonString(@NotNull Object obj, @NotNull Type type) {
+    public String toJsonString(@Nonnull Object obj, @Nonnull Type type) {
         if (obj instanceof JSONObject json) {
             return json.toString();
         }
@@ -28,9 +28,9 @@ public class JSONMapper implements JsonMapper {
     }
 
     @SuppressWarnings("unchecked")
-    @NotNull
+    @Nonnull
     @Override
-    public <T> T fromJsonString(@NotNull String json, @NotNull Type targetType) {
+    public <T> T fromJsonString(@Nonnull String json, @Nonnull Type targetType) {
         try {
             return (T) new JSONObject(json);
         } catch (JSONException e) {

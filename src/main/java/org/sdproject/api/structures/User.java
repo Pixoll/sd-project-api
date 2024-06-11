@@ -2,10 +2,10 @@ package org.sdproject.api.structures;
 
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import org.sdproject.api.documentation.FieldDoc;
 
+import javax.annotation.Nullable;
 import java.util.Date;
 
 public class User implements Structure {

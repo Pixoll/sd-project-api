@@ -1,9 +1,9 @@
 package org.sdproject.api;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -52,7 +52,7 @@ public class SessionTokenManager {
         TOKENS.put(TokenType.ADMIN.toString(), json.getJSONObject(TokenType.ADMIN.toString()));
     }
 
-    public static @NotNull String generateSessionToken(@NotNull TokenType type, @NotNull String rut) {
+    public static @Nonnull String generateSessionToken(@Nonnull TokenType type, @Nonnull String rut) {
         final JSONObject destination = TOKENS.getJSONObject(type.toString());
         if (destination.has(rut)) {
             revokeToken(type, rut);
@@ -72,11 +72,11 @@ public class SessionTokenManager {
         return token;
     }
 
-    public static @Nullable String getRutFromToken(@NotNull TokenType type, @NotNull String token) {
+    public static @Nullable String getRutFromToken(@Nonnull TokenType type, @Nonnull String token) {
         return TOKENS.getJSONObject(type.toString()).optString(token, null);
     }
 
-    public static void revokeToken(@NotNull TokenType type, @NotNull String rut) {
+    public static void revokeToken(@Nonnull TokenType type, @Nonnull String rut) {
         final JSONObject source = TOKENS.getJSONObject(type.toString());
         if (!source.has(rut)) return;
 

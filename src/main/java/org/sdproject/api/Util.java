@@ -1,10 +1,10 @@
 package org.sdproject.api;
 
 import com.google.common.hash.Hashing;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
