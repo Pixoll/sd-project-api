@@ -5,7 +5,6 @@ import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 import org.sdproject.api.endpoints.Endpoint;
 import org.sdproject.api.structures.Structure;
-import org.sdproject.api.structures.ValidationException;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -31,7 +30,7 @@ public class GenerateApiDocs {
     private static final List<Class<Structure>> STRUCTURES = getClasses(
             "org.sdproject.api.structures",
             Structure.class,
-            List.of(Structure.class, ValidationException.class)
+            List.of(Structure.class)
     );
     private static final HashMap<String, String> ENDPOINT_PATH_TO_LINK = new HashMap<>();
     private static final ArrayList<Method> ALL_ENDPOINT_METHODS = new ArrayList<>();
