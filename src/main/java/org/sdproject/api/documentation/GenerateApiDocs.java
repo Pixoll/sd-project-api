@@ -44,6 +44,7 @@ public class GenerateApiDocs {
             Admin.class,
             Package.class,
             Shipment.class,
+            StatusHistory.class,
             User.class
     );
     private static final HashMap<String, String> ENDPOINT_PATH_TO_LINK = new HashMap<>();
@@ -86,7 +87,7 @@ public class GenerateApiDocs {
             final MarkdownTable table = new MarkdownTable("Field", "Type", "Description");
 
             result.append("### ")
-                    .append(structure.getSimpleName())
+                    .append(structure.getSimpleName().replaceAll("([A-Z])", " $1").stripLeading())
                     .append(" Object\n\n");
 
             for (final Field field : structure.getDeclaredFields()) {
@@ -261,9 +262,12 @@ public class GenerateApiDocs {
     private static String replaceMarkdownReferences(String text) {
         return LINKS_REGEX.matcher(text).replaceAll(matchResult -> {
             final String structure = matchResult.group(1);
+            final String structureName = structure != null
+                    ? structure.replaceAll("([A-Z])", " $1").stripLeading().toLowerCase()
+                    : null;
             final String file = matchResult.group(2);
             final String endpoint = matchResult.group(3);
-            return structure != null ? "[" + structure.toLowerCase() + "](#" + structure.toLowerCase() + "-object)"
+            return structureName != null ? "[" + structureName + "](#" + structureName.replaceAll(" ", "-") + "-object)"
                     : file != null ? "[" + file + "](" + file + ")"
                     : "[" + endpoint + "](#" + ENDPOINT_PATH_TO_LINK.get(endpoint) + ")";
         });
