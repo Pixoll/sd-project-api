@@ -11,10 +11,7 @@ import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class Shipment implements Structure {
     @BsonId()
@@ -45,8 +42,9 @@ public class Shipment implements Structure {
     @FieldDoc(jsonKey = "delivery_timestamp", description = "When the shipment arrived to the destination address.")
     public @Nullable Long deliveryTimestamp;
 
-    @FieldDoc(description = "Status of the shipment.")
-    public Status status;
+    @BsonProperty("status_history")
+    @FieldDoc(jsonKey = "status_history", description = "Status history of the shipment.")
+    public ArrayList<StatusHistory> statusHistory;
 
     @BsonProperty("shipping_type")
     @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.")
@@ -65,7 +63,7 @@ public class Shipment implements Structure {
     public Boolean homeDelivery;
 
     @FieldDoc(description = "All the packages being shipped.")
-    public List<Package> packages;
+    public ArrayList<Package> packages;
 
     @BsonProperty("created_at")
     @FieldDoc(isCreatedTimestamp = true)
@@ -86,7 +84,17 @@ public class Shipment implements Structure {
         this.destinationAddress = new Address(json.optJSONObject(Field.DESTINATION_ADDRESS.name, new JSONObject()));
         this.dispatchTimestamp = json.optLongObject(Field.DISPATCH_TIMESTAMP.name, null);
         this.deliveryTimestamp = json.optLongObject(Field.DELIVERY_TIMESTAMP.name, null);
-        this.status = Util.stringToEnum(json.optString(Field.STATUS.name, null), Status.class);
+
+        this.statusHistory = new ArrayList<>();
+        final List<JSONObject> jsonStatusHistories = Util.jsonArrayToList(
+                json.optJSONArray(Field.STATUS_HISTORY.name, new JSONArray()),
+                JSONObject.class
+        );
+
+        for (final JSONObject jsonStatusHistory : jsonStatusHistories) {
+            this.statusHistory.add(new StatusHistory(jsonStatusHistory));
+        }
+
         this.shippingType = Util.stringToEnum(json.optString(Field.SHIPPING_TYPE.name, null), Type.class);
         this.pendingPayment = json.optBooleanObject(Field.PENDING_PAYMENT.name, null);
         this.homePickup = json.optBooleanObject(Field.HOME_PICKUP.name, null);
@@ -99,7 +107,7 @@ public class Shipment implements Structure {
         );
 
         for (final JSONObject jsonPackage : jsonPackages) {
-            packages.add(new Package(jsonPackage));
+            this.packages.add(new Package(jsonPackage));
         }
 
         this.createdAt = new Date();
@@ -118,12 +126,16 @@ public class Shipment implements Structure {
                 .put(Field.DESTINATION_ADDRESS.name, this.destinationAddress.toJSON())
                 .put(Field.DISPATCH_TIMESTAMP.name, this.dispatchTimestamp)
                 .put(Field.DELIVERY_TIMESTAMP.name, this.deliveryTimestamp)
-                .put(Field.STATUS.name, this.status.name)
+                .put(Field.STATUS_HISTORY.name, new JSONArray(
+                        this.statusHistory.stream().map(StatusHistory::toJSON).toList()
+                ))
                 .put(Field.SHIPPING_TYPE.name, this.shippingType.name)
                 .put(Field.PENDING_PAYMENT.name, this.pendingPayment)
                 .put(Field.HOME_PICKUP.name, this.homePickup)
                 .put(Field.HOME_DELIVERY.name, this.homeDelivery)
-                .put(Field.PACKAGES.name, new JSONArray(this.packages.stream().map(Package::toJSON).toList()))
+                .put(Field.PACKAGES.name, new JSONArray(
+                        this.packages.stream().map(Package::toJSON).toList()
+                ))
                 .put(Field.CREATED_TIMESTAMP.name, this.createdAt.getTime())
                 .put(Field.UPDATED_TIMESTAMP.name, this.updatedAt.getTime());
     }
@@ -172,8 +184,22 @@ public class Shipment implements Structure {
 
         this.destinationAddress.validate();
 
-        if (this.status == null) {
-            throw new ValidationException("Shipment status cannot be empty.");
+        if (this.statusHistory == null || this.statusHistory.isEmpty()) {
+            throw new ValidationException("Shipment status history cannot be empty.");
+        }
+
+        if (this.statusHistory.size() > StatusHistory.Status.values().length) {
+            throw new ValidationException("Shipment status history contains more statuses than there are possible ones.");
+        }
+
+        final HashSet<StatusHistory.Status> statuses = new HashSet<>();
+        for (final StatusHistory statusHistory : this.statusHistory) {
+            statusHistory.validate();
+            statuses.add(statusHistory.status);
+        }
+
+        if (statuses.size() != this.statusHistory.size()) {
+            throw new ValidationException("Shipment status history cannot contain repeated statuses.");
         }
 
         if (this.shippingType == null) {
@@ -214,7 +240,7 @@ public class Shipment implements Structure {
         DESTINATION_ADDRESS("destination_address"),
         DISPATCH_TIMESTAMP("dispatch_timestamp"),
         DELIVERY_TIMESTAMP("delivery_timestamp"),
-        STATUS("status"),
+        STATUS_HISTORY("status_history"),
         SHIPPING_TYPE("shipping_type"),
         PENDING_PAYMENT("pending_payment"),
         HOME_PICKUP("home_pickup"),
@@ -233,25 +259,6 @@ public class Shipment implements Structure {
 
         Field(String name) {
             this(name, name);
-        }
-    }
-
-    public enum Status {
-        PENDING("pending"),
-        PRE_TRANSIT("pre-transit"),
-        IN_TRANSIT("in_transit"),
-        OUT_FOR_DELIVERY("out_for_delivery"),
-        DELIVERED("delivered");
-
-        public final String name;
-
-        Status(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return this.name;
         }
     }
 
