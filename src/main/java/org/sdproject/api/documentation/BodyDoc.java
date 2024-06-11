@@ -8,7 +8,10 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BodyDoc {
     String name() default "";
+
     Class<?> type() default Void.class;
+
     String description() default "";
+
     String value() default "";
 }

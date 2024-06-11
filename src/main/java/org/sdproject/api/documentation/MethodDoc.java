@@ -6,5 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MethodDoc {
     String name();
+
     String description();
 }

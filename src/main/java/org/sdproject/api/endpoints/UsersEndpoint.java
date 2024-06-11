@@ -17,11 +17,7 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
     }
 
     @MethodDoc(name = "Get User", description = "Returns a {structure:User} for the given `rut`, `email` or `phone` number.")
-    @HeaderDoc(
-            name = "Authorization",
-            type = String.class,
-            description = "Session token of the logged in admin. See {endpoint:POST /admins/session}."
-    )
+    @HeaderAdminAuthDoc
     @QueryDoc(
             key = "rut",
             type = String.class,
@@ -119,11 +115,7 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
     }
 
     @MethodDoc(name = "Delete User", description = "Delete the {structure:User}'s account.")
-    @HeaderDoc(
-            name = "Authorization",
-            type = String.class,
-            description = "Session token of the logged-in user. See {endpoint:POST /users/session}."
-    )
+    @HeaderUserAuthDoc
     @QueryDoc(key = "rut", type = String.class, description = "RUT of the user.")
     @CodeDoc(code = HttpStatus.NO_CONTENT, reason = "Successfully deleted the user.")
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in.")

@@ -50,11 +50,7 @@ public class UsersSessionEndpoint extends Endpoint implements Endpoint.PostMetho
     }
 
     @MethodDoc(name = "Logout from User Session", description = "Revoke user session token.")
-    @HeaderDoc(
-            name = "Authorization",
-            type = String.class,
-            description = "Session token of the logged in user. See {endpoint:POST /users/session}."
-    )
+    @HeaderUserAuthDoc
     @CodeDoc(code = HttpStatus.NO_CONTENT, reason = "Successfully revoked session token.")
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in.")
     @Override

@@ -38,12 +38,7 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
     }
 
     @MethodDoc(name = "Create Shipment", description = "Create a new {structure:Shipment}.")
-    @HeaderDoc(
-            name = "Authorization",
-            type = String.class,
-            description = "Session token of the logged-in user or admin. "
-                    + "See {endpoint:POST /users/session} and {endpoint:POST /admins/session}."
-    )
+    @HeaderAnyAuthDoc
     @BodyDoc("A {structure:Shipment} object without the `id`, `created_timestamp` and `updated_timestamp` fields.")
     @CodeDoc(code = HttpStatus.CREATED, reason = "Successfully created new shipment.")
     @CodeDoc(code = HttpStatus.BAD_REQUEST, reason = "Malformed shipment structure.")
@@ -70,11 +65,7 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
     }
 
     @MethodDoc(name = "Delete Shipment", description = "Delete the {structure:Shipment} matching the provided tracking `id`.")
-    @HeaderDoc(
-            name = "Authorization",
-            type = String.class,
-            description = "Session token of the logged in admin. See {endpoint:POST /admins/session}."
-    )
+    @HeaderAdminAuthDoc
     @QueryDoc(key = "id", type = String.class, description = "The shipment's tracking id.")
     @CodeDoc(code = HttpStatus.NO_CONTENT, reason = "Successfully deleted the shipment.")
     @CodeDoc(code = HttpStatus.BAD_REQUEST, reason = "Did not provide tracking `id`.")

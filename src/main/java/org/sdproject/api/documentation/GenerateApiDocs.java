@@ -135,14 +135,40 @@ public class GenerateApiDocs {
                     .append("\n```\n\n");
 
             final HeaderDoc[] headerDocs = method.getAnnotationsByType(HeaderDoc.class);
-            if (headerDocs.length > 0) {
+            final HeaderAdminAuthDoc adminAuthHeaderDoc = method.getAnnotation(HeaderAdminAuthDoc.class);
+            final HeaderUserAuthDoc userAuthHeaderDoc = method.getAnnotation(HeaderUserAuthDoc.class);
+            final HeaderAnyAuthDoc anyAuthHeaderDoc = method.getAnnotation(HeaderAnyAuthDoc.class);
+            if (headerDocs.length > 0 || adminAuthHeaderDoc != null || userAuthHeaderDoc != null || anyAuthHeaderDoc != null) {
+                final MarkdownTable table = new MarkdownTable("Name", "Type", "Description")
+                        .addRows(headerDocs, headerDoc -> new String[]{
+                                headerDoc.name(),
+                                parseClassType(headerDoc.type()),
+                                replaceMarkdownReferences(headerDoc.description())
+                        });
+
+                if (adminAuthHeaderDoc != null) {
+                    table.addRow(adminAuthHeaderDoc.name(),
+                            parseClassType(adminAuthHeaderDoc.type()),
+                            replaceMarkdownReferences(adminAuthHeaderDoc.description())
+                    );
+                }
+
+                if (userAuthHeaderDoc != null) {
+                    table.addRow(userAuthHeaderDoc.name(),
+                            parseClassType(userAuthHeaderDoc.type()),
+                            replaceMarkdownReferences(userAuthHeaderDoc.description())
+                    );
+                }
+
+                if (anyAuthHeaderDoc != null) {
+                    table.addRow(anyAuthHeaderDoc.name(),
+                            parseClassType(anyAuthHeaderDoc.type()),
+                            replaceMarkdownReferences(anyAuthHeaderDoc.description())
+                    );
+                }
+
                 result.append("#### Request Headers\n\n")
-                        .append(new MarkdownTable("Name", "Type", "Description")
-                                .addRows(headerDocs, headerDoc -> new String[]{
-                                        headerDoc.name(),
-                                        parseClassType(headerDoc.type()),
-                                        replaceMarkdownReferences(headerDoc.description())
-                                }))
+                        .append(table)
                         .append("\n");
             }
 

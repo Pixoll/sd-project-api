@@ -13,11 +13,7 @@ public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod {
     }
 
     @MethodDoc(name = "Get Admin", description = "Returns an {structure:Admin} for the given `rut`.")
-    @HeaderDoc(
-            name = "Authorization",
-            type = String.class,
-            description = "Session token of the logged in admin. See {endpoint:POST /admins/session}."
-    )
+    @HeaderAdminAuthDoc
     @QueryDoc(key = "rut", type = String.class, description = "RUT of the admin.")
     @ResponseDoc("An {structure:Admin} object without the `password` and `salt` fields.")
     @CodeDoc(code = HttpStatus.OK, reason = "Successfully retrieved the admin.")

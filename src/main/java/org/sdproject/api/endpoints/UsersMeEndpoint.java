@@ -4,10 +4,7 @@ import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import org.sdproject.api.DatabaseConnection;
-import org.sdproject.api.documentation.CodeDoc;
-import org.sdproject.api.documentation.HeaderDoc;
-import org.sdproject.api.documentation.MethodDoc;
-import org.sdproject.api.documentation.ResponseDoc;
+import org.sdproject.api.documentation.*;
 import org.sdproject.api.structures.User;
 
 public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod {
@@ -16,11 +13,7 @@ public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod {
     }
 
     @MethodDoc(name = "Get Current User", description = "Returns the information of the current logged-in {structure:User}.")
-    @HeaderDoc(
-            name = "Authorization",
-            type = String.class,
-            description = "Session token of the logged-in user. See {endpoint:POST /users/session}."
-    )
+    @HeaderUserAuthDoc
     @ResponseDoc("A {structure:User} object without the `password` and `salt` fields.")
     @CodeDoc(code = HttpStatus.OK, reason = "Successfully retrieved the user.")
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in.")

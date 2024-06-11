@@ -19,11 +19,7 @@ public class ShipmentsStatusEndpoint extends Endpoint implements Endpoint.PostMe
     @MethodDoc(name = "Update Shipment Status", description = "Update the specified {structure:Shipment}'s status. "
             + "Must follow the same order provided by {structure:StatusHistory}."
     )
-    @HeaderDoc(
-            name = "Authorization",
-            type = String.class,
-            description = "Session token of the logged in admin. See {endpoint:POST /admins/session}."
-    )
+    @HeaderAdminAuthDoc
     @QueryDoc(key = "id", type = String.class, description = "The shipment's tracking id.")
     @BodyDoc(
             name = "new_status",

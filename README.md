@@ -143,7 +143,7 @@ GET /admins
 
 | Name          | Type   | Description                                                                        |
 |---------------|--------|------------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged in admin. See [POST /admins/session](#login-as-admin). |
+| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
 
 #### Request Query Parameters
 
@@ -210,7 +210,7 @@ DELETE /admins/session
 
 | Name          | Type   | Description                                                                        |
 |---------------|--------|------------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged in admin. See [POST /admins/session](#login-as-admin). |
+| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
 
 #### Response Codes
 
@@ -345,7 +345,7 @@ DELETE /shipments
 
 | Name          | Type   | Description                                                                        |
 |---------------|--------|------------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged in admin. See [POST /admins/session](#login-as-admin). |
+| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
 
 #### Request Query Parameters
 
@@ -376,7 +376,7 @@ POST /shipments/status
 
 | Name          | Type   | Description                                                                        |
 |---------------|--------|------------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged in admin. See [POST /admins/session](#login-as-admin). |
+| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
 
 #### Request Query Parameters
 
@@ -414,7 +414,7 @@ GET /users
 
 | Name          | Type   | Description                                                                        |
 |---------------|--------|------------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged in admin. See [POST /admins/session](#login-as-admin). |
+| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
 
 #### Request Query Parameters
 
@@ -563,7 +563,7 @@ DELETE /users/session
 
 | Name          | Type   | Description                                                                     |
 |---------------|--------|---------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged in user. See [POST /users/session](#login-as-user). |
+| Authorization | string | Session token of the logged-in user. See [POST /users/session](#login-as-user). |
 
 #### Response Codes
 
@@ -586,7 +586,7 @@ POST /users/verify_id
 
 | Name          | Type   | Description                                                                     |
 |---------------|--------|---------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged in user. See [POST /users/session](#login-as-user). |
+| Authorization | string | Session token of the logged-in user. See [POST /users/session](#login-as-user). |
 
 #### Request Query Parameters
 

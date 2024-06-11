@@ -32,11 +32,7 @@ public class UsersVerifyIdEndpoint extends Endpoint implements Endpoint.PostMeth
             name = "Verify User Identity",
             description = "Verify a user's ID by reading the QR code at the back of it. Will not process images bigger than 1MB."
     )
-    @HeaderDoc(
-            name = "Authorization",
-            type = String.class,
-            description = "Session token of the logged in user. See {endpoint:POST /users/session}."
-    )
+    @HeaderUserAuthDoc
     @QueryDoc(key = "rut", type = String.class, description = "RUT of the user to verify.")
     @BodyDoc(name = "data", type = String.class, description = "Image encoded in base64 format.")
     @CodeDoc(code = HttpStatus.OK, reason = "Successfully verified the user's identity.")

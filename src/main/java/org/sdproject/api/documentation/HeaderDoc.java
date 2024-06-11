@@ -8,6 +8,8 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface HeaderDoc {
     String name();
+
     Class<?> type();
+
     String description();
 }

@@ -51,11 +51,7 @@ public class AdminsSessionEndpoint extends Endpoint implements Endpoint.PostMeth
     }
 
     @MethodDoc(name = "Logout from Admin Session", description = "Revoke admin session token.")
-    @HeaderDoc(
-            name = "Authorization",
-            type = String.class,
-            description = "Session token of the logged in admin. See {endpoint:POST /admins/session}."
-    )
+    @HeaderAdminAuthDoc
     @CodeDoc(code = HttpStatus.NO_CONTENT, reason = "Successfully revoked session token.")
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in.")
     @Override

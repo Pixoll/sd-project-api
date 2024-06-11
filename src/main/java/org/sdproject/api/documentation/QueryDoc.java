@@ -8,6 +8,8 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface QueryDoc {
     String key();
+
     Class<?> type();
+
     String description();
 }
