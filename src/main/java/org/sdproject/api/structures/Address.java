@@ -86,7 +86,7 @@ public class Address implements Structure {
 
     @Override
     public String toString() {
-        return Address.class.getSimpleName() + " " + this.toJSON().toString(2);
+        return this.getClass().getSimpleName() + " " + this.toJSON().toString(2);
     }
 
     public enum Field {

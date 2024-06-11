@@ -229,7 +229,7 @@ public class Shipment implements Structure {
 
     @Override
     public String toString() {
-        return Shipment.class.getSimpleName() + " " + this.toJSON().toString(2);
+        return this.getClass().getSimpleName() + " " + this.toJSON().toString(2);
     }
 
     public enum Field {

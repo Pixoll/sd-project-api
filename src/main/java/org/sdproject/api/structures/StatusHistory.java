@@ -39,6 +39,11 @@ public class StatusHistory implements Structure {
         }
     }
 
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + " " + this.toJSON().toString(2);
+    }
+
     public enum Field {
         STATUS("status"),
         TIMESTAMP("timestamp");
