@@ -71,9 +71,9 @@ public class UsersSessionEndpoint extends Endpoint implements Endpoint.PostMetho
     @Override
     public void delete(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
-        if (authData == null || authData.type() != SessionTokenManager.TokenType.USER) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in.");
             return;
+        if (authData == null || !authData.isUser()) {
         }
 
         SessionTokenManager.revokeToken(SessionTokenManager.TokenType.USER, authData.rut());

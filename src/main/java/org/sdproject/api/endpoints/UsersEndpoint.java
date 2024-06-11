@@ -7,7 +7,6 @@ import io.javalin.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
-import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.*;
 import org.sdproject.api.structures.User;
@@ -50,9 +49,9 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
     @Override
     public void get(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
-        if (authData == null || authData.type() != SessionTokenManager.TokenType.ADMIN) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
             return;
+        if (authData == null || !authData.isAdmin()) {
         }
 
         final String rut = ctx.queryParam("rut");
@@ -147,9 +146,9 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
     @Override
     public void delete(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
-        if (authData == null || authData.type() != SessionTokenManager.TokenType.USER) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in.");
             return;
+        if (authData == null || !authData.isUser()) {
         }
 
         final User user = DatabaseConnection.getUsersCollection()

@@ -7,7 +7,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
-import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.structures.Shipment;
 import org.sdproject.api.structures.ValidationException;
 
@@ -96,9 +95,9 @@ public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, E
     @Override
     public void delete(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
-        if (authData == null || authData.type() != SessionTokenManager.TokenType.ADMIN) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
             return;
+        if (authData == null || !authData.isAdmin()) {
         }
 
         final String id = ctx.queryParam("id");

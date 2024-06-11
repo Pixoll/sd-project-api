@@ -4,7 +4,6 @@ import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import org.sdproject.api.DatabaseConnection;
-import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.documentation.*;
 import org.sdproject.api.structures.Admin;
 
@@ -28,9 +27,9 @@ public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod {
     @Override
     public void get(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
-        if (authData == null || authData.type() != SessionTokenManager.TokenType.ADMIN) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
             return;
+        if (authData == null || !authData.isAdmin()) {
         }
 
         final String rut = ctx.queryParam("rut");

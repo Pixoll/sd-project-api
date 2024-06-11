@@ -71,9 +71,9 @@ public class AdminsSessionEndpoint extends Endpoint implements Endpoint.PostMeth
     @Override
     public void delete(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
-        if (authData == null || authData.type() != SessionTokenManager.TokenType.ADMIN) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in.");
             return;
+        if (authData == null || !authData.isAdmin()) {
         }
 
         SessionTokenManager.revokeToken(SessionTokenManager.TokenType.ADMIN, authData.rut());

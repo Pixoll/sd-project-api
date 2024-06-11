@@ -4,7 +4,6 @@ import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import org.sdproject.api.DatabaseConnection;
-import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.documentation.CodeDoc;
 import org.sdproject.api.documentation.HeaderDoc;
 import org.sdproject.api.documentation.MethodDoc;
@@ -29,9 +28,9 @@ public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod {
     @Override
     public void get(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
-        if (authData == null || authData.type() != SessionTokenManager.TokenType.USER) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in.");
             return;
+        if (authData == null || !authData.isUser()) {
         }
 
         final User user = DatabaseConnection.getUsersCollection()

@@ -14,7 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
-import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.structures.User;
 
 import javax.imageio.ImageIO;
@@ -50,9 +49,9 @@ public class UsersVerifyIdEndpoint extends Endpoint implements Endpoint.PostMeth
     @Override
     public void post(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
-        if (authData == null || authData.type() != SessionTokenManager.TokenType.USER) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in.");
             return;
+        if (authData == null || !authData.isUser()) {
         }
 
         final MongoCollection<User> usersCollection = DatabaseConnection.getUsersCollection();

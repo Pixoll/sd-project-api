@@ -81,5 +81,12 @@ public abstract class Endpoint {
     }
 
     protected record AuthorizationData(SessionTokenManager.TokenType type, String rut) {
+        public boolean isAdmin() {
+            return this.type == SessionTokenManager.TokenType.ADMIN;
+        }
+
+        public boolean isUser() {
+            return this.type == SessionTokenManager.TokenType.USER;
+        }
     }
 }

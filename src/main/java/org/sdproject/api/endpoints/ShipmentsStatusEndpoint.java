@@ -7,7 +7,6 @@ import io.javalin.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
-import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.*;
 import org.sdproject.api.structures.Shipment;
@@ -40,9 +39,9 @@ public class ShipmentsStatusEndpoint extends Endpoint implements Endpoint.PostMe
     @Override
     public void post(Context ctx) {
         final AuthorizationData authData = getAuthorizationData(ctx);
-        if (authData == null || authData.type() != SessionTokenManager.TokenType.ADMIN) {
             sendError(ctx, HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
             return;
+        if (authData == null || !authData.isAdmin()) {
         }
 
         final String id = ctx.queryParam("id");
