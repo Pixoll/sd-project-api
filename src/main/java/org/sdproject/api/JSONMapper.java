@@ -1,10 +1,12 @@
 package org.sdproject.api;
 
+import io.javalin.http.HttpStatus;
 import io.javalin.json.JsonMapper;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sdproject.api.endpoints.EndpointException;
 import org.sdproject.api.structures.Structure;
 
 import java.lang.reflect.Type;
@@ -29,6 +31,12 @@ public class JSONMapper implements JsonMapper {
     @NotNull
     @Override
     public <T> T fromJsonString(@NotNull String json, @NotNull Type targetType) {
-        return (T) new JSONObject(json);
+        try {
+            return (T) new JSONObject(json);
+        } catch (JSONException e) {
+            throw new RuntimeException(
+                    new EndpointException(HttpStatus.BAD_REQUEST, "Invalid request body: " + e.getMessage())
+            );
+        }
     }
 }
