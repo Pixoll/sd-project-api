@@ -56,7 +56,7 @@ Error messages are given in a JSON format with both the `code` and a human-reada
 | Field     | Type    | Description                                    |
 |-----------|---------|------------------------------------------------|
 | region    | string  | The region.                                    |
-| city      | string  | The city or commune.                           |
+| commune   | string  | The commune.                                   |
 | street    | string  | The street name.                               |
 | number    | integer | The street number.                             |
 | secondary | ?string | Secondary information like apartment building. |

@@ -13,8 +13,8 @@ public class Address extends Structure implements UpdatableStructure {
     @FieldDoc(description = "The region.")
     public String region;
 
-    @FieldDoc(description = "The city or commune.")
-    public String city;
+    @FieldDoc(description = "The commune.")
+    public String commune;
 
     @FieldDoc(description = "The street name.")
     public String street;
@@ -30,7 +30,7 @@ public class Address extends Structure implements UpdatableStructure {
 
     public Address(JSONObject json, @Nonnull String parentName) throws ValidationException {
         this.region = json.optString(Field.REGION.name, null);
-        this.city = json.optString(Field.CITY.name, null);
+        this.commune = json.optString(Field.COMMUNE.name, null);
         this.street = json.optString(Field.STREET.name, null);
         this.number = json.optIntegerObject(Field.NUMBER.name, null);
         this.secondary = json.optString(Field.SECONDARY.name, null);
@@ -41,7 +41,7 @@ public class Address extends Structure implements UpdatableStructure {
     @Override
     public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
         this.region = json.optString(Field.REGION.name, this.region);
-        this.city = json.optString(Field.CITY.name, this.city);
+        this.commune = json.optString(Field.COMMUNE.name, this.commune);
         this.street = json.optString(Field.STREET.name, this.street);
         this.number = json.optIntegerObject(Field.NUMBER.name, this.number);
         this.secondary = json.optString(Field.SECONDARY.name, this.secondary);
@@ -53,7 +53,7 @@ public class Address extends Structure implements UpdatableStructure {
     public JSONObject toJSON() {
         return new JSONObject()
                 .put(Field.REGION.name, this.region)
-                .put(Field.CITY.name, this.city)
+                .put(Field.COMMUNE.name, this.commune)
                 .put(Field.STREET.name, this.street)
                 .put(Field.NUMBER.name, this.number)
                 .put(Field.SECONDARY.name, this.secondary != null ? this.secondary : JSONObject.NULL);
@@ -76,15 +76,15 @@ public class Address extends Structure implements UpdatableStructure {
             throw new ValidationException(keyPrefix + Field.REGION.name, "Invalid address region name.");
         }
 
-        if (this.city == null || this.city.isEmpty()) {
-            throw new ValidationException(keyPrefix + Field.CITY.name, "Address city or commune name cannot be empty.");
+        if (this.commune == null || this.commune.isEmpty()) {
+            throw new ValidationException(keyPrefix + Field.COMMUNE.name, "Address commune name cannot be empty.");
         }
 
-        final boolean invalidCity = Util.jsonArrayToList(region.getJSONArray("communes"), String.class)
+        final boolean invalidCommune = Util.jsonArrayToList(region.getJSONArray("communes"), String.class)
                 .stream()
-                .noneMatch(c -> c.equalsIgnoreCase(this.city));
-        if (invalidCity) {
-            throw new ValidationException(keyPrefix + Field.CITY.name, "Invalid address city or commune name.");
+                .noneMatch(c -> c.equalsIgnoreCase(this.commune));
+        if (invalidCommune) {
+            throw new ValidationException(keyPrefix + Field.COMMUNE.name, "Invalid address commune name.");
         }
 
         if (this.street == null || this.street.isEmpty()) {
@@ -107,7 +107,7 @@ public class Address extends Structure implements UpdatableStructure {
 
     public enum Field {
         REGION("region"),
-        CITY("city"),
+        COMMUNE("commune"),
         STREET("street"),
         NUMBER("number"),
         SECONDARY("secondary");
