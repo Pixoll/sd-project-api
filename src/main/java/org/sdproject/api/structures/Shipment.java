@@ -93,18 +93,7 @@ public class Shipment extends Structure {
         this.deliveryTimestamp = json.optLongObject(Field.DELIVERY_TIMESTAMP.name, null);
 
         this.statusHistory = new ArrayList<>();
-        final List<JSONObject> jsonStatusHistories = Util.jsonArrayToList(
-                json.optJSONArray(Field.STATUS_HISTORY.name, new JSONArray()),
-                JSONObject.class
-        );
-
-        for (int i = 0; i < jsonStatusHistories.size(); i++) {
-            final JSONObject jsonStatusHistory = jsonStatusHistories.get(i);
-            this.statusHistory.add(new StatusHistory(
-                    jsonStatusHistory,
-                    Field.STATUS_HISTORY.name + "[" + i + "]"
-            ));
-        }
+        this.statusHistory.add(new StatusHistory(StatusHistory.Status.PENDING));
 
         this.shippingType = Util.stringToEnum(json.optString(Field.SHIPPING_TYPE.name, null), Type.class);
         this.pendingPayment = json.optBooleanObject(Field.PENDING_PAYMENT.name, null);
