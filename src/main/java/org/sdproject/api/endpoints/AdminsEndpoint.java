@@ -10,6 +10,8 @@ import org.sdproject.api.documentation.*;
 import org.sdproject.api.structures.Admin;
 import org.sdproject.api.structures.ValidationException;
 
+import java.util.Date;
+
 public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod, Endpoint.PatchMethod {
     public AdminsEndpoint() {
         super("/admins");
@@ -59,20 +61,20 @@ public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod, Endp
             throw new EndpointException(HttpStatus.BAD_REQUEST, "Admin does not exist.");
         }
 
-        final Admin newAdmin = (Admin) admin.clone();
+        final Date updatedAt = admin.updatedAt;
 
         try {
-            newAdmin.updateFromJSON(body);
+            admin.updateFromJSON(body);
         } catch (ValidationException e) {
             throw new EndpointException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
-        if (admin.jsonEquals(newAdmin)) {
+        if (updatedAt.compareTo(admin.updatedAt) == 0) {
             ctx.status(HttpStatus.NOT_MODIFIED);
             return;
         }
 
-        adminsCollection.replaceOne(Filters.eq(Admin.Field.RUT.raw, admin.rut), newAdmin);
-        ctx.status(HttpStatus.OK).json(newAdmin);
+        adminsCollection.replaceOne(Filters.eq(Admin.Field.RUT.raw, admin.rut), admin);
+        ctx.status(HttpStatus.OK).json(admin);
     }
 }

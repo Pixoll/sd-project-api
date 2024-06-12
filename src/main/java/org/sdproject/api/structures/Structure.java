@@ -22,8 +22,9 @@ public abstract class Structure implements Cloneable {
         return other.toJSON().toString().equals(this.toJSON().toString());
     }
 
+    @SuppressWarnings("CloneDoesntDeclareCloneNotSupportedException")
     @Override
-    public Structure clone() {
+    protected Structure clone() {
         try {
             final Structure structure = (Structure) super.clone();
 
