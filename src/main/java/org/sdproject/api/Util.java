@@ -3,7 +3,6 @@ package org.sdproject.api;
 import com.google.common.hash.Hashing;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.sdproject.api.structures.ValidationException;
 
 import javax.annotation.Nullable;
 import java.io.File;

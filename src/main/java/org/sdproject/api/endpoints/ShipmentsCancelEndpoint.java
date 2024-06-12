@@ -2,7 +2,6 @@ package org.sdproject.api.endpoints;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import org.sdproject.api.DatabaseConnection;
