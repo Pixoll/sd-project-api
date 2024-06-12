@@ -543,70 +543,6 @@ A [user](#user-object) object without the `salt`, `verified`, `created_timestamp
 | 400 Bad Request | Malformed user structure.                                         |
 | 409 Conflict    | A user with that `rut`, `email` or `phone` number already exists. |
 
-### Update User
-
-Update the information of the current logged-in [user](#user-object).
-
-#### URL
-
-```
-PATCH /users
-```
-
-#### Request Headers
-
-| Name          | Type   | Description                                                                     |
-|---------------|--------|---------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged-in user. See [POST /users/session](#login-as-user). |
-
-#### Request Body
-
-A partial [user](#user-object) object with the information to update.
-
-#### Response Body
-
-The updated [user](#user-object), if any information was successfully modified.
-
-#### Response Codes
-
-| HTTP Code        | Reason                  |
-|------------------|-------------------------|
-| 200 OK           | Successfully updated.   |
-| 304 Not Modified | Nothing was modified.   |
-| 400 Bad Request  | Malformed request body. |
-| 401 Unauthorized | Not logged in.          |
-| 404 Not Found    | User does not exist.    |
-
-### Delete User
-
-Delete the [user](#user-object)'s account.
-
-#### URL
-
-```
-DELETE /users
-```
-
-#### Request Headers
-
-| Name          | Type   | Description                                                                     |
-|---------------|--------|---------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged-in user. See [POST /users/session](#login-as-user). |
-
-#### Request Query Parameters
-
-| Name | Type   | Description      |
-|------|--------|------------------|
-| rut  | string | RUT of the user. |
-
-#### Response Codes
-
-| HTTP Code        | Reason                         |
-|------------------|--------------------------------|
-| 204 No Content   | Successfully deleted the user. |
-| 401 Unauthorized | Not logged in.                 |
-| 404 Not Found    | User does not exist.           |
-
 ### Get Current User
 
 Returns the information of the current logged-in [user](#user-object).
@@ -634,6 +570,70 @@ A [user](#user-object) object without the `password` and `salt` fields.
 | 200 OK           | Successfully retrieved the user. |
 | 401 Unauthorized | Not logged in.                   |
 | 404 Not Found    | User does not exist.             |
+
+### Update Current User
+
+Update the information of the current logged-in [user](#user-object).
+
+#### URL
+
+```
+PATCH /users/me
+```
+
+#### Request Headers
+
+| Name          | Type   | Description                                                                     |
+|---------------|--------|---------------------------------------------------------------------------------|
+| Authorization | string | Session token of the logged-in user. See [POST /users/session](#login-as-user). |
+
+#### Request Body
+
+A partial [user](#user-object) object with the information to update.
+
+#### Response Body
+
+The updated [user](#user-object), if any information was successfully modified.
+
+#### Response Codes
+
+| HTTP Code        | Reason                  |
+|------------------|-------------------------|
+| 200 OK           | Successfully updated.   |
+| 304 Not Modified | Nothing was modified.   |
+| 400 Bad Request  | Malformed request body. |
+| 401 Unauthorized | Not logged in.          |
+| 404 Not Found    | User does not exist.    |
+
+### Delete Current User
+
+Delete the [user](#user-object)'s account.
+
+#### URL
+
+```
+DELETE /users/me
+```
+
+#### Request Headers
+
+| Name          | Type   | Description                                                                     |
+|---------------|--------|---------------------------------------------------------------------------------|
+| Authorization | string | Session token of the logged-in user. See [POST /users/session](#login-as-user). |
+
+#### Request Query Parameters
+
+| Name | Type   | Description      |
+|------|--------|------------------|
+| rut  | string | RUT of the user. |
+
+#### Response Codes
+
+| HTTP Code        | Reason                         |
+|------------------|--------------------------------|
+| 204 No Content   | Successfully deleted the user. |
+| 401 Unauthorized | Not logged in.                 |
+| 404 Not Found    | User does not exist.           |
 
 ### Login as User
 
