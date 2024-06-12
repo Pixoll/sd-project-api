@@ -174,6 +174,40 @@ An [admin](#admin-object) object without the `password` and `salt` fields.
 | 401 Unauthorized | Not logged in as an admin.               |
 | 404 Not Found    | Admin does not exist.                    |
 
+### Update Admin
+
+Update the information of the current logged-in [admin](#admin-object).
+
+#### URL
+
+```
+PATCH /admins
+```
+
+#### Request Headers
+
+| Name          | Type   | Description                                                                        |
+|---------------|--------|------------------------------------------------------------------------------------|
+| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
+
+#### Request Body
+
+A partial [admin](#admin-object) object with the information to update.
+
+#### Response Body
+
+The updated [admin](#admin-object), if any information was successfully modified.
+
+#### Response Codes
+
+| HTTP Code        | Reason                     |
+|------------------|----------------------------|
+| 200 OK           | Successfully updated.      |
+| 304 Not Modified | Nothing was modified.      |
+| 400 Bad Request  | Malformed request body.    |
+| 401 Unauthorized | Not logged in as an admin. |
+| 404 Not Found    | Admin does not exist.      |
+
 ### Login as Admin
 
 Verify admin login credentials.

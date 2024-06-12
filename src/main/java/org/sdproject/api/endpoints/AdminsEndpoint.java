@@ -47,6 +47,15 @@ public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod, Endp
         ctx.status(HttpStatus.OK).json(admin);
     }
 
+    @MethodDoc(name = "Update Admin", description = "Update the information of the current logged-in {structure:Admin}.")
+    @HeaderAdminAuthDoc
+    @BodyDoc("A partial {structure:Admin} object with the information to update.")
+    @ResponseDoc("The updated {structure:Admin}, if any information was successfully modified.")
+    @CodeDoc(code = HttpStatus.OK, reason = "Successfully updated.")
+    @CodeDoc(code = HttpStatus.NOT_MODIFIED, reason = "Nothing was modified.")
+    @CodeDoc(code = HttpStatus.BAD_REQUEST, reason = "Malformed request body.")
+    @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in as an admin.")
+    @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "Admin does not exist.")
     @Override
     public void patch(Context ctx) throws EndpointException {
         final JSONObject body = ctx.bodyAsClass(JSONObject.class);
@@ -58,7 +67,7 @@ public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod, Endp
         final MongoCollection<Admin> adminsCollection = DatabaseConnection.getAdminsCollection();
         final Admin admin = adminsCollection.find(Filters.eq(Admin.Field.RUT.raw, authData.rut())).first();
         if (admin == null) {
-            throw new EndpointException(HttpStatus.BAD_REQUEST, "Admin does not exist.");
+            throw new EndpointException(HttpStatus.NOT_FOUND, "Admin does not exist.");
         }
 
         final Date updatedAt = admin.updatedAt;
