@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.documentation.*;
+import org.sdproject.api.structures.Shipment;
 import org.sdproject.api.structures.User;
 import org.sdproject.api.structures.ValidationException;
 
@@ -89,6 +90,7 @@ public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod, End
     @CodeDoc(code = HttpStatus.NO_CONTENT, reason = "Successfully deleted the user.")
     @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in.")
     @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "User does not exist.")
+    @CodeDoc(code = HttpStatus.CONFLICT, reason = "Cannot delete account as it has active shipments associated.")
     @Override
     public void delete(Context ctx) throws EndpointException {
         final AuthorizationData authData = getAuthorizationData(ctx);
@@ -96,13 +98,27 @@ public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod, End
             throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in.");
         }
 
-        final User user = DatabaseConnection.getUsersCollection()
-                .findOneAndDelete(Filters.eq(User.Field.RUT.raw, authData.rut()));
+        final MongoCollection<User> usersCollection = DatabaseConnection.getUsersCollection();
+        final User user = usersCollection.find(Filters.eq(User.Field.RUT.raw, authData.rut())).first();
         if (user == null) {
             SessionTokenManager.revokeToken(authData.type(), authData.rut());
             throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
 
+        final long activeShipments = DatabaseConnection.getShipmentsCollection().countDocuments(Filters.and(
+                Filters.or(
+                        Filters.eq(Shipment.Field.SENDER_RUT.raw, authData.rut()),
+                        Filters.eq(Shipment.Field.RECIPIENT_RUT.raw, authData.rut())
+                ),
+                Filters.eq(Shipment.Field.CANCELLED.raw, false),
+                Filters.eq(Shipment.Field.COMPLETED.raw, false)
+        ));
+
+        if (activeShipments > 0) {
+            throw new EndpointException(HttpStatus.CONFLICT, "Cannot delete account as it has active shipments associated.");
+        }
+
+        usersCollection.deleteOne(Filters.eq(User.Field.RUT.raw, authData.rut()));
         ctx.status(HttpStatus.NO_CONTENT);
     }
 }

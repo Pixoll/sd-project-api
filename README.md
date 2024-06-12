@@ -594,11 +594,12 @@ DELETE /users/me
 
 #### Response Codes
 
-| HTTP Code        | Reason                         |
-|------------------|--------------------------------|
-| 204 No Content   | Successfully deleted the user. |
-| 401 Unauthorized | Not logged in.                 |
-| 404 Not Found    | User does not exist.           |
+| HTTP Code        | Reason                                                       |
+|------------------|--------------------------------------------------------------|
+| 204 No Content   | Successfully deleted the user.                               |
+| 401 Unauthorized | Not logged in.                                               |
+| 404 Not Found    | User does not exist.                                         |
+| 409 Conflict     | Cannot delete account as it has active shipments associated. |
 
 ### Login as User
 
