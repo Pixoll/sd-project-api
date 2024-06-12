@@ -50,10 +50,8 @@ public class ShipmentsCancelEndpoint extends Endpoint implements Endpoint.PatchM
             throw new EndpointException(HttpStatus.CONFLICT, "Shipment is already marked as cancelled.");
         }
 
-        shipmentCollection.updateOne(
-                Filters.eq(Shipment.Field.ID.raw, id),
-                Updates.set(Shipment.Field.CANCELLED.raw, true)
-        );
+        shipment.markAsCancelled();
+        shipmentCollection.replaceOne(Filters.eq(Shipment.Field.ID.raw, id), shipment);
 
         ctx.status(HttpStatus.OK);
     }

@@ -169,7 +169,16 @@ public class Shipment extends Structure implements UpdatableStructure {
     public boolean updateStatus(StatusHistory.Status status) {
         //noinspection ComparatorResultComparison
         if (status.compareTo(this.currentStatus()) != 1) return false;
-        return this.statusHistory.add(new StatusHistory(status));
+
+        final boolean added = this.statusHistory.add(new StatusHistory(status));
+        if (added) this.updatedAt = new Date();
+
+        return added;
+    }
+
+    public void markAsCancelled() {
+        this.cancelled = true;
+        this.updatedAt = new Date();
     }
 
     @Override
