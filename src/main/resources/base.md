@@ -39,7 +39,7 @@ Error messages are given in a JSON format with both the `code` and a human-reada
 
 - Resource fields that may contain a null value have types that are prefixed with a question mark.
 - Resource fields that are optional have names that are suffixed with a question mark.
-- Resource fields that are readonly (i.e. will be ignored in PATCH or PUT requests) are _italicized_.
+- Resource fields that are readonly (i.e. will be ignored in PATCH and PUT requests) are _italicized_.
 - Resource fields that are generated (i.e. will be ignored in POST requests) are **bolded**.
 
 | Field                              | Type             |
