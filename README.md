@@ -107,6 +107,7 @@ Fields in this structure cannot be updated at all.
 | _home_pickup_            | boolean                                                      | Whether the packages are being picked up at the sender's address.  |
 | _home_delivery_          | boolean                                                      | Whether the packages are being shipped to the recipient's address. |
 | _packages_               | array of [package](#package-object) objects                  | All the packages being shipped.                                    |
+| _**cancelled**_          | boolean                                                      | Whether this shipment was cancelled.                               |
 | _**created_timestamp**_  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                                       |
 | _**updated_timestamp**_  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                                  |
 
@@ -319,6 +320,38 @@ Contents of [/static/regions_communes.json](/static/regions_communes.json).
 |-----------|------------------------------------------|
 | 200 OK    | Successfully retrieved the regions list. |
 
+### Mark Shipment as Cancelled
+
+Mark the [shipment](#shipment-object) matching the provided tracking `id` as cancelled.
+
+#### URL
+
+```
+PATCH /shipments/cancel
+```
+
+#### Request Headers
+
+| Name          | Type   | Description                                                                        |
+|---------------|--------|------------------------------------------------------------------------------------|
+| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
+
+#### Request Query Parameters
+
+| Name | Type   | Description                 |
+|------|--------|-----------------------------|
+| id   | string | The shipment's tracking id. |
+
+#### Response Codes
+
+| HTTP Code        | Reason                                         |
+|------------------|------------------------------------------------|
+| 204 No Content   | Successfully marked the shipment as cancelled. |
+| 400 Bad Request  | Did not provide tracking `id`.                 |
+| 401 Unauthorized | Not logged in as an admin.                     |
+| 404 Not Found    | Shipment does not exist.                       |
+| 409 Conflict     | Shipment is already marked as cancelled.       |
+
 ### Get Shipment
 
 Returns a [shipment](#shipment-object) for the given tracking `id`.
@@ -414,37 +447,6 @@ The updated [shipment](#shipment-object), if any information was successfully mo
 | 400 Bad Request  | Malformed request body.    |
 | 401 Unauthorized | Not logged in as an admin. |
 | 404 Not Found    | Shipment does not exist.   |
-
-### Delete Shipment
-
-Delete the [shipment](#shipment-object) matching the provided tracking `id`.
-
-#### URL
-
-```
-DELETE /shipments
-```
-
-#### Request Headers
-
-| Name          | Type   | Description                                                                        |
-|---------------|--------|------------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
-
-#### Request Query Parameters
-
-| Name | Type   | Description                 |
-|------|--------|-----------------------------|
-| id   | string | The shipment's tracking id. |
-
-#### Response Codes
-
-| HTTP Code        | Reason                             |
-|------------------|------------------------------------|
-| 204 No Content   | Successfully deleted the shipment. |
-| 400 Bad Request  | Did not provide tracking `id`.     |
-| 401 Unauthorized | Not logged in as an admin.         |
-| 404 Not Found    | Shipment does not exist.           |
 
 ### Update Shipment Status
 

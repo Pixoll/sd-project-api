@@ -106,6 +106,9 @@ public class Shipment extends Structure implements UpdatableStructure {
     @FieldDoc(description = "All the packages being shipped.", readonly = true)
     public ArrayList<Package> packages;
 
+    @FieldDoc(description = "Whether this shipment was cancelled.", readonly = true, generated = true)
+    public boolean cancelled;
+
     @BsonProperty("created_at")
     @FieldDoc(isCreatedTimestamp = true)
     public Date createdAt;
@@ -151,6 +154,7 @@ public class Shipment extends Structure implements UpdatableStructure {
             this.packages.add(new Package(jsonPackage, Field.PACKAGES.name + "[" + i + "]"));
         }
 
+        this.cancelled = false;
         this.createdAt = new Date();
         this.updatedAt = new Date();
 
@@ -201,6 +205,7 @@ public class Shipment extends Structure implements UpdatableStructure {
                 .put(Field.PACKAGES.name, new JSONArray(
                         this.packages.stream().map(Package::toJSON).toList()
                 ))
+                .put(Field.CANCELLED.name, this.cancelled)
                 .put(Field.CREATED_TIMESTAMP.name, this.createdAt.getTime())
                 .put(Field.UPDATED_TIMESTAMP.name, this.updatedAt.getTime());
     }
@@ -330,6 +335,7 @@ public class Shipment extends Structure implements UpdatableStructure {
         HOME_PICKUP("home_pickup"),
         HOME_DELIVERY("home_delivery"),
         PACKAGES("packages"),
+        CANCELLED("cancelled"),
         CREATED_TIMESTAMP("created_at"),
         UPDATED_TIMESTAMP("updated_at");
 

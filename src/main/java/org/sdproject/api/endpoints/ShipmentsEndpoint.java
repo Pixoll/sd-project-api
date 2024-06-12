@@ -7,15 +7,12 @@ import io.javalin.http.HttpStatus;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
-import org.sdproject.api.structures.Admin;
 import org.sdproject.api.structures.Shipment;
 import org.sdproject.api.structures.ValidationException;
 
 import java.util.Date;
 
-public class ShipmentsEndpoint
-        extends Endpoint
-        implements Endpoint.GetMethod, Endpoint.PostMethod, Endpoint.PatchMethod, Endpoint.DeleteMethod {
+public class ShipmentsEndpoint extends Endpoint implements Endpoint.GetMethod, Endpoint.PostMethod, Endpoint.PatchMethod {
     public ShipmentsEndpoint() {
         super("/shipments");
     }
@@ -117,33 +114,5 @@ public class ShipmentsEndpoint
 
         shipmentsCollection.replaceOne(Filters.eq(Shipment.Field.ID.raw, id), shipment);
         ctx.status(HttpStatus.OK).json(shipment);
-    }
-
-    @MethodDoc(name = "Delete Shipment", description = "Delete the {structure:Shipment} matching the provided tracking `id`.")
-    @HeaderAdminAuthDoc
-    @QueryDoc(key = "id", type = String.class, description = "The shipment's tracking id.")
-    @CodeDoc(code = HttpStatus.NO_CONTENT, reason = "Successfully deleted the shipment.")
-    @CodeDoc(code = HttpStatus.BAD_REQUEST, reason = "Did not provide tracking `id`.")
-    @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in as an admin.")
-    @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "Shipment does not exist.")
-    @Override
-    public void delete(Context ctx) throws EndpointException {
-        final AuthorizationData authData = getAuthorizationData(ctx);
-        if (authData == null || !authData.isAdmin()) {
-            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
-        }
-
-        final String id = ctx.queryParam("id");
-        if (id == null || id.isEmpty()) {
-            throw new EndpointException(HttpStatus.BAD_REQUEST, "Expected shipment id in the query.");
-        }
-
-        final Shipment shipment = DatabaseConnection.getShipmentsCollection()
-                .findOneAndDelete(Filters.eq(Shipment.Field.ID.raw, id));
-        if (shipment == null) {
-            throw new EndpointException(HttpStatus.NOT_FOUND, "Shipment does not exist.");
-        }
-
-        ctx.status(HttpStatus.NO_CONTENT);
     }
 }
