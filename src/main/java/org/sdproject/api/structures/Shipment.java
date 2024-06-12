@@ -49,11 +49,21 @@ public class Shipment extends Structure implements UpdatableStructure {
     public Address destinationAddress;
 
     @BsonProperty("dispatch_timestamp")
-    @FieldDoc(jsonKey = "dispatch_timestamp", description = "When the shipment was picked up from the source address.")
+    @FieldDoc(
+            jsonKey = "dispatch_timestamp",
+            description = "When the shipment was picked up from the source address.",
+            readonly = true,
+            generated = true
+    )
     public @Nullable Long dispatchTimestamp;
 
     @BsonProperty("delivery_timestamp")
-    @FieldDoc(jsonKey = "delivery_timestamp", description = "When the shipment arrived to the destination address.")
+    @FieldDoc(
+            jsonKey = "delivery_timestamp",
+            description = "When the shipment arrived to the destination address.",
+            readonly = true,
+            generated = true
+    )
     public @Nullable Long deliveryTimestamp;
 
     @BsonProperty("status_history")
@@ -114,8 +124,8 @@ public class Shipment extends Structure implements UpdatableStructure {
                 json.optJSONObject(Field.DESTINATION_ADDRESS.name, new JSONObject()),
                 Field.DESTINATION_ADDRESS.name
         ) : null;
-        this.dispatchTimestamp = json.optLongObject(Field.DISPATCH_TIMESTAMP.name, null);
-        this.deliveryTimestamp = json.optLongObject(Field.DELIVERY_TIMESTAMP.name, null);
+        this.dispatchTimestamp = null;
+        this.deliveryTimestamp = null;
 
         this.statusHistory = new ArrayList<>();
         this.statusHistory.add(new StatusHistory(StatusHistory.Status.PENDING));
@@ -158,8 +168,6 @@ public class Shipment extends Structure implements UpdatableStructure {
         final Shipment original = (Shipment) this.clone();
 
         this.rutRecipient = json.optString(Field.RUT_RECIPIENT.name, this.rutRecipient);
-        this.dispatchTimestamp = json.optLongObject(Field.DISPATCH_TIMESTAMP.name, this.dispatchTimestamp);
-        this.deliveryTimestamp = json.optLongObject(Field.DELIVERY_TIMESTAMP.name, this.deliveryTimestamp);
 
         this.validate();
 
