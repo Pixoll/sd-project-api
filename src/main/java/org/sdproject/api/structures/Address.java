@@ -1,5 +1,6 @@
 package org.sdproject.api.structures;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
@@ -8,7 +9,7 @@ import org.sdproject.api.endpoints.RegionsEndpoint;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class Address extends Structure {
+public class Address extends Structure implements UpdateableStructure {
     @FieldDoc(description = "The region.")
     public String region;
 
@@ -33,6 +34,17 @@ public class Address extends Structure {
         this.street = json.optString(Field.STREET.name, null);
         this.number = json.optIntegerObject(Field.NUMBER.name, null);
         this.secondary = json.optString(Field.SECONDARY.name, null);
+
+        this.validate(parentName);
+    }
+
+    @Override
+    public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
+        this.region = json.optString(Field.REGION.name, this.region);
+        this.city = json.optString(Field.CITY.name, this.city);
+        this.street = json.optString(Field.STREET.name, this.street);
+        this.number = json.optIntegerObject(Field.NUMBER.name, this.number);
+        this.secondary = json.optString(Field.SECONDARY.name, this.secondary);
 
         this.validate(parentName);
     }

@@ -2,6 +2,7 @@ package org.sdproject.api.structures;
 
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
@@ -10,8 +11,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 
-public class Admin extends Structure {
-    @BsonId()
+public class Admin extends Structure implements UpdateableStructure {
+    @BsonId
     @FieldDoc(description = "The admin's RUT.")
     public String rut;
 
@@ -68,6 +69,34 @@ public class Admin extends Structure {
         this.updatedAt = new Date();
 
         this.validate();
+    }
+
+    @Override
+    public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
+        final Admin original = (Admin) this.clone();
+
+        this.firstName = json.optString(Field.FIRST_NAME.name, this.firstName);
+        this.secondName = json.optString(Field.SECOND_NAME.name, this.secondName);
+        this.firstLastName = json.optString(Field.FIRST_LAST_NAME.name, this.firstLastName);
+        this.secondLastName = json.optString(Field.SECOND_LAST_NAME.name, this.secondLastName);
+        this.email = json.optString(Field.EMAIL.name, this.email);
+        this.phone = json.optIntegerObject(Field.PHONE.name, this.phone);
+
+        final boolean updatePassword = json.has(Field.PASSWORD.name);
+        if (updatePassword) {
+            this.password = json.getString(Field.PASSWORD.name);
+        }
+
+        this.validate();
+
+        if (this.jsonEquals(original)) return;
+
+        this.updatedAt = new Date();
+
+        if (updatePassword) {
+            this.salt = Util.generateSalt();
+            this.password = Util.hashPassword(this.password, this.salt);
+        }
     }
 
     @Override

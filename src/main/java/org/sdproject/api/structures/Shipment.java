@@ -4,6 +4,7 @@ import com.mongodb.client.model.Filters;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
@@ -14,8 +15,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class Shipment extends Structure {
-    @BsonId()
+public class Shipment extends Structure implements UpdateableStructure {
+    @BsonId
     @FieldDoc(description = "The shipment id. Used for tracking.")
     public String id;
 
@@ -126,7 +127,36 @@ public class Shipment extends Structure {
         //noinspection ComparatorResultComparison
         if (status.compareTo(this.currentStatus()) != 1) return false;
         return this.statusHistory.add(new StatusHistory(status));
+    }
 
+    @Override
+    public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
+        final Shipment original = (Shipment) this.clone();
+
+        this.rutSender = json.optString(Field.RUT_SENDER.name, this.rutSender);
+        this.rutRecipient = json.optString(Field.RUT_RECIPIENT.name, this.rutRecipient);
+
+        if (json.has(Field.SOURCE_ADDRESS.name)) {
+            this.sourceAddress.updateFromJSON(
+                    json.optJSONObject(Field.SOURCE_ADDRESS.name, new JSONObject()),
+                    Field.SOURCE_ADDRESS.name
+            );
+        }
+
+        if (json.has(Field.DESTINATION_ADDRESS.name)) {
+            this.destinationAddress.updateFromJSON(
+                    json.optJSONObject(Field.DESTINATION_ADDRESS.name, new JSONObject()),
+                    Field.DESTINATION_ADDRESS.name
+            );
+        }
+
+        this.dispatchTimestamp = json.optLongObject(Field.DISPATCH_TIMESTAMP.name, this.dispatchTimestamp);
+        this.deliveryTimestamp = json.optLongObject(Field.DELIVERY_TIMESTAMP.name, this.deliveryTimestamp);
+        this.pendingPayment = json.optBooleanObject(Field.PENDING_PAYMENT.name, this.pendingPayment);
+
+        if (!this.jsonEquals(original)) {
+            this.updatedAt = new Date();
+        }
     }
 
     @Override

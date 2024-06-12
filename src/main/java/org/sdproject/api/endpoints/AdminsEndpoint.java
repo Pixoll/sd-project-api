@@ -1,13 +1,16 @@
 package org.sdproject.api.endpoints;
 
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
 import org.sdproject.api.structures.Admin;
+import org.sdproject.api.structures.ValidationException;
 
-public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod {
+public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod, Endpoint.PatchMethod {
     public AdminsEndpoint() {
         super("/admins");
     }
@@ -40,5 +43,36 @@ public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod {
         }
 
         ctx.status(HttpStatus.OK).json(admin);
+    }
+
+    @Override
+    public void patch(Context ctx) throws EndpointException {
+        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
+        final AuthorizationData authData = getAuthorizationData(ctx);
+        if (authData == null || !authData.isAdmin()) {
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in as an admin.");
+        }
+
+        final MongoCollection<Admin> adminsCollection = DatabaseConnection.getAdminsCollection();
+        final Admin admin = adminsCollection.find(Filters.eq(Admin.Field.RUT.raw, authData.rut())).first();
+        if (admin == null) {
+            throw new EndpointException(HttpStatus.BAD_REQUEST, "Admin does not exist.");
+        }
+
+        final Admin newAdmin = (Admin) admin.clone();
+
+        try {
+            newAdmin.updateFromJSON(body);
+        } catch (ValidationException e) {
+            throw new EndpointException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+
+        if (admin.jsonEquals(newAdmin)) {
+            ctx.status(HttpStatus.NOT_MODIFIED);
+            return;
+        }
+
+        adminsCollection.replaceOne(Filters.eq(Admin.Field.RUT.raw, admin.rut), newAdmin);
+        ctx.status(HttpStatus.OK).json(newAdmin);
     }
 }
