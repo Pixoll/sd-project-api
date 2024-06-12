@@ -375,6 +375,46 @@ A [shipment](#shipment-object) object without the `id`, `created_timestamp` and 
 | 400 Bad Request  | Malformed shipment structure.      |
 | 401 Unauthorized | Not logged in.                     |
 
+### Update Shipment
+
+Update the information of a [shipment](#shipment-object) by its tracking `id`.
+
+#### URL
+
+```
+PATCH /shipments
+```
+
+#### Request Headers
+
+| Name          | Type   | Description                                                                        |
+|---------------|--------|------------------------------------------------------------------------------------|
+| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
+
+#### Request Query Parameters
+
+| Name | Type   | Description                 |
+|------|--------|-----------------------------|
+| id   | string | The shipment's tracking id. |
+
+#### Request Body
+
+A partial [shipment](#shipment-object) object with the information to update.
+
+#### Response Body
+
+The updated [shipment](#shipment-object), if any information was successfully modified.
+
+#### Response Codes
+
+| HTTP Code        | Reason                     |
+|------------------|----------------------------|
+| 200 OK           | Successfully updated.      |
+| 304 Not Modified | Nothing was modified.      |
+| 400 Bad Request  | Malformed request body.    |
+| 401 Unauthorized | Not logged in as an admin. |
+| 404 Not Found    | Shipment does not exist.   |
+
 ### Delete Shipment
 
 Delete the [shipment](#shipment-object) matching the provided tracking `id`.
