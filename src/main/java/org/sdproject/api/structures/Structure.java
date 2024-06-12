@@ -15,7 +15,7 @@ public abstract class Structure {
         this.validate("");
     }
 
-    boolean jsonEquals(@Nonnull Structure other) {
+    public boolean jsonEquals(@Nonnull Structure other) {
         return other.toJSON().toString().equals(this.toJSON().toString());
     }
 }
