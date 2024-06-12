@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class User extends Structure implements UpdatableStructure {
     @BsonId
-    @FieldDoc(description = "The user's RUT.")
+    @FieldDoc(description = "The user's RUT.", readonly = true)
     public String rut;
 
     @BsonProperty("first_name")
@@ -44,10 +44,10 @@ public class User extends Structure implements UpdatableStructure {
     @FieldDoc(description = "The user's password.")
     public String password;
 
-    @FieldDoc(description = "The user's salt for the password.")
+    @FieldDoc(description = "The user's salt for the password.", readonly = true, generated = true)
     public String salt;
 
-    @FieldDoc(description = "Whether the user has verified their identity or not.")
+    @FieldDoc(description = "Whether the user has verified their identity or not.", readonly = true, generated = true)
     public boolean verified;
 
     @BsonProperty("created_at")

@@ -35,15 +35,21 @@ Error messages are given in a JSON format with both the `code` and a human-reada
 
 ## Resources Structure
 
-### Nullable and Optional Resource Fields
+### Resource Field Types
 
-Resource fields that may contain a null value have types that are prefixed with a question mark. Resource fields that are optional have names that are suffixed with a question mark.
+- Resource fields that may contain a null value have types that are prefixed with a question mark.
+- Resource fields that are optional have names that are suffixed with a question mark.
+- Resource fields that are readonly (i.e. will be ignored in PATCH or PUT requests) are _italicized_.
+- Resource fields that are generated (i.e. will be ignored in POST requests) are **bolded**.
 
-| Field                        | Type    |
-|------------------------------|---------|
-| optional_field?              | string  |
-| nullable_field               | ?string |
-| optional_and_nullable_field? | ?string |
+| Field                              | Type             |
+|------------------------------------|------------------|
+| optional_field?                    | string           |
+| nullable_field                     | ?integer         |
+| optional_and_nullable_field?       | ?float           |
+| _readonly_field_                   | boolean          |
+| **generated_field**                | object           |
+| _**readonly_and_generated_field**_ | array of objects |
 
 ### Address Object
 
@@ -57,21 +63,23 @@ Resource fields that may contain a null value have types that are prefixed with 
 
 ### Admin Object
 
-| Field             | Type                                                         | Description                        |
-|-------------------|--------------------------------------------------------------|------------------------------------|
-| rut               | string                                                       | The admin's RUT.                   |
-| first_name        | string                                                       | The admin's first name.            |
-| second_name       | ?string                                                      | The admin's second name.           |
-| first_last_name   | string                                                       | The admin's first last name.       |
-| second_last_name  | ?string                                                      | The admin's second last name.      |
-| email             | string                                                       | The admin's email address.         |
-| phone             | integer                                                      | The admin's phone number.          |
-| password          | string                                                       | The admin's password.              |
-| salt              | string                                                       | The admin's salt for the password. |
-| created_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.       |
-| updated_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.  |
+| Field                   | Type                                                         | Description                        |
+|-------------------------|--------------------------------------------------------------|------------------------------------|
+| _rut_                   | string                                                       | The admin's RUT.                   |
+| first_name              | string                                                       | The admin's first name.            |
+| second_name             | ?string                                                      | The admin's second name.           |
+| first_last_name         | string                                                       | The admin's first last name.       |
+| second_last_name        | ?string                                                      | The admin's second last name.      |
+| email                   | string                                                       | The admin's email address.         |
+| phone                   | integer                                                      | The admin's phone number.          |
+| password                | string                                                       | The admin's password.              |
+| _**salt**_              | string                                                       | The admin's salt for the password. |
+| _**created_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.       |
+| _**updated_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.  |
 
 ### Package Object
+
+Fields in this structure cannot be updated at all.
 
 | Field       | Type   | Description                                           |
 |-------------|--------|-------------------------------------------------------|
@@ -84,25 +92,27 @@ Resource fields that may contain a null value have types that are prefixed with 
 
 ### Shipment Object
 
-| Field               | Type                                                         | Description                                                        |
-|---------------------|--------------------------------------------------------------|--------------------------------------------------------------------|
-| id                  | string                                                       | The shipment id. Used for tracking.                                |
-| rut_sender          | string                                                       | RUT of the sender. Must be of an existing [user](#user-object).    |
-| rut_recipient       | string                                                       | RUT of the recipient. Must be of an existing [user](#user-object). |
-| source_address      | [address](#address-object) object                            | Address where the packages are being shipped from.                 |
-| destination_address | [address](#address-object) object                            | Address where the packages are being shipped to.                   |
-| dispatch_timestamp  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address.           |
-| delivery_timestamp  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address.              |
-| status_history      | array of [status history](#status-history-object) objects    | Status history of the shipment.                                    |
-| shipping_type       | string                                                       | Type of the shipping. One of: `same_day`, `fast` or `regular`.     |
-| pending_payment     | boolean                                                      | Whether the shipment is going to be paid by the recipient or not.  |
-| home_pickup         | boolean                                                      | Whether the packages are being picked up at the sender's address.  |
-| home_delivery       | boolean                                                      | Whether the packages are being shipped to the recipient's address. |
-| packages            | array of [package](#package-object) objects                  | All the packages being shipped.                                    |
-| created_timestamp   | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                                       |
-| updated_timestamp   | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                                  |
+| Field                   | Type                                                         | Description                                                        |
+|-------------------------|--------------------------------------------------------------|--------------------------------------------------------------------|
+| _**id**_                | string                                                       | The shipment id. Used for tracking.                                |
+| _rut_sender_            | string                                                       | RUT of the sender. Must be of an existing [user](#user-object).    |
+| rut_recipient           | string                                                       | RUT of the recipient. Must be of an existing [user](#user-object). |
+| _source_address_        | [address](#address-object) object                            | Address where the packages are being shipped from.                 |
+| _destination_address_   | [address](#address-object) object                            | Address where the packages are being shipped to.                   |
+| dispatch_timestamp      | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address.           |
+| delivery_timestamp      | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address.              |
+| **status_history**      | array of [status history](#status-history-object) objects    | Status history of the shipment.                                    |
+| _shipping_type_         | string                                                       | Type of the shipping. One of: `same_day`, `fast` or `regular`.     |
+| _pending_payment_       | boolean                                                      | Whether the shipment is going to be paid by the recipient or not.  |
+| _home_pickup_           | boolean                                                      | Whether the packages are being picked up at the sender's address.  |
+| _home_delivery_         | boolean                                                      | Whether the packages are being shipped to the recipient's address. |
+| _packages_              | array of [package](#package-object) objects                  | All the packages being shipped.                                    |
+| _**created_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                                       |
+| _**updated_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                                  |
 
 ### Status History Object
+
+Fields in this structure cannot be updated at all.
 
 | Field     | Type                                                         | Description                                                                                                |
 |-----------|--------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
@@ -111,21 +121,21 @@ Resource fields that may contain a null value have types that are prefixed with 
 
 ### User Object
 
-| Field             | Type                                                         | Description                                          |
-|-------------------|--------------------------------------------------------------|------------------------------------------------------|
-| rut               | string                                                       | The user's RUT.                                      |
-| first_name        | string                                                       | The user's first name.                               |
-| second_name       | ?string                                                      | The user's second name.                              |
-| first_last_name   | string                                                       | The user's first last name.                          |
-| second_last_name  | ?string                                                      | The user's second last name.                         |
-| email             | string                                                       | The user's email address.                            |
-| phone             | integer                                                      | The user's phone number.                             |
-| address           | [address](#address-object) object                            | The user's address.                                  |
-| password          | string                                                       | The user's password.                                 |
-| salt              | string                                                       | The user's salt for the password.                    |
-| verified          | boolean                                                      | Whether the user has verified their identity or not. |
-| created_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                         |
-| updated_timestamp | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                    |
+| Field                   | Type                                                         | Description                                          |
+|-------------------------|--------------------------------------------------------------|------------------------------------------------------|
+| _rut_                   | string                                                       | The user's RUT.                                      |
+| first_name              | string                                                       | The user's first name.                               |
+| second_name             | ?string                                                      | The user's second name.                              |
+| first_last_name         | string                                                       | The user's first last name.                          |
+| second_last_name        | ?string                                                      | The user's second last name.                         |
+| email                   | string                                                       | The user's email address.                            |
+| phone                   | integer                                                      | The user's phone number.                             |
+| address                 | [address](#address-object) object                            | The user's address.                                  |
+| password                | string                                                       | The user's password.                                 |
+| _**salt**_              | string                                                       | The user's salt for the password.                    |
+| _**verified**_          | boolean                                                      | Whether the user has verified their identity or not. |
+| _**created_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                         |
+| _**updated_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                    |
 
 ## Endpoints
 

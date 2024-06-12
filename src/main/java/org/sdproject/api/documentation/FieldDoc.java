@@ -13,6 +13,10 @@ public @interface FieldDoc {
 
     boolean defaultIsNull() default false;
 
+    boolean readonly() default false;
+
+    boolean generated() default false;
+
     boolean isCreatedTimestamp() default false;
 
     boolean isUpdatedTimestamp() default false;

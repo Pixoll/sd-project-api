@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class Admin extends Structure implements UpdatableStructure {
     @BsonId
-    @FieldDoc(description = "The admin's RUT.")
+    @FieldDoc(description = "The admin's RUT.", readonly = true)
     public String rut;
 
     @BsonProperty("first_name")
@@ -41,7 +41,7 @@ public class Admin extends Structure implements UpdatableStructure {
     @FieldDoc(description = "The admin's password.")
     public String password;
 
-    @FieldDoc(description = "The admin's salt for the password.")
+    @FieldDoc(description = "The admin's salt for the password.", readonly = true, generated = true)
     public String salt;
 
     @BsonProperty("created_at")

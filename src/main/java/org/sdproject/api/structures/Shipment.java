@@ -17,11 +17,15 @@ import java.util.*;
 
 public class Shipment extends Structure implements UpdatableStructure {
     @BsonId
-    @FieldDoc(description = "The shipment id. Used for tracking.")
+    @FieldDoc(description = "The shipment id. Used for tracking.", readonly = true, generated = true)
     public String id;
 
     @BsonProperty("rut_sender")
-    @FieldDoc(jsonKey = "rut_sender", description = "RUT of the sender. Must be of an existing {structure:User}.")
+    @FieldDoc(
+            jsonKey = "rut_sender",
+            description = "RUT of the sender. Must be of an existing {structure:User}.",
+            readonly = true
+    )
     public String rutSender;
 
     @BsonProperty("rut_recipient")
@@ -29,11 +33,19 @@ public class Shipment extends Structure implements UpdatableStructure {
     public String rutRecipient;
 
     @BsonProperty("source_address")
-    @FieldDoc(jsonKey = "source_address", description = "Address where the packages are being shipped from.")
+    @FieldDoc(
+            jsonKey = "source_address",
+            description = "Address where the packages are being shipped from.",
+            readonly = true
+    )
     public Address sourceAddress;
 
     @BsonProperty("destination_address")
-    @FieldDoc(jsonKey = "destination_address", description = "Address where the packages are being shipped to.")
+    @FieldDoc(
+            jsonKey = "destination_address",
+            description = "Address where the packages are being shipped to.",
+            readonly = true
+    )
     public Address destinationAddress;
 
     @BsonProperty("dispatch_timestamp")
@@ -45,26 +57,38 @@ public class Shipment extends Structure implements UpdatableStructure {
     public @Nullable Long deliveryTimestamp;
 
     @BsonProperty("status_history")
-    @FieldDoc(jsonKey = "status_history", description = "Status history of the shipment.")
+    @FieldDoc(jsonKey = "status_history", description = "Status history of the shipment.", generated = true)
     public ArrayList<StatusHistory> statusHistory;
 
     @BsonProperty("shipping_type")
-    @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.")
+    @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.", readonly = true)
     public Type shippingType;
 
     @BsonProperty("pending_payment")
-    @FieldDoc(jsonKey = "pending_payment", description = "Whether the shipment is going to be paid by the recipient or not.")
+    @FieldDoc(
+            jsonKey = "pending_payment",
+            description = "Whether the shipment is going to be paid by the recipient or not.",
+            readonly = true
+    )
     public Boolean pendingPayment;
 
     @BsonProperty("home_pickup")
-    @FieldDoc(jsonKey = "home_pickup", description = "Whether the packages are being picked up at the sender's address.")
+    @FieldDoc(
+            jsonKey = "home_pickup",
+            description = "Whether the packages are being picked up at the sender's address.",
+            readonly = true
+    )
     public Boolean homePickup;
 
     @BsonProperty("home_delivery")
-    @FieldDoc(jsonKey = "home_delivery", description = "Whether the packages are being shipped to the recipient's address.")
+    @FieldDoc(
+            jsonKey = "home_delivery",
+            description = "Whether the packages are being shipped to the recipient's address.",
+            readonly = true
+    )
     public Boolean homeDelivery;
 
-    @FieldDoc(description = "All the packages being shipped.")
+    @FieldDoc(description = "All the packages being shipped.", readonly = true)
     public ArrayList<Package> packages;
 
     @BsonProperty("created_at")

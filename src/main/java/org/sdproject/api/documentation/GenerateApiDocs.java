@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.io.Resources;
 import org.sdproject.api.endpoints.Endpoint;
 import org.sdproject.api.structures.Structure;
+import org.sdproject.api.structures.UpdatableStructure;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -82,22 +83,29 @@ public class GenerateApiDocs {
                     .append(structure.getSimpleName().replaceAll("([A-Z])", " $1").stripLeading())
                     .append(" Object\n\n");
 
+            if (!UpdatableStructure.class.isAssignableFrom(structure)) {
+                result.append("Fields in this structure cannot be updated at all.\n\n");
+            }
+
             for (final Field field : structure.getDeclaredFields()) {
                 final FieldDoc fieldDoc = field.getAnnotation(FieldDoc.class);
                 if (fieldDoc == null) continue;
 
                 if (fieldDoc.isCreatedTimestamp()) {
-                    table.addRow("created_timestamp", ISO_TIMESTAMP, "When the object was created.");
+                    table.addRow("_**created_timestamp**_", ISO_TIMESTAMP, "When the object was created.");
                     continue;
                 }
 
                 if (fieldDoc.isUpdatedTimestamp()) {
-                    table.addRow("updated_timestamp", ISO_TIMESTAMP, "When the object was last updated.");
+                    table.addRow("_**updated_timestamp**_", ISO_TIMESTAMP, "When the object was last updated.");
                     continue;
                 }
 
                 final String fieldName = fieldDoc.jsonKey().isEmpty() ? field.getName() : fieldDoc.jsonKey();
                 final String optionalField = fieldDoc.optional() && !fieldDoc.defaultIsNull() ? "?" : "";
+                final String readonlyField = fieldDoc.readonly() ? "_" : "";
+                final String generatedField = fieldDoc.generated() ? "**" : "";
+
                 final String nullableType = fieldDoc.defaultIsNull() ? "?" : "";
                 final String fieldType = parseFieldType(field.getType(), field.getGenericType(), fieldName);
                 String description = fieldDoc.description();
@@ -110,7 +118,7 @@ public class GenerateApiDocs {
                 }
 
                 table.addRow(
-                        fieldName + optionalField,
+                        readonlyField + generatedField + fieldName + optionalField + generatedField + readonlyField,
                         nullableType + replaceMarkdownReferences(fieldType),
                         replaceMarkdownReferences(description)
                 );
