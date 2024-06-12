@@ -6,6 +6,7 @@ import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
+import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.documentation.*;
 import org.sdproject.api.structures.User;
 import org.sdproject.api.structures.ValidationException;
@@ -34,6 +35,7 @@ public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod, End
                 .find(Filters.eq(User.Field.RUT.raw, authData.rut()))
                 .first();
         if (user == null) {
+            SessionTokenManager.revokeToken(authData.type(), authData.rut());
             throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
 
@@ -60,6 +62,7 @@ public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod, End
         final MongoCollection<User> usersCollection = DatabaseConnection.getUsersCollection();
         final User user = usersCollection.find(Filters.eq(User.Field.RUT.raw, authData.rut())).first();
         if (user == null) {
+            SessionTokenManager.revokeToken(authData.type(), authData.rut());
             throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
 
@@ -96,6 +99,7 @@ public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod, End
         final User user = DatabaseConnection.getUsersCollection()
                 .findOneAndDelete(Filters.eq(User.Field.RUT.raw, authData.rut()));
         if (user == null) {
+            SessionTokenManager.revokeToken(authData.type(), authData.rut());
             throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
 

@@ -12,6 +12,7 @@ import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
+import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.documentation.*;
 import org.sdproject.api.structures.User;
 
@@ -49,8 +50,9 @@ public class UsersVerifyIdEndpoint extends Endpoint implements Endpoint.PostMeth
         }
 
         final MongoCollection<User> usersCollection = DatabaseConnection.getUsersCollection();
-        final User user = usersCollection.find(Filters.eq("_id", authData.rut())).first();
+        final User user = usersCollection.find(Filters.eq(User.Field.RUT.raw, authData.rut())).first();
         if (user == null) {
+            SessionTokenManager.revokeToken(authData.type(), authData.rut());
             throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
 

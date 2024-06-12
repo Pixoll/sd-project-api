@@ -6,6 +6,7 @@ import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
+import org.sdproject.api.SessionTokenManager;
 import org.sdproject.api.documentation.*;
 import org.sdproject.api.structures.Admin;
 import org.sdproject.api.structures.ValidationException;
@@ -67,6 +68,7 @@ public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod, Endp
         final MongoCollection<Admin> adminsCollection = DatabaseConnection.getAdminsCollection();
         final Admin admin = adminsCollection.find(Filters.eq(Admin.Field.RUT.raw, authData.rut())).first();
         if (admin == null) {
+            SessionTokenManager.revokeToken(authData.type(), authData.rut());
             throw new EndpointException(HttpStatus.NOT_FOUND, "Admin does not exist.");
         }
 
