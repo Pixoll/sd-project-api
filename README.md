@@ -53,13 +53,14 @@ Error messages are given in a JSON format with both the `code` and a human-reada
 
 ### Address Object
 
-| Field     | Type    | Description                                    |
-|-----------|---------|------------------------------------------------|
-| region    | string  | The region.                                    |
-| commune   | string  | The commune.                                   |
-| street    | string  | The street name.                               |
-| number    | integer | The street number.                             |
-| secondary | ?string | Secondary information like apartment building. |
+| Field             | Type    | Description                                    |
+|-------------------|---------|------------------------------------------------|
+| region            | string  | The region.                                    |
+| commune           | string  | The commune.                                   |
+| _**postal_code**_ | integer | The postal code of the commune.                |
+| street            | string  | The street name.                               |
+| number            | integer | The street number.                             |
+| secondary         | ?string | Secondary information like apartment building. |
 
 ### Admin Object
 

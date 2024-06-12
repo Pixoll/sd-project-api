@@ -1,5 +1,6 @@
 package org.sdproject.api.structures;
 
+import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.sdproject.api.Util;
@@ -16,6 +17,10 @@ public class Address extends Structure implements UpdatableStructure {
     @FieldDoc(description = "The commune.")
     public String commune;
 
+    @BsonProperty("postal_code")
+    @FieldDoc(jsonKey = "postal_code", description = "The postal code of the commune.", readonly = true, generated = true)
+    public Integer postalCode;
+
     @FieldDoc(description = "The street name.")
     public String street;
 
@@ -31,6 +36,11 @@ public class Address extends Structure implements UpdatableStructure {
     public Address(JSONObject json, @Nonnull String parentName) throws ValidationException {
         this.region = json.optString(Field.REGION.name, null);
         this.commune = json.optString(Field.COMMUNE.name, null);
+
+        final JSONObject regionObject = findRegion(this.region);
+        final JSONObject communeObject = regionObject != null ? findCommune(regionObject, this.commune) : null;
+        this.postalCode = communeObject != null ? communeObject.getInt("postal_code") : null;
+
         this.street = json.optString(Field.STREET.name, null);
         this.number = json.optIntegerObject(Field.NUMBER.name, null);
         this.secondary = json.optString(Field.SECONDARY.name, null);
@@ -42,6 +52,11 @@ public class Address extends Structure implements UpdatableStructure {
     public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
         this.region = json.optString(Field.REGION.name, this.region);
         this.commune = json.optString(Field.COMMUNE.name, this.commune);
+
+        final JSONObject regionObject = findRegion(this.region);
+        final JSONObject communeObject = regionObject != null ? findCommune(regionObject, this.commune) : null;
+        this.postalCode = communeObject != null ? communeObject.getInt("postal_code") : null;
+
         this.street = json.optString(Field.STREET.name, this.street);
         this.number = json.optIntegerObject(Field.NUMBER.name, this.number);
         this.secondary = json.optString(Field.SECONDARY.name, this.secondary);
@@ -67,12 +82,8 @@ public class Address extends Structure implements UpdatableStructure {
             throw new ValidationException(keyPrefix + Field.REGION.name, "Address region name cannot be empty.");
         }
 
-        final JSONObject region = RegionsEndpoint.REGIONS.stream()
-                .filter(r -> r.getString("name").equalsIgnoreCase(this.region))
-                .findFirst()
-                .orElse(null);
-
-        if (region == null) {
+        final JSONObject regionObject = findRegion(this.region);
+        if (regionObject == null) {
             throw new ValidationException(keyPrefix + Field.REGION.name, "Invalid address region name.");
         }
 
@@ -80,11 +91,15 @@ public class Address extends Structure implements UpdatableStructure {
             throw new ValidationException(keyPrefix + Field.COMMUNE.name, "Address commune name cannot be empty.");
         }
 
-        final boolean invalidCommune = Util.jsonArrayToList(region.getJSONArray("communes"), String.class)
-                .stream()
-                .noneMatch(c -> c.equalsIgnoreCase(this.commune));
-        if (invalidCommune) {
+        if (findCommune(regionObject, this.commune) == null) {
             throw new ValidationException(keyPrefix + Field.COMMUNE.name, "Invalid address commune name.");
+        }
+
+        if (this.postalCode == null) {
+            throw new ValidationException(
+                    keyPrefix + Field.COMMUNE.name,
+                    "Address postal code could not be recognized from region and commune."
+            );
         }
 
         if (this.street == null || this.street.isEmpty()) {
@@ -117,5 +132,22 @@ public class Address extends Structure implements UpdatableStructure {
         Field(String name) {
             this.name = name;
         }
+    }
+
+    @Nullable
+    private static JSONObject findRegion(String region) {
+        return RegionsEndpoint.REGIONS.stream()
+                .filter(r -> r.getString("name").equalsIgnoreCase(region))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Nullable
+    private static JSONObject findCommune(JSONObject regionObject, String commune) {
+        return Util.jsonArrayToList(regionObject.getJSONArray("communes"), JSONObject.class)
+                .stream()
+                .filter(c -> c.getString("name").equalsIgnoreCase(commune))
+                .findFirst()
+                .orElse(null);
     }
 }
