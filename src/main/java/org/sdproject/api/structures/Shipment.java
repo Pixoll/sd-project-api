@@ -133,28 +133,9 @@ public class Shipment extends Structure implements UpdatableStructure {
     public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
         final Shipment original = (Shipment) this.clone();
 
-        this.rutSender = json.optString(Field.RUT_SENDER.name, this.rutSender);
         this.rutRecipient = json.optString(Field.RUT_RECIPIENT.name, this.rutRecipient);
-
-        if (json.has(Field.SOURCE_ADDRESS.name)) {
-            this.sourceAddress.updateFromJSON(
-                    json.optJSONObject(Field.SOURCE_ADDRESS.name, new JSONObject()),
-                    Field.SOURCE_ADDRESS.name
-            );
-        }
-
-        if (json.has(Field.DESTINATION_ADDRESS.name)) {
-            this.destinationAddress.updateFromJSON(
-                    json.optJSONObject(Field.DESTINATION_ADDRESS.name, new JSONObject()),
-                    Field.DESTINATION_ADDRESS.name
-            );
-        }
-
         this.dispatchTimestamp = json.optLongObject(Field.DISPATCH_TIMESTAMP.name, this.dispatchTimestamp);
         this.deliveryTimestamp = json.optLongObject(Field.DELIVERY_TIMESTAMP.name, this.deliveryTimestamp);
-        this.pendingPayment = json.optBooleanObject(Field.PENDING_PAYMENT.name, this.pendingPayment);
-        this.homePickup = json.optBooleanObject(Field.HOME_PICKUP.name, this.homePickup);
-        this.homeDelivery = json.optBooleanObject(Field.HOME_DELIVERY.name, this.homeDelivery);
 
         this.validate();
 

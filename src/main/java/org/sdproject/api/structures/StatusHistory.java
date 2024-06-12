@@ -1,7 +1,6 @@
 package org.sdproject.api.structures;
 
 import org.json.JSONObject;
-import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
 import javax.annotation.Nonnull;
@@ -20,13 +19,6 @@ public class StatusHistory extends Structure {
     public StatusHistory(Status status) {
         this.status = status;
         this.timestamp = new Date().getTime();
-    }
-
-    public StatusHistory(JSONObject json, @Nonnull String parentName) throws ValidationException {
-        this.status = Util.stringToEnum(json.optString(Field.STATUS.name, null), Status.class);
-        this.timestamp = json.optLongObject(Field.TIMESTAMP.name, null);
-
-        this.validate(parentName);
     }
 
     @Override
