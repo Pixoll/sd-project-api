@@ -153,6 +153,10 @@ public class Shipment extends Structure implements UpdatableStructure {
         this.dispatchTimestamp = json.optLongObject(Field.DISPATCH_TIMESTAMP.name, this.dispatchTimestamp);
         this.deliveryTimestamp = json.optLongObject(Field.DELIVERY_TIMESTAMP.name, this.deliveryTimestamp);
         this.pendingPayment = json.optBooleanObject(Field.PENDING_PAYMENT.name, this.pendingPayment);
+        this.homePickup = json.optBooleanObject(Field.HOME_PICKUP.name, this.homePickup);
+        this.homeDelivery = json.optBooleanObject(Field.HOME_DELIVERY.name, this.homeDelivery);
+
+        this.validate();
 
         if (!this.jsonEquals(original)) {
             this.updatedAt = new Date();
