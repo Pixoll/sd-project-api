@@ -15,17 +15,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class Shipment extends Structure implements UpdatableStructure {
+public class Shipment extends Structure {
     @BsonId
-    @FieldDoc(description = "The shipment id. Used for tracking.", readonly = true, generated = true)
+    @FieldDoc(description = "The shipment id. Used for tracking.", generated = true)
     public String id;
 
     @BsonProperty("sender_rut")
-    @FieldDoc(
-            jsonKey = "sender_rut",
-            description = "RUT of the sender. Must be of an existing {structure:User}.",
-            readonly = true
-    )
+    @FieldDoc(jsonKey = "sender_rut", description = "RUT of the sender. Must be of an existing {structure:User}.")
     public String senderRut;
 
     @BsonProperty("recipient_rut")
@@ -33,26 +29,17 @@ public class Shipment extends Structure implements UpdatableStructure {
     public String recipientRut;
 
     @BsonProperty("source_address")
-    @FieldDoc(
-            jsonKey = "source_address",
-            description = "Address where the packages are being shipped from.",
-            readonly = true
-    )
+    @FieldDoc(jsonKey = "source_address", description = "Address where the packages are being shipped from.")
     public Address sourceAddress;
 
     @BsonProperty("destination_address")
-    @FieldDoc(
-            jsonKey = "destination_address",
-            description = "Address where the packages are being shipped to.",
-            readonly = true
-    )
+    @FieldDoc(jsonKey = "destination_address", description = "Address where the packages are being shipped to.")
     public Address destinationAddress;
 
     @BsonProperty("dispatch_timestamp")
     @FieldDoc(
             jsonKey = "dispatch_timestamp",
             description = "When the shipment was picked up from the source address.",
-            readonly = true,
             generated = true
     )
     public @Nullable Long dispatchTimestamp;
@@ -61,52 +48,34 @@ public class Shipment extends Structure implements UpdatableStructure {
     @FieldDoc(
             jsonKey = "delivery_timestamp",
             description = "When the shipment arrived to the destination address.",
-            readonly = true,
             generated = true
     )
     public @Nullable Long deliveryTimestamp;
 
     @BsonProperty("status_history")
-    @FieldDoc(
-            jsonKey = "status_history",
-            description = "Status history of the shipment.",
-            readonly = true,
-            generated = true
-    )
+    @FieldDoc(jsonKey = "status_history", description = "Status history of the shipment.", generated = true)
     public ArrayList<StatusHistory> statusHistory;
 
     @BsonProperty("shipping_type")
-    @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.", readonly = true)
+    @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.")
     public Type shippingType;
 
     @BsonProperty("pending_payment")
-    @FieldDoc(
-            jsonKey = "pending_payment",
-            description = "Whether the shipment is going to be paid by the recipient or not.",
-            readonly = true
-    )
+    @FieldDoc(jsonKey = "pending_payment", description = "Whether the shipment is going to be paid by the recipient or not.")
     public Boolean pendingPayment;
 
     @BsonProperty("home_pickup")
-    @FieldDoc(
-            jsonKey = "home_pickup",
-            description = "Whether the packages are being picked up at the sender's address.",
-            readonly = true
-    )
+    @FieldDoc(jsonKey = "home_pickup", description = "Whether the packages are being picked up at the sender's address.")
     public Boolean homePickup;
 
     @BsonProperty("home_delivery")
-    @FieldDoc(
-            jsonKey = "home_delivery",
-            description = "Whether the packages are being shipped to the recipient's address.",
-            readonly = true
-    )
+    @FieldDoc(jsonKey = "home_delivery", description = "Whether the packages are being shipped to the recipient's address.")
     public Boolean homeDelivery;
 
-    @FieldDoc(description = "All the packages being shipped.", readonly = true)
+    @FieldDoc(description = "All the packages being shipped.")
     public ArrayList<Package> packages;
 
-    @FieldDoc(description = "Whether this shipment was cancelled.", readonly = true, generated = true)
+    @FieldDoc(description = "Whether this shipment was cancelled.", generated = true)
     public boolean cancelled;
 
     @BsonProperty("created_at")
@@ -179,19 +148,6 @@ public class Shipment extends Structure implements UpdatableStructure {
     public void markAsCancelled() {
         this.cancelled = true;
         this.updatedAt = new Date();
-    }
-
-    @Override
-    public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
-        final Shipment original = (Shipment) this.clone();
-
-        this.recipientRut = json.optString(Field.RECIPIENT_RUT.name, this.recipientRut);
-
-        this.validate();
-
-        if (!this.jsonEquals(original)) {
-            this.updatedAt = new Date();
-        }
     }
 
     @Override

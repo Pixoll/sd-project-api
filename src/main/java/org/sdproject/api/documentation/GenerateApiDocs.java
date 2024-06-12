@@ -84,7 +84,7 @@ public class GenerateApiDocs {
                     .append(" Object\n\n");
 
             if (!UpdatableStructure.class.isAssignableFrom(structure)) {
-                result.append("Fields in this structure cannot be updated at all.\n\n");
+                result.append("Fields in this structure cannot be updated either directly or at all.\n\n");
             }
 
             for (final Field field : structure.getDeclaredFields()) {

@@ -79,7 +79,7 @@ Error messages are given in a JSON format with both the `code` and a human-reada
 
 ### Package Object
 
-Fields in this structure cannot be updated at all.
+Fields in this structure cannot be updated either directly or at all.
 
 | Field       | Type   | Description                                           |
 |-------------|--------|-------------------------------------------------------|
@@ -92,28 +92,30 @@ Fields in this structure cannot be updated at all.
 
 ### Shipment Object
 
-| Field                    | Type                                                         | Description                                                        |
-|--------------------------|--------------------------------------------------------------|--------------------------------------------------------------------|
-| _**id**_                 | string                                                       | The shipment id. Used for tracking.                                |
-| _sender_rut_             | string                                                       | RUT of the sender. Must be of an existing [user](#user-object).    |
-| recipient_rut            | string                                                       | RUT of the recipient. Must be of an existing [user](#user-object). |
-| _source_address_         | [address](#address-object) object                            | Address where the packages are being shipped from.                 |
-| _destination_address_    | [address](#address-object) object                            | Address where the packages are being shipped to.                   |
-| _**dispatch_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address.           |
-| _**delivery_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address.              |
-| _**status_history**_     | array of [status history](#status-history-object) objects    | Status history of the shipment.                                    |
-| _shipping_type_          | string                                                       | Type of the shipping. One of: `same_day`, `fast` or `regular`.     |
-| _pending_payment_        | boolean                                                      | Whether the shipment is going to be paid by the recipient or not.  |
-| _home_pickup_            | boolean                                                      | Whether the packages are being picked up at the sender's address.  |
-| _home_delivery_          | boolean                                                      | Whether the packages are being shipped to the recipient's address. |
-| _packages_               | array of [package](#package-object) objects                  | All the packages being shipped.                                    |
-| _**cancelled**_          | boolean                                                      | Whether this shipment was cancelled.                               |
-| _**created_timestamp**_  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                                       |
-| _**updated_timestamp**_  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                                  |
+Fields in this structure cannot be updated either directly or at all.
+
+| Field                   | Type                                                         | Description                                                        |
+|-------------------------|--------------------------------------------------------------|--------------------------------------------------------------------|
+| **id**                  | string                                                       | The shipment id. Used for tracking.                                |
+| sender_rut              | string                                                       | RUT of the sender. Must be of an existing [user](#user-object).    |
+| recipient_rut           | string                                                       | RUT of the recipient. Must be of an existing [user](#user-object). |
+| source_address          | [address](#address-object) object                            | Address where the packages are being shipped from.                 |
+| destination_address     | [address](#address-object) object                            | Address where the packages are being shipped to.                   |
+| **dispatch_timestamp**  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address.           |
+| **delivery_timestamp**  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address.              |
+| **status_history**      | array of [status history](#status-history-object) objects    | Status history of the shipment.                                    |
+| shipping_type           | string                                                       | Type of the shipping. One of: `same_day`, `fast` or `regular`.     |
+| pending_payment         | boolean                                                      | Whether the shipment is going to be paid by the recipient or not.  |
+| home_pickup             | boolean                                                      | Whether the packages are being picked up at the sender's address.  |
+| home_delivery           | boolean                                                      | Whether the packages are being shipped to the recipient's address. |
+| packages                | array of [package](#package-object) objects                  | All the packages being shipped.                                    |
+| **cancelled**           | boolean                                                      | Whether this shipment was cancelled.                               |
+| _**created_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                                       |
+| _**updated_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                                  |
 
 ### Status History Object
 
-Fields in this structure cannot be updated at all.
+Fields in this structure cannot be updated either directly or at all.
 
 | Field     | Type                                                         | Description                                                                                                |
 |-----------|--------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
@@ -407,46 +409,6 @@ A [shipment](#shipment-object) object without the `id`, `created_timestamp` and 
 | 201 Created      | Successfully created new shipment. |
 | 400 Bad Request  | Malformed shipment structure.      |
 | 401 Unauthorized | Not logged in.                     |
-
-### Update Shipment
-
-Update the information of a [shipment](#shipment-object) by its tracking `id`.
-
-#### URL
-
-```
-PATCH /shipments
-```
-
-#### Request Headers
-
-| Name          | Type   | Description                                                                        |
-|---------------|--------|------------------------------------------------------------------------------------|
-| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
-
-#### Request Query Parameters
-
-| Name | Type   | Description                 |
-|------|--------|-----------------------------|
-| id   | string | The shipment's tracking id. |
-
-#### Request Body
-
-A partial [shipment](#shipment-object) object with the information to update.
-
-#### Response Body
-
-The updated [shipment](#shipment-object), if any information was successfully modified.
-
-#### Response Codes
-
-| HTTP Code        | Reason                     |
-|------------------|----------------------------|
-| 200 OK           | Successfully updated.      |
-| 304 Not Modified | Nothing was modified.      |
-| 400 Bad Request  | Malformed request body.    |
-| 401 Unauthorized | Not logged in as an admin. |
-| 404 Not Found    | Shipment does not exist.   |
 
 ### Update Shipment Status
 
