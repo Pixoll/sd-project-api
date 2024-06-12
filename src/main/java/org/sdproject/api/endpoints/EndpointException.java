@@ -17,7 +17,7 @@ public class EndpointException extends Exception {
 
     public JSONObject toJSON() {
         return new JSONObject()
-                .put("status", this.statusCode.getCode())
-                .put("message", this.getMessage());
+                .put("message", this.getMessage())
+                .put("code", this.statusCode.getCode());
     }
 }
