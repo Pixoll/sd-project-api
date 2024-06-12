@@ -125,11 +125,8 @@ public class Shipment extends Structure {
     public boolean updateStatus(StatusHistory.Status status) {
         //noinspection ComparatorResultComparison
         if (status.compareTo(this.currentStatus()) != 1) return false;
+        return this.statusHistory.add(new StatusHistory(status));
 
-        final StatusHistory newStatus = new StatusHistory();
-        newStatus.status = status;
-        newStatus.timestamp = new Date().getTime();
-        return this.statusHistory.add(newStatus);
     }
 
     @Override

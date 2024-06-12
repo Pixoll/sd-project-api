@@ -5,6 +5,7 @@ import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
 import javax.annotation.Nonnull;
+import java.util.Date;
 
 public class StatusHistory extends Structure {
     @FieldDoc(description = "Status of the shipment.")
@@ -14,6 +15,11 @@ public class StatusHistory extends Structure {
     public Long timestamp;
 
     public StatusHistory() {
+    }
+
+    public StatusHistory(Status status) {
+        this.status = status;
+        this.timestamp = new Date().getTime();
     }
 
     public StatusHistory(JSONObject json, @Nonnull String parentName) throws ValidationException {
