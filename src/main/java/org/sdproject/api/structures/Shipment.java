@@ -77,6 +77,9 @@ public class Shipment extends Structure {
     @FieldDoc(description = "Whether this shipment was cancelled.", generated = true)
     public boolean cancelled;
 
+    @FieldDoc(description = "Whether this shipment has been completed.", generated = true)
+    public boolean completed;
+
     @BsonProperty("created_at")
     @FieldDoc(isCreatedTimestamp = true)
     public Date createdAt;
@@ -123,6 +126,7 @@ public class Shipment extends Structure {
         }
 
         this.cancelled = false;
+        this.completed = false;
         this.createdAt = new Date();
         this.updatedAt = new Date();
 
@@ -139,6 +143,11 @@ public class Shipment extends Structure {
         if (status.compareTo(this.currentStatus()) != 1) return false;
 
         final boolean added = this.statusHistory.add(new StatusHistory(status));
+
+        if (status == StatusHistory.Status.DELIVERED) {
+            this.completed = true;
+        }
+
         if (added) this.updatedAt = new Date();
 
         return added;
@@ -170,6 +179,7 @@ public class Shipment extends Structure {
                         this.packages.stream().map(Package::toJSON).toList()
                 ))
                 .put(Field.CANCELLED.name, this.cancelled)
+                .put(Field.COMPLETED.name, this.completed)
                 .put(Field.CREATED_TIMESTAMP.name, this.createdAt.getTime())
                 .put(Field.UPDATED_TIMESTAMP.name, this.updatedAt.getTime());
     }
@@ -300,6 +310,7 @@ public class Shipment extends Structure {
         HOME_DELIVERY("home_delivery"),
         PACKAGES("packages"),
         CANCELLED("cancelled"),
+        COMPLETED("completed"),
         CREATED_TIMESTAMP("created_at"),
         UPDATED_TIMESTAMP("updated_at");
 

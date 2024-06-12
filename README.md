@@ -110,6 +110,7 @@ Fields in this structure cannot be updated either directly or at all.
 | home_delivery           | boolean                                                      | Whether the packages are being shipped to the recipient's address. |
 | packages                | array of [package](#package-object) objects                  | All the packages being shipped.                                    |
 | **cancelled**           | boolean                                                      | Whether this shipment was cancelled.                               |
+| **completed**           | boolean                                                      | Whether this shipment has been completed.                          |
 | _**created_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                                       |
 | _**updated_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                                  |
 
