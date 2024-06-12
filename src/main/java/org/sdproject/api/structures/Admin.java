@@ -55,22 +55,6 @@ public class Admin extends Structure implements UpdatableStructure {
     public Admin() {
     }
 
-    public Admin(JSONObject json) throws ValidationException {
-        this.rut = json.optString(Field.RUT.name, null);
-        this.firstName = json.optString(Field.FIRST_NAME.name, null);
-        this.secondName = json.optString(Field.SECOND_NAME.name, null);
-        this.firstLastName = json.optString(Field.FIRST_LAST_NAME.name, null);
-        this.secondLastName = json.optString(Field.SECOND_LAST_NAME.name, null);
-        this.email = json.optString(Field.EMAIL.name, null);
-        this.phone = json.optIntegerObject(Field.PHONE.name, null);
-        this.password = json.optString(Field.PASSWORD.name, null);
-        this.salt = json.optString(Field.SALT.name, null);
-        this.createdAt = new Date();
-        this.updatedAt = new Date();
-
-        this.validate();
-    }
-
     @Override
     public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
         final Admin original = (Admin) this.clone();
