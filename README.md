@@ -101,7 +101,7 @@ Fields in this structure cannot be updated at all.
 | _destination_address_    | [address](#address-object) object                            | Address where the packages are being shipped to.                   |
 | _**dispatch_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address.           |
 | _**delivery_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address.              |
-| **status_history**       | array of [status history](#status-history-object) objects    | Status history of the shipment.                                    |
+| _**status_history**_     | array of [status history](#status-history-object) objects    | Status history of the shipment.                                    |
 | _shipping_type_          | string                                                       | Type of the shipping. One of: `same_day`, `fast` or `regular`.     |
 | _pending_payment_        | boolean                                                      | Whether the shipment is going to be paid by the recipient or not.  |
 | _home_pickup_            | boolean                                                      | Whether the packages are being picked up at the sender's address.  |

@@ -67,7 +67,12 @@ public class Shipment extends Structure implements UpdatableStructure {
     public @Nullable Long deliveryTimestamp;
 
     @BsonProperty("status_history")
-    @FieldDoc(jsonKey = "status_history", description = "Status history of the shipment.", generated = true)
+    @FieldDoc(
+            jsonKey = "status_history",
+            description = "Status history of the shipment.",
+            readonly = true,
+            generated = true
+    )
     public ArrayList<StatusHistory> statusHistory;
 
     @BsonProperty("shipping_type")
