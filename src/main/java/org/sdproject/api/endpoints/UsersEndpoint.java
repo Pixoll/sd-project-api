@@ -11,7 +11,11 @@ import org.sdproject.api.documentation.*;
 import org.sdproject.api.structures.User;
 import org.sdproject.api.structures.ValidationException;
 
-public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpoint.PostMethod, Endpoint.DeleteMethod {
+import java.util.Date;
+
+public class UsersEndpoint
+        extends Endpoint
+        implements Endpoint.GetMethod, Endpoint.PostMethod, Endpoint.PatchMethod, Endpoint.DeleteMethod {
     public UsersEndpoint() {
         super("/users");
     }
@@ -112,6 +116,46 @@ public class UsersEndpoint extends Endpoint implements Endpoint.GetMethod, Endpo
         usersCollection.insertOne(newUser);
 
         ctx.status(HttpStatus.CREATED);
+    }
+
+    @MethodDoc(name = "Update User", description = "Update the information of the current logged-in {structure:User}.")
+    @HeaderUserAuthDoc
+    @BodyDoc("A partial {structure:User} object with the information to update.")
+    @ResponseDoc("The updated {structure:User}, if any information was successfully modified.")
+    @CodeDoc(code = HttpStatus.OK, reason = "Successfully updated.")
+    @CodeDoc(code = HttpStatus.NOT_MODIFIED, reason = "Nothing was modified.")
+    @CodeDoc(code = HttpStatus.BAD_REQUEST, reason = "Malformed request body.")
+    @CodeDoc(code = HttpStatus.UNAUTHORIZED, reason = "Not logged in.")
+    @CodeDoc(code = HttpStatus.NOT_FOUND, reason = "User does not exist.")
+    @Override
+    public void patch(Context ctx) throws EndpointException {
+        final JSONObject body = ctx.bodyAsClass(JSONObject.class);
+        final AuthorizationData authData = getAuthorizationData(ctx);
+        if (authData == null || !authData.isUser()) {
+            throw new EndpointException(HttpStatus.UNAUTHORIZED, "Not logged in.");
+        }
+
+        final MongoCollection<User> usersCollection = DatabaseConnection.getUsersCollection();
+        final User user = usersCollection.find(Filters.eq(User.Field.RUT.raw, authData.rut())).first();
+        if (user == null) {
+            throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
+        }
+
+        final Date updatedAt = user.updatedAt;
+
+        try {
+            user.updateFromJSON(body);
+        } catch (ValidationException e) {
+            throw new EndpointException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+
+        if (updatedAt.compareTo(user.updatedAt) == 0) {
+            ctx.status(HttpStatus.NOT_MODIFIED);
+            return;
+        }
+
+        usersCollection.replaceOne(Filters.eq(User.Field.RUT.raw, user.rut), user);
+        ctx.status(HttpStatus.OK).json(user);
     }
 
     @MethodDoc(name = "Delete User", description = "Delete the {structure:User}'s account.")
