@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 
-public class User extends Structure implements UpdateableStructure {
+public class User extends Structure implements UpdatableStructure {
     @BsonId
     @FieldDoc(description = "The user's RUT.")
     public String rut;

@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Date;
 
-public class Admin extends Structure implements UpdateableStructure {
+public class Admin extends Structure implements UpdatableStructure {
     @BsonId
     @FieldDoc(description = "The admin's RUT.")
     public String rut;

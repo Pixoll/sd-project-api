@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 
-public interface UpdateableStructure {
+public interface UpdatableStructure {
     void updateFromJSON(@Nonnull JSONObject json, @Nonnull String parentName) throws ValidationException;
 
     default void updateFromJSON(@Nonnull JSONObject json) throws ValidationException {

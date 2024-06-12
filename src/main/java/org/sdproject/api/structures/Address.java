@@ -9,7 +9,7 @@ import org.sdproject.api.endpoints.RegionsEndpoint;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class Address extends Structure implements UpdateableStructure {
+public class Address extends Structure implements UpdatableStructure {
     @FieldDoc(description = "The region.")
     public String region;
 

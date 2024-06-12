@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class Shipment extends Structure implements UpdateableStructure {
+public class Shipment extends Structure implements UpdatableStructure {
     @BsonId
     @FieldDoc(description = "The shipment id. Used for tracking.")
     public String id;
