@@ -95,8 +95,8 @@ Fields in this structure cannot be updated at all.
 | Field                    | Type                                                         | Description                                                        |
 |--------------------------|--------------------------------------------------------------|--------------------------------------------------------------------|
 | _**id**_                 | string                                                       | The shipment id. Used for tracking.                                |
-| _rut_sender_             | string                                                       | RUT of the sender. Must be of an existing [user](#user-object).    |
-| rut_recipient            | string                                                       | RUT of the recipient. Must be of an existing [user](#user-object). |
+| _sender_rut_             | string                                                       | RUT of the sender. Must be of an existing [user](#user-object).    |
+| recipient_rut            | string                                                       | RUT of the recipient. Must be of an existing [user](#user-object). |
 | _source_address_         | [address](#address-object) object                            | Address where the packages are being shipped from.                 |
 | _destination_address_    | [address](#address-object) object                            | Address where the packages are being shipped to.                   |
 | _**dispatch_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address.           |

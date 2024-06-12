@@ -20,17 +20,17 @@ public class Shipment extends Structure implements UpdatableStructure {
     @FieldDoc(description = "The shipment id. Used for tracking.", readonly = true, generated = true)
     public String id;
 
-    @BsonProperty("rut_sender")
+    @BsonProperty("sender_rut")
     @FieldDoc(
-            jsonKey = "rut_sender",
+            jsonKey = "sender_rut",
             description = "RUT of the sender. Must be of an existing {structure:User}.",
             readonly = true
     )
-    public String rutSender;
+    public String senderRut;
 
-    @BsonProperty("rut_recipient")
-    @FieldDoc(jsonKey = "rut_recipient", description = "RUT of the recipient. Must be of an existing {structure:User}.")
-    public String rutRecipient;
+    @BsonProperty("recipient_rut")
+    @FieldDoc(jsonKey = "recipient_rut", description = "RUT of the recipient. Must be of an existing {structure:User}.")
+    public String recipientRut;
 
     @BsonProperty("source_address")
     @FieldDoc(
@@ -122,8 +122,8 @@ public class Shipment extends Structure implements UpdatableStructure {
 
     public Shipment(JSONObject json) throws ValidationException {
         this.id = new ObjectId().toHexString();
-        this.rutSender = json.optString(Field.RUT_SENDER.name, null);
-        this.rutRecipient = json.optString(Field.RUT_RECIPIENT.name, null);
+        this.senderRut = json.optString(Field.SENDER_RUT.name, null);
+        this.recipientRut = json.optString(Field.RECIPIENT_RUT.name, null);
         this.sourceAddress = json.has(Field.SOURCE_ADDRESS.name) ? new Address(
                 json.optJSONObject(Field.SOURCE_ADDRESS.name, new JSONObject()),
                 Field.SOURCE_ADDRESS.name
@@ -176,7 +176,7 @@ public class Shipment extends Structure implements UpdatableStructure {
     public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
         final Shipment original = (Shipment) this.clone();
 
-        this.rutRecipient = json.optString(Field.RUT_RECIPIENT.name, this.rutRecipient);
+        this.recipientRut = json.optString(Field.RECIPIENT_RUT.name, this.recipientRut);
 
         this.validate();
 
@@ -189,8 +189,8 @@ public class Shipment extends Structure implements UpdatableStructure {
     public JSONObject toJSON() {
         return new JSONObject()
                 .put(Field.ID.name, this.id)
-                .put(Field.RUT_SENDER.name, this.rutSender)
-                .put(Field.RUT_RECIPIENT.name, this.rutRecipient)
+                .put(Field.SENDER_RUT.name, this.senderRut)
+                .put(Field.RECIPIENT_RUT.name, this.recipientRut)
                 .put(Field.SOURCE_ADDRESS.name, this.sourceAddress.toJSON())
                 .put(Field.DESTINATION_ADDRESS.name, this.destinationAddress.toJSON())
                 .put(Field.DISPATCH_TIMESTAMP.name, this.dispatchTimestamp)
@@ -212,38 +212,38 @@ public class Shipment extends Structure implements UpdatableStructure {
 
     @Override
     public void validate(@Nonnull String parentName) throws ValidationException {
-        if (this.rutSender == null) {
-            throw new ValidationException(Field.RUT_SENDER.name, "Sender rut cannot be empty.");
+        if (this.senderRut == null) {
+            throw new ValidationException(Field.SENDER_RUT.name, "Sender rut cannot be empty.");
         }
 
-        if (Objects.equals(this.rutSender, this.rutRecipient)) {
-            throw new ValidationException(Field.RUT_RECIPIENT.name, "Sender and recipient cannot be the same.");
+        if (Objects.equals(this.senderRut, this.recipientRut)) {
+            throw new ValidationException(Field.RECIPIENT_RUT.name, "Sender and recipient cannot be the same.");
         }
 
-        if (!Util.isValidRut(this.rutSender)) {
-            throw new ValidationException(Field.RUT_SENDER.name, "Invalid rut.");
+        if (!Util.isValidRut(this.senderRut)) {
+            throw new ValidationException(Field.SENDER_RUT.name, "Invalid rut.");
         }
 
         final User sender = DatabaseConnection.getUsersCollection()
-                .find(Filters.eq(User.Field.RUT.raw, this.rutSender))
+                .find(Filters.eq(User.Field.RUT.raw, this.senderRut))
                 .first();
         if (sender == null) {
-            throw new ValidationException(Field.RUT_SENDER.name, "User with rut " + this.rutSender + " does not exist.");
+            throw new ValidationException(Field.SENDER_RUT.name, "User with rut " + this.senderRut + " does not exist.");
         }
 
-        if (this.rutRecipient == null) {
-            throw new ValidationException(Field.RUT_RECIPIENT.name, "Recipient rut cannot be empty.");
+        if (this.recipientRut == null) {
+            throw new ValidationException(Field.RECIPIENT_RUT.name, "Recipient rut cannot be empty.");
         }
 
-        if (!Util.isValidRut(this.rutSender)) {
-            throw new ValidationException(Field.RUT_RECIPIENT.name, "Invalid rut.");
+        if (!Util.isValidRut(this.senderRut)) {
+            throw new ValidationException(Field.RECIPIENT_RUT.name, "Invalid rut.");
         }
 
         final User recipient = DatabaseConnection.getUsersCollection()
-                .find(Filters.eq(User.Field.RUT.raw, this.rutRecipient))
+                .find(Filters.eq(User.Field.RUT.raw, this.recipientRut))
                 .first();
         if (recipient == null) {
-            throw new ValidationException(Field.RUT_RECIPIENT.name, "User with rut " + this.rutRecipient + " does not exist.");
+            throw new ValidationException(Field.RECIPIENT_RUT.name, "User with rut " + this.recipientRut + " does not exist.");
         }
 
         if (this.sourceAddress == null) {
@@ -323,8 +323,8 @@ public class Shipment extends Structure implements UpdatableStructure {
 
     public enum Field {
         ID("id", "_id"),
-        RUT_SENDER("rut_sender"),
-        RUT_RECIPIENT("rut_recipient"),
+        SENDER_RUT("sender_rut"),
+        RECIPIENT_RUT("recipient_rut"),
         SOURCE_ADDRESS("source_address"),
         DESTINATION_ADDRESS("destination_address"),
         DISPATCH_TIMESTAMP("dispatch_timestamp"),
