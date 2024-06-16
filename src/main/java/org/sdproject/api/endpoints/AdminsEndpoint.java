@@ -72,15 +72,15 @@ public class AdminsEndpoint extends Endpoint implements Endpoint.GetMethod, Endp
             throw new EndpointException(HttpStatus.NOT_FOUND, "Admin does not exist.");
         }
 
-        final Date updatedAt = admin.updatedAt;
+        final boolean updated;
 
         try {
-            admin.updateFromJSON(body);
+            updated = admin.updateFromJSON(body);
         } catch (ValidationException e) {
             throw new EndpointException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
-        if (updatedAt.compareTo(admin.updatedAt) == 0) {
+        if (!updated) {
             ctx.status(HttpStatus.NOT_MODIFIED);
             return;
         }

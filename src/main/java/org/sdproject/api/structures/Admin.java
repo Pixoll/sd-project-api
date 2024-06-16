@@ -56,7 +56,7 @@ public class Admin extends Structure implements UpdatableStructure {
     }
 
     @Override
-    public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
+    public boolean updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
         final Admin original = (Admin) this.clone();
 
         this.firstName = json.optString(Field.FIRST_NAME.name, this.firstName);
@@ -73,7 +73,7 @@ public class Admin extends Structure implements UpdatableStructure {
 
         this.validate();
 
-        if (this.jsonEquals(original)) return;
+        if (this.jsonEquals(original)) return false;
 
         this.updatedAt = new Date();
 
@@ -81,6 +81,8 @@ public class Admin extends Structure implements UpdatableStructure {
             this.salt = Util.generateSalt();
             this.password = Util.hashPassword(this.password, this.salt);
         }
+
+        return true;
     }
 
     @Override

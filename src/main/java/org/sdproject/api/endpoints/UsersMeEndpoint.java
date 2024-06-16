@@ -67,15 +67,15 @@ public class UsersMeEndpoint extends Endpoint implements Endpoint.GetMethod, End
             throw new EndpointException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
 
-        final Date updatedAt = user.updatedAt;
+        final boolean updated;
 
         try {
-            user.updateFromJSON(body);
+            updated = user.updateFromJSON(body);
         } catch (ValidationException e) {
             throw new EndpointException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
 
-        if (updatedAt.compareTo(user.updatedAt) == 0) {
+        if (!updated) {
             ctx.status(HttpStatus.NOT_MODIFIED);
             return;
         }

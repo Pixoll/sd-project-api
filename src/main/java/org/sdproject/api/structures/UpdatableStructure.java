@@ -5,9 +5,9 @@ import org.json.JSONObject;
 import javax.annotation.Nonnull;
 
 public interface UpdatableStructure {
-    void updateFromJSON(@Nonnull JSONObject json, @Nonnull String parentName) throws ValidationException;
+    boolean updateFromJSON(@Nonnull JSONObject json, @Nonnull String parentName) throws ValidationException;
 
-    default void updateFromJSON(@Nonnull JSONObject json) throws ValidationException {
-        this.updateFromJSON(json, "");
+    default boolean updateFromJSON(@Nonnull JSONObject json) throws ValidationException {
+        return this.updateFromJSON(json, "");
     }
 }

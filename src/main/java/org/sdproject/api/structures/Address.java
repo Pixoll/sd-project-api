@@ -49,7 +49,9 @@ public class Address extends Structure implements UpdatableStructure {
     }
 
     @Override
-    public void updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
+    public boolean updateFromJSON(@NotNull JSONObject json, @NotNull String parentName) throws ValidationException {
+        final Address original = (Address) this.clone();
+
         this.region = json.optString(Field.REGION.name, this.region);
         this.commune = json.optString(Field.COMMUNE.name, this.commune);
 
@@ -62,16 +64,13 @@ public class Address extends Structure implements UpdatableStructure {
         this.secondary = json.optString(Field.SECONDARY.name, this.secondary);
 
         this.validate(parentName);
+
+        return this.jsonEquals(original);
     }
 
     @Override
     public JSONObject toJSON() {
-        return new JSONObject()
-                .put(Field.REGION.name, this.region)
-                .put(Field.COMMUNE.name, this.commune)
-                .put(Field.STREET.name, this.street)
-                .put(Field.NUMBER.name, this.number)
-                .put(Field.SECONDARY.name, this.secondary != null ? this.secondary : JSONObject.NULL);
+        return new JSONObject().put(Field.REGION.name, this.region).put(Field.COMMUNE.name, this.commune).put(Field.STREET.name, this.street).put(Field.NUMBER.name, this.number).put(Field.SECONDARY.name, this.secondary != null ? this.secondary : JSONObject.NULL);
     }
 
     @Override
@@ -96,10 +95,7 @@ public class Address extends Structure implements UpdatableStructure {
         }
 
         if (this.postalCode == null) {
-            throw new ValidationException(
-                    keyPrefix + Field.COMMUNE.name,
-                    "Address postal code could not be recognized from region and commune."
-            );
+            throw new ValidationException(keyPrefix + Field.COMMUNE.name, "Address postal code could not be recognized from region and commune.");
         }
 
         if (this.street == null || this.street.isEmpty()) {
@@ -121,11 +117,7 @@ public class Address extends Structure implements UpdatableStructure {
     }
 
     public enum Field {
-        REGION("region"),
-        COMMUNE("commune"),
-        STREET("street"),
-        NUMBER("number"),
-        SECONDARY("secondary");
+        REGION("region"), COMMUNE("commune"), STREET("street"), NUMBER("number"), SECONDARY("secondary");
 
         public final String name;
 
@@ -136,18 +128,11 @@ public class Address extends Structure implements UpdatableStructure {
 
     @Nullable
     private static JSONObject findRegion(String region) {
-        return RegionsEndpoint.REGIONS.stream()
-                .filter(r -> r.getString("name").equalsIgnoreCase(region))
-                .findFirst()
-                .orElse(null);
+        return RegionsEndpoint.REGIONS.stream().filter(r -> r.getString("name").equalsIgnoreCase(region)).findFirst().orElse(null);
     }
 
     @Nullable
     private static JSONObject findCommune(JSONObject regionObject, String commune) {
-        return Util.jsonArrayToList(regionObject.getJSONArray("communes"), JSONObject.class)
-                .stream()
-                .filter(c -> c.getString("name").equalsIgnoreCase(commune))
-                .findFirst()
-                .orElse(null);
+        return Util.jsonArrayToList(regionObject.getJSONArray("communes"), JSONObject.class).stream().filter(c -> c.getString("name").equalsIgnoreCase(commune)).findFirst().orElse(null);
     }
 }
