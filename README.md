@@ -102,16 +102,16 @@ Fields in this structure cannot be updated either directly or at all.
 | recipient_rut           | string                                                       | RUT of the recipient. Must be of an existing [user](#user-object). |
 | source_address          | [address](#address-object) object                            | Address where the packages are being shipped from.                 |
 | destination_address     | [address](#address-object) object                            | Address where the packages are being shipped to.                   |
-| **dispatch_timestamp**  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment was picked up from the source address.           |
-| **delivery_timestamp**  | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the shipment arrived to the destination address.              |
 | **status_history**      | array of [status history](#status-history-object) objects    | Status history of the shipment.                                    |
 | shipping_type           | string                                                       | Type of the shipping. One of: `same_day`, `fast` or `regular`.     |
-| pending_payment         | boolean                                                      | Whether the shipment is going to be paid by the recipient or not.  |
+| recipient_pays          | boolean                                                      | Whether the shipment is going to be paid by the recipient.         |
 | home_pickup             | boolean                                                      | Whether the packages are being picked up at the sender's address.  |
 | home_delivery           | boolean                                                      | Whether the packages are being shipped to the recipient's address. |
 | packages                | array of [package](#package-object) objects                  | All the packages being shipped.                                    |
+| **price**               | integer                                                      | Calculated price of the shipment, including taxes.                 |
 | **cancelled**           | boolean                                                      | Whether this shipment was cancelled.                               |
 | **completed**           | boolean                                                      | Whether this shipment has been completed.                          |
+| **paid**                | boolean                                                      | Whether this shipment has been paid.                               |
 | _**created_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was created.                                       |
 | _**updated_timestamp**_ | [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp | When the object was last updated.                                  |
 
@@ -411,6 +411,38 @@ A [shipment](#shipment-object) object without the `id`, `created_timestamp` and 
 | 201 Created      | Successfully created new shipment. |
 | 400 Bad Request  | Malformed shipment structure.      |
 | 401 Unauthorized | Not logged in.                     |
+
+### Pay a Shipment
+
+**Dummy endpoint**. Pay for a [shipment](#shipment-object) using the user's payment information.
+
+#### URL
+
+```
+POST /shipments/pay
+```
+
+#### Request Headers
+
+| Name          | Type   | Description                                                                        |
+|---------------|--------|------------------------------------------------------------------------------------|
+| Authorization | string | Session token of the logged-in admin. See [POST /admins/session](#login-as-admin). |
+
+#### Request Query Parameters
+
+| Name | Type   | Description                 |
+|------|--------|-----------------------------|
+| id   | string | The shipment's tracking id. |
+
+#### Response Codes
+
+| HTTP Code        | Reason                           |
+|------------------|----------------------------------|
+| 200 OK           | Successfully paid the shipment.  |
+| 400 Bad Request  | Malformed request query or body. |
+| 401 Unauthorized | Not logged in as an admin.       |
+| 404 Not Found    | Shipment does not exist.         |
+| 409 Conflict     | The shipment was already paid.   |
 
 ### Update Shipment Status
 

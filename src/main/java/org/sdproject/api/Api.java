@@ -25,6 +25,7 @@ public class Api {
                             new RegionsEndpoint(),
                             new ShipmentsCancelEndpoint(),
                             new ShipmentsEndpoint(),
+                            new ShipmentsPayEndpoint(),
                             new ShipmentsStatusEndpoint(),
                             new UsersEndpoint(),
                             new UsersMeEndpoint(),

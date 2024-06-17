@@ -7,6 +7,9 @@ import org.sdproject.api.documentation.FieldDoc;
 import javax.annotation.Nonnull;
 
 public class Package extends Structure {
+    private static final int DOCUMENT_FEE  = 100;
+    private static final int PACKAGE_WEIGHT_FEE = 1000;
+
     @FieldDoc(description = "Type of the package.")
     public Type type;
 
@@ -37,6 +40,13 @@ public class Package extends Structure {
         this.weight = json.optFloatObject(Field.WEIGHT.name, null);
 
         this.validate(parentName);
+    }
+
+    public float calculatePrice() {
+        return switch (this.type) {
+            case DOCUMENT -> DOCUMENT_FEE;
+            case PACKAGE -> PACKAGE_WEIGHT_FEE * this.weight;
+        };
     }
 
     @Override

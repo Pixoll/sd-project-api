@@ -23,7 +23,8 @@ import java.io.IOException;
 import java.util.Base64;
 
 public class UsersVerifyIdEndpoint extends Endpoint implements Endpoint.PostMethod {
-    private static final String ID_URL_REGEX = "^https://portal\\.sidiv\\.registrocivil\\.cl/docstatus\\?RUN=(\\d{7,}-[\\dkK])&type=CEDULA&serial=\\d{9}&mrz=\\d{24}$";
+    private static final String ID_URL_REGEX = "^https://portal\\.sidiv\\.registrocivil\\.cl/docstatus\\?RUN=(\\d{7,}-["
+            + "\\dkK])&type=CEDULA&serial=\\d{9}&mrz=\\d{24}$";
 
     public UsersVerifyIdEndpoint() {
         super("/users/verify_id");

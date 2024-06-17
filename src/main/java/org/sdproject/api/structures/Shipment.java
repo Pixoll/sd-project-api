@@ -11,10 +11,13 @@ import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 public class Shipment extends Structure {
+    private static final float IVA = 0.19f;
+    private static final int HOME_PICKUP_FEE = 1000;
+    private static final int HOME_DELIVERY_FEE = 1000;
+
     @BsonId
     @FieldDoc(description = "The shipment id. Used for tracking.", generated = true)
     public String id;
@@ -35,22 +38,6 @@ public class Shipment extends Structure {
     @FieldDoc(jsonKey = "destination_address", description = "Address where the packages are being shipped to.")
     public Address destinationAddress;
 
-    @BsonProperty("dispatch_timestamp")
-    @FieldDoc(
-            jsonKey = "dispatch_timestamp",
-            description = "When the shipment was picked up from the source address.",
-            generated = true
-    )
-    public @Nullable Long dispatchTimestamp;
-
-    @BsonProperty("delivery_timestamp")
-    @FieldDoc(
-            jsonKey = "delivery_timestamp",
-            description = "When the shipment arrived to the destination address.",
-            generated = true
-    )
-    public @Nullable Long deliveryTimestamp;
-
     @BsonProperty("status_history")
     @FieldDoc(jsonKey = "status_history", description = "Status history of the shipment.", generated = true)
     public ArrayList<StatusHistory> statusHistory;
@@ -59,9 +46,9 @@ public class Shipment extends Structure {
     @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.")
     public Type shippingType;
 
-    @BsonProperty("pending_payment")
-    @FieldDoc(jsonKey = "pending_payment", description = "Whether the shipment is going to be paid by the recipient or not.")
-    public Boolean pendingPayment;
+    @BsonProperty("recipient_pays")
+    @FieldDoc(jsonKey = "recipient_pays", description = "Whether the shipment is going to be paid by the recipient.")
+    public Boolean recipientPays;
 
     @BsonProperty("home_pickup")
     @FieldDoc(jsonKey = "home_pickup", description = "Whether the packages are being picked up at the sender's address.")
@@ -74,11 +61,17 @@ public class Shipment extends Structure {
     @FieldDoc(description = "All the packages being shipped.")
     public ArrayList<Package> packages;
 
+    @FieldDoc(description = "Calculated price of the shipment, including taxes.", generated = true)
+    public Integer price;
+
     @FieldDoc(description = "Whether this shipment was cancelled.", generated = true)
     public boolean cancelled;
 
     @FieldDoc(description = "Whether this shipment has been completed.", generated = true)
     public boolean completed;
+
+    @FieldDoc(description = "Whether this shipment has been paid.", generated = true)
+    public boolean paid;
 
     @BsonProperty("created_at")
     @FieldDoc(isCreatedTimestamp = true)
@@ -103,14 +96,12 @@ public class Shipment extends Structure {
                 json.optJSONObject(Field.DESTINATION_ADDRESS.name, new JSONObject()),
                 Field.DESTINATION_ADDRESS.name
         ) : null;
-        this.dispatchTimestamp = null;
-        this.deliveryTimestamp = null;
 
         this.statusHistory = new ArrayList<>();
         this.statusHistory.add(new StatusHistory(StatusHistory.Status.PENDING));
 
         this.shippingType = Util.stringToEnum(json.optString(Field.SHIPPING_TYPE.name, null), Type.class);
-        this.pendingPayment = json.optBooleanObject(Field.PENDING_PAYMENT.name, null);
+        this.recipientPays = json.optBooleanObject(Field.RECIPIENT_PAYS.name, null);
         this.homePickup = json.optBooleanObject(Field.HOME_PICKUP.name, null);
         this.homeDelivery = json.optBooleanObject(Field.HOME_DELIVERY.name, null);
 
@@ -125,12 +116,27 @@ public class Shipment extends Structure {
             this.packages.add(new Package(jsonPackage, Field.PACKAGES.name + "[" + i + "]"));
         }
 
+        this.price = this.calculatePrice();
         this.cancelled = false;
         this.completed = false;
+        this.paid = false;
         this.createdAt = new Date();
         this.updatedAt = new Date();
 
         this.validate();
+    }
+
+    private int calculatePrice() {
+        float price = 0;
+
+        for (final Package pkg : this.packages) {
+            price += pkg.calculatePrice();
+        }
+
+        if (this.homePickup) price += HOME_PICKUP_FEE;
+        if (this.homeDelivery) price += HOME_DELIVERY_FEE;
+
+        return Math.round(price * (1 + IVA));
     }
 
     public StatusHistory.Status currentStatus() {
@@ -142,19 +148,23 @@ public class Shipment extends Structure {
         //noinspection ComparatorResultComparison
         if (status.compareTo(this.currentStatus()) != 1) return false;
 
-        final boolean added = this.statusHistory.add(new StatusHistory(status));
+        this.statusHistory.add(new StatusHistory(status));
 
         if (status == StatusHistory.Status.DELIVERED) {
             this.completed = true;
         }
 
-        if (added) this.updatedAt = new Date();
-
-        return added;
+        this.updatedAt = new Date();
+        return true;
     }
 
     public void markAsCancelled() {
         this.cancelled = true;
+        this.updatedAt = new Date();
+    }
+
+    public void markAsPaid() {
+        this.paid = true;
         this.updatedAt = new Date();
     }
 
@@ -166,13 +176,11 @@ public class Shipment extends Structure {
                 .put(Field.RECIPIENT_RUT.name, this.recipientRut)
                 .put(Field.SOURCE_ADDRESS.name, this.sourceAddress.toJSON())
                 .put(Field.DESTINATION_ADDRESS.name, this.destinationAddress.toJSON())
-                .put(Field.DISPATCH_TIMESTAMP.name, this.dispatchTimestamp)
-                .put(Field.DELIVERY_TIMESTAMP.name, this.deliveryTimestamp)
                 .put(Field.STATUS_HISTORY.name, new JSONArray(
                         this.statusHistory.stream().map(StatusHistory::toJSON).toList()
                 ))
                 .put(Field.SHIPPING_TYPE.name, this.shippingType.name)
-                .put(Field.PENDING_PAYMENT.name, this.pendingPayment)
+                .put(Field.RECIPIENT_PAYS.name, this.recipientPays)
                 .put(Field.HOME_PICKUP.name, this.homePickup)
                 .put(Field.HOME_DELIVERY.name, this.homeDelivery)
                 .put(Field.PACKAGES.name, new JSONArray(
@@ -180,6 +188,7 @@ public class Shipment extends Structure {
                 ))
                 .put(Field.CANCELLED.name, this.cancelled)
                 .put(Field.COMPLETED.name, this.completed)
+                .put(Field.PAID.name, this.paid)
                 .put(Field.CREATED_TIMESTAMP.name, this.createdAt.getTime())
                 .put(Field.UPDATED_TIMESTAMP.name, this.updatedAt.getTime());
     }
@@ -268,8 +277,8 @@ public class Shipment extends Structure {
             throw new ValidationException(Field.SHIPPING_TYPE.name, "Shipping type cannot be empty.");
         }
 
-        if (this.pendingPayment == null) {
-            throw new ValidationException(Field.PENDING_PAYMENT.name, "Pending payment cannot be empty.");
+        if (this.recipientPays == null) {
+            throw new ValidationException(Field.RECIPIENT_PAYS.name, "Payment by recipient option cannot be empty.");
         }
 
         if (this.homePickup == null) {
@@ -301,16 +310,15 @@ public class Shipment extends Structure {
         RECIPIENT_RUT("recipient_rut"),
         SOURCE_ADDRESS("source_address"),
         DESTINATION_ADDRESS("destination_address"),
-        DISPATCH_TIMESTAMP("dispatch_timestamp"),
-        DELIVERY_TIMESTAMP("delivery_timestamp"),
         STATUS_HISTORY("status_history"),
         SHIPPING_TYPE("shipping_type"),
-        PENDING_PAYMENT("pending_payment"),
+        RECIPIENT_PAYS("recipient_pays"),
         HOME_PICKUP("home_pickup"),
         HOME_DELIVERY("home_delivery"),
         PACKAGES("packages"),
         CANCELLED("cancelled"),
         COMPLETED("completed"),
+        PAID("paid"),
         CREATED_TIMESTAMP("created_at"),
         UPDATED_TIMESTAMP("updated_at");
 
@@ -328,14 +336,16 @@ public class Shipment extends Structure {
     }
 
     public enum Type {
-        SAME_DAY("same_day"),
-        FAST("fast"),
-        REGULAR("regular");
+        SAME_DAY("same_day", 5000),
+        FAST("fast", 2500),
+        REGULAR("regular", 1000);
 
         public final String name;
+        public final int fee;
 
-        Type(String name) {
+        Type(String name, int fee) {
             this.name = name;
+            this.fee = fee;
         }
 
         @Override
