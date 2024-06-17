@@ -42,7 +42,7 @@ public class DatabaseConnection {
         this.database = this.client.getDatabase(Api.DOTENV.get("MONGO_DB_NAME")).withCodecRegistry(POJO_CODEC_REGISTRY);
     }
 
-    public static void create() {
+    public static void connect() {
         if (INSTANCE == null)
             INSTANCE = new DatabaseConnection();
     }

@@ -12,7 +12,7 @@ public class Api {
 
     public static void main(String[] args) {
         SessionTokenManager.loadSessionTokens();
-        DatabaseConnection.create();
+        DatabaseConnection.connect();
 
         Javalin.create(config -> {
                     config.router.contextPath = "/api/v1";

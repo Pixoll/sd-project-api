@@ -44,8 +44,8 @@ public class EmailSender {
                 mimeMessage.setFrom(new InternetAddress(EMAIL));
 
                 final ArrayList<InternetAddress> recipientEmails = new ArrayList<>();
-                for (String s : to) {
-                    InternetAddress internetAddress = new InternetAddress(s);
+                for (final String email : to) {
+                    InternetAddress internetAddress = new InternetAddress(email);
                     recipientEmails.add(internetAddress);
                 }
 
