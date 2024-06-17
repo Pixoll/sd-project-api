@@ -7,7 +7,7 @@ import io.javalin.http.HttpStatus;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.documentation.*;
 import org.sdproject.api.payments.PaymentException;
-import org.sdproject.api.payments.PaymentsHandler;
+import org.sdproject.api.payments.PaymentsManager;
 import org.sdproject.api.structures.Shipment;
 
 public class ShipmentsPayEndpoint extends Endpoint implements Endpoint.PostMethod {
@@ -46,7 +46,7 @@ public class ShipmentsPayEndpoint extends Endpoint implements Endpoint.PostMetho
         }
 
         try {
-            PaymentsHandler.makePayment();
+            PaymentsManager.makePayment();
         } catch (PaymentException e) {
             throw new EndpointException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

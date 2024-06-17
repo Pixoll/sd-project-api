@@ -2,7 +2,7 @@ package org.sdproject.api.payments;
 
 import java.util.Random;
 
-public class PaymentsHandler {
+public class PaymentsManager {
     private static final Random RANDOM = new Random();
 
     public static void makePayment() throws PaymentException {
