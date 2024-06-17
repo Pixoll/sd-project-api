@@ -203,10 +203,6 @@ public class Shipment extends Structure {
             throw new ValidationException(Field.RECIPIENT_RUT.name, "Sender and recipient cannot be the same.");
         }
 
-        if (!Util.isValidRut(this.senderRut)) {
-            throw new ValidationException(Field.SENDER_RUT.name, "Invalid rut.");
-        }
-
         final User sender = DatabaseConnection.getUsersCollection()
                 .find(Filters.eq(User.Field.RUT.raw, this.senderRut))
                 .first();
@@ -216,10 +212,6 @@ public class Shipment extends Structure {
 
         if (this.recipientRut == null) {
             throw new ValidationException(Field.RECIPIENT_RUT.name, "Recipient rut cannot be empty.");
-        }
-
-        if (!Util.isValidRut(this.senderRut)) {
-            throw new ValidationException(Field.RECIPIENT_RUT.name, "Invalid rut.");
         }
 
         final User recipient = DatabaseConnection.getUsersCollection()
