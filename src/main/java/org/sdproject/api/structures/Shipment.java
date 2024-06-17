@@ -133,8 +133,8 @@ public class Shipment extends Structure {
             price += pkg.calculatePrice();
         }
 
-        if (this.homePickup) price += HOME_PICKUP_FEE;
-        if (this.homeDelivery) price += HOME_DELIVERY_FEE;
+        if (this.homePickup != null && this.homePickup) price += HOME_PICKUP_FEE;
+        if (this.homeDelivery != null && this.homeDelivery) price += HOME_DELIVERY_FEE;
 
         return Math.round(price * (1 + IVA));
     }
