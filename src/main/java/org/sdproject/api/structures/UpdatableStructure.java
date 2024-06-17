@@ -2,7 +2,7 @@ package org.sdproject.api.structures;
 
 import org.json.JSONObject;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 public interface UpdatableStructure {
     boolean updateFromJSON(@Nonnull JSONObject json, @Nonnull String parentName) throws ValidationException;

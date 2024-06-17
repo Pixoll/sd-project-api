@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import org.sdproject.api.endpoints.EndpointException;
 import org.sdproject.api.structures.Structure;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.lang.reflect.Type;
 
 public class JSONMapper implements JsonMapper {

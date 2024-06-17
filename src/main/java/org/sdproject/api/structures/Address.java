@@ -7,8 +7,8 @@ import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 import org.sdproject.api.endpoints.RegionsEndpoint;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 
 public class Address extends Structure implements UpdatableStructure {
     @FieldDoc(description = "The region.")

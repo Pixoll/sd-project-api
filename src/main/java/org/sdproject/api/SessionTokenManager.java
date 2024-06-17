@@ -2,8 +2,8 @@ package org.sdproject.api;
 
 import org.json.JSONObject;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;

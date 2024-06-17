@@ -6,7 +6,7 @@ import io.javalin.http.Header;
 import io.javalin.http.HttpStatus;
 import org.sdproject.api.SessionTokenManager;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;

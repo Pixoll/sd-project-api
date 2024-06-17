@@ -7,8 +7,8 @@ import org.json.JSONObject;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import java.util.Date;
 
 public class User extends Structure implements UpdatableStructure {

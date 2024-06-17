@@ -4,7 +4,7 @@ import org.json.JSONObject;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 public class Package extends Structure {
     private static final int DOCUMENT_FEE  = 100;

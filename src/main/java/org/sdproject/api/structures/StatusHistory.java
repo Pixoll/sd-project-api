@@ -3,7 +3,7 @@ package org.sdproject.api.structures;
 import org.json.JSONObject;
 import org.sdproject.api.documentation.FieldDoc;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.Date;
 
 public class StatusHistory extends Structure {
