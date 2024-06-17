@@ -324,6 +324,26 @@ Contents of [/static/regions_communes.json](/static/regions_communes.json).
 |-----------|------------------------------------------|
 | 200 OK    | Successfully retrieved the regions list. |
 
+### Get All Shipment
+
+Returns all the stored [shipment](#shipment-object)s.
+
+#### URL
+
+```
+GET /shipments/all
+```
+
+#### Response Body
+
+An array of [shipment](#shipment-object) objects.
+
+#### Response Codes
+
+| HTTP Code | Reason                                |
+|-----------|---------------------------------------|
+| 200 OK    | Successfully retrieved the shipments. |
+
 ### Mark Shipment as Cancelled
 
 Mark the [shipment](#shipment-object) matching the provided tracking `id` as cancelled.
