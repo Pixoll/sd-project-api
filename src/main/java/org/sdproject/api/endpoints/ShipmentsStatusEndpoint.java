@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.*;
+import org.sdproject.api.email.EmailSender;
 import org.sdproject.api.structures.Shipment;
 import org.sdproject.api.structures.StatusHistory;
 
@@ -65,6 +66,20 @@ public class ShipmentsStatusEndpoint extends Endpoint implements Endpoint.PostMe
                     + " as it's currently set to " + shipment.currentStatus() + "."
             );
         }
+
+        shipment.populate();
+
+        EmailSender.send(
+                new String[]{shipment.sender.email, shipment.recipient.email},
+                shipment.id + " | Shipment status updated",
+                String.format("""
+                                The status shipment with tracking ID %s has been updated to %s.
+                                
+                                Use the tracking ID in our website to check a detailed history.""",
+                        shipment.id,
+                        newStatus.name.replaceAll("_", " ")
+                )
+        );
 
         shipmentsCollection.replaceOne(Filters.eq(Shipment.Field.ID.raw, id), shipment);
         ctx.status(HttpStatus.OK);

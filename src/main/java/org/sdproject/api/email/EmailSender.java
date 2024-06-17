@@ -1,15 +1,11 @@
 package org.sdproject.api.email;
 
-import jakarta.mail.Authenticator;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
-import jakarta.mail.PasswordAuthentication;
-import jakarta.mail.Session;
-import jakarta.mail.Transport;
+import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import org.sdproject.api.Api;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
@@ -38,7 +34,7 @@ public class EmailSender {
     }
 
     @SuppressWarnings("CallToPrintStackTrace")
-    public static void send(String to, String subject, String message) {
+    public static void send(String[] to, String subject, String message) {
         final ExecutorService executorService = Executors.newSingleThreadExecutor();
         final CompletableFuture<Long> promise = CompletableFuture.supplyAsync(() -> {
             final long id = EMAIL_COUNTER.getAndIncrement();
@@ -46,12 +42,28 @@ public class EmailSender {
             try {
                 final MimeMessage mimeMessage = new MimeMessage(SESSION);
                 mimeMessage.setFrom(new InternetAddress(EMAIL));
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+                final ArrayList<InternetAddress> recipientEmails = new ArrayList<>();
+                for (String s : to) {
+                    InternetAddress internetAddress = new InternetAddress(s);
+                    recipientEmails.add(internetAddress);
+                }
+
+                mimeMessage.setRecipients(
+                        Message.RecipientType.TO,
+                        recipientEmails.toArray(InternetAddress[]::new)
+                );
                 mimeMessage.setSubject(subject);
                 mimeMessage.setSentDate(new Date());
                 mimeMessage.setText(message);
 
-                System.out.println("Sending email (id " + id + ") to " + to);
+                final StringBuilder recipients = new StringBuilder(to[0]);
+                for (int i = 1; i < to.length; i++) {
+                    recipients.append(", ").append(to[i]);
+                }
+
+                System.out.println("Sending email (id " + id + ") to " + recipients);
+
                 Transport.send(mimeMessage);
             } catch (MessagingException mex) {
                 mex.printStackTrace();

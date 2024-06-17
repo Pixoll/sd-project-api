@@ -1,7 +1,9 @@
 package org.sdproject.api.structures;
 
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.bson.types.ObjectId;
 import org.json.JSONArray;
@@ -13,7 +15,7 @@ import org.sdproject.api.documentation.FieldDoc;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-public class Shipment extends Structure {
+public class Shipment extends Structure implements PopulatableStructure {
     private static final float IVA = 0.19f;
     private static final int HOME_PICKUP_FEE = 1000;
     private static final int HOME_DELIVERY_FEE = 1000;
@@ -26,9 +28,14 @@ public class Shipment extends Structure {
     @FieldDoc(jsonKey = "sender_rut", description = "RUT of the sender. Must be of an existing {structure:User}.")
     public String senderRut;
 
+    @BsonIgnore
+    public User sender;
+
     @BsonProperty("recipient_rut")
     @FieldDoc(jsonKey = "recipient_rut", description = "RUT of the recipient. Must be of an existing {structure:User}.")
     public String recipientRut;
+
+    public User recipient;
 
     @BsonProperty("source_address")
     @FieldDoc(jsonKey = "source_address", description = "Address where the packages are being shipped from.")
@@ -123,6 +130,7 @@ public class Shipment extends Structure {
         this.createdAt = new Date();
         this.updatedAt = new Date();
 
+        this.populate();
         this.validate();
     }
 
@@ -137,6 +145,14 @@ public class Shipment extends Structure {
         if (this.homeDelivery != null && this.homeDelivery) price += HOME_DELIVERY_FEE;
 
         return Math.round(price * (1 + IVA));
+    }
+
+    @Override
+    public void populate() {
+        final MongoCollection<User> usersCollection = DatabaseConnection.getUsersCollection();
+
+        this.sender = usersCollection.find(Filters.eq(User.Field.RUT.raw, this.senderRut)).first();
+        this.recipient = usersCollection.find(Filters.eq(User.Field.RUT.raw, this.recipientRut)).first();
     }
 
     public StatusHistory.Status currentStatus() {
@@ -203,22 +219,16 @@ public class Shipment extends Structure {
             throw new ValidationException(Field.RECIPIENT_RUT.name, "Sender and recipient cannot be the same.");
         }
 
-        final User sender = DatabaseConnection.getUsersCollection()
-                .find(Filters.eq(User.Field.RUT.raw, this.senderRut))
-                .first();
-        if (sender == null) {
-            throw new ValidationException(Field.SENDER_RUT.name, "User with rut " + this.senderRut + " does not exist.");
+        if (this.sender == null) {
+            throw new ValidationException(Field.SENDER_RUT.name, "Sender with rut " + this.senderRut + " does not exist.");
         }
 
         if (this.recipientRut == null) {
             throw new ValidationException(Field.RECIPIENT_RUT.name, "Recipient rut cannot be empty.");
         }
 
-        final User recipient = DatabaseConnection.getUsersCollection()
-                .find(Filters.eq(User.Field.RUT.raw, this.recipientRut))
-                .first();
-        if (recipient == null) {
-            throw new ValidationException(Field.RECIPIENT_RUT.name, "User with rut " + this.recipientRut + " does not exist.");
+        if (this.recipient == null) {
+            throw new ValidationException(Field.RECIPIENT_RUT.name, "Recipient with rut " + this.recipientRut + " does not exist.");
         }
 
         if (this.sourceAddress == null) {
