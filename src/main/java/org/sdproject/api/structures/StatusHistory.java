@@ -29,19 +29,7 @@ public class StatusHistory extends Structure {
     }
 
     @Override
-    public void validate(@Nonnull String parentName) throws ValidationException {
-        final String keyPrefix = parentName.isEmpty() ? "" : parentName + ".";
-
-        if (this.status == null) {
-            throw new ValidationException(keyPrefix + Field.STATUS.name, "Status in shipment history cannot be empty.");
-        }
-
-        if (this.timestamp == null) {
-            throw new ValidationException(
-                    keyPrefix + Field.TIMESTAMP.name,
-                    "Timestamp in shipment history cannot be empty."
-            );
-        }
+    public void validate(@Nonnull String parentName) {
     }
 
     @Override
