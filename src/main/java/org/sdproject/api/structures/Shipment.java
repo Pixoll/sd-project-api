@@ -2,6 +2,7 @@ package org.sdproject.api.structures;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import jakarta.annotation.Nonnull;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
@@ -12,8 +13,10 @@ import org.sdproject.api.DatabaseConnection;
 import org.sdproject.api.Util;
 import org.sdproject.api.documentation.FieldDoc;
 
-import jakarta.annotation.Nonnull;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 public class Shipment extends Structure implements PopulatableStructure {
     private static final float IVA = 0.19f;
@@ -45,10 +48,6 @@ public class Shipment extends Structure implements PopulatableStructure {
     @FieldDoc(jsonKey = "destination_address", description = "Address where the packages are being shipped to.")
     public Address destinationAddress;
 
-    @BsonProperty("status_history")
-    @FieldDoc(jsonKey = "status_history", description = "Status history of the shipment.", generated = true)
-    private ArrayList<StatusHistory> statusHistory;
-
     @BsonProperty("shipping_type")
     @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.")
     public Type shippingType;
@@ -58,15 +57,18 @@ public class Shipment extends Structure implements PopulatableStructure {
     public Boolean recipientPays;
 
     @BsonProperty("home_pickup")
-    @FieldDoc(jsonKey = "home_pickup", description = "Whether the packages are being picked up at the sender's address.")
+    @FieldDoc(
+            jsonKey = "home_pickup",
+            description = "Whether the packages are being picked up at the sender's address."
+    )
     public Boolean homePickup;
 
     @BsonProperty("home_delivery")
-    @FieldDoc(jsonKey = "home_delivery", description = "Whether the packages are being shipped to the recipient's address.")
+    @FieldDoc(
+            jsonKey = "home_delivery",
+            description = "Whether the packages are being shipped to the recipient's address."
+    )
     public Boolean homeDelivery;
-
-    @FieldDoc(description = "All the packages being shipped.")
-    private ArrayList<Package> packages;
 
     @FieldDoc(description = "Calculated price of the shipment, including taxes.", generated = true)
     public Integer price;
@@ -79,6 +81,13 @@ public class Shipment extends Structure implements PopulatableStructure {
 
     @FieldDoc(description = "Whether this shipment has been paid.", generated = true)
     public boolean paid;
+
+    @BsonProperty("status_history")
+    @FieldDoc(jsonKey = "status_history", description = "Status history of the shipment.", generated = true)
+    private ArrayList<StatusHistory> statusHistory;
+
+    @FieldDoc(description = "All the packages being shipped.")
+    private ArrayList<Package> packages;
 
     @BsonProperty("created_at")
     @FieldDoc(isCreatedTimestamp = true)
@@ -155,14 +164,18 @@ public class Shipment extends Structure implements PopulatableStructure {
         this.recipient = usersCollection.find(Filters.eq(User.Field.RUT.raw, this.recipientRut)).first();
     }
 
+    private boolean isValidNewStatus(StatusHistory.Status status) {
+        //noinspection ComparatorResultComparison
+        return status.compareTo(this.currentStatus()) == 1;
+    }
+
     public StatusHistory.Status currentStatus() {
         this.statusHistory.sort((sh1, sh2) -> Math.toIntExact(sh1.timestamp - sh2.timestamp));
         return this.statusHistory.get(this.statusHistory.size() - 1).status;
     }
 
     public boolean updateStatus(StatusHistory.Status status) {
-        //noinspection ComparatorResultComparison
-        if (status.compareTo(this.currentStatus()) != 1) return false;
+        if (!this.isValidNewStatus(status)) return false;
 
         this.statusHistory.add(new StatusHistory(status));
 
@@ -220,7 +233,10 @@ public class Shipment extends Structure implements PopulatableStructure {
         }
 
         if (this.sender == null) {
-            throw new ValidationException(Field.SENDER_RUT.name, "Sender with rut " + this.senderRut + " does not exist.");
+            throw new ValidationException(
+                    Field.SENDER_RUT.name,
+                    "Sender with rut " + this.senderRut + " does not exist."
+            );
         }
 
         if (this.recipientRut == null) {
@@ -228,7 +244,10 @@ public class Shipment extends Structure implements PopulatableStructure {
         }
 
         if (this.recipient == null) {
-            throw new ValidationException(Field.RECIPIENT_RUT.name, "Recipient with rut " + this.recipientRut + " does not exist.");
+            throw new ValidationException(
+                    Field.RECIPIENT_RUT.name,
+                    "Recipient with rut " + this.recipientRut + " does not exist."
+            );
         }
 
         if (this.sourceAddress == null) {
