@@ -47,7 +47,7 @@ public class Shipment extends Structure implements PopulatableStructure {
 
     @BsonProperty("status_history")
     @FieldDoc(jsonKey = "status_history", description = "Status history of the shipment.", generated = true)
-    public ArrayList<StatusHistory> statusHistory;
+    private ArrayList<StatusHistory> statusHistory;
 
     @BsonProperty("shipping_type")
     @FieldDoc(jsonKey = "shipping_type", description = "Type of the shipping.")
@@ -66,7 +66,7 @@ public class Shipment extends Structure implements PopulatableStructure {
     public Boolean homeDelivery;
 
     @FieldDoc(description = "All the packages being shipped.")
-    public ArrayList<Package> packages;
+    private ArrayList<Package> packages;
 
     @FieldDoc(description = "Calculated price of the shipment, including taxes.", generated = true)
     public Integer price;
