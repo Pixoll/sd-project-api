@@ -250,31 +250,6 @@ public class Shipment extends Structure implements PopulatableStructure {
             );
         }
 
-        if (this.statusHistory == null || this.statusHistory.isEmpty()) {
-            throw new ValidationException(Field.STATUS_HISTORY.name, "Shipment status history cannot be empty.");
-        }
-
-        if (this.statusHistory.size() > StatusHistory.Status.values().length) {
-            throw new ValidationException(
-                    Field.STATUS_HISTORY.name,
-                    "Shipment status history contains more statuses than there are possible ones."
-            );
-        }
-
-        final HashSet<StatusHistory.Status> statuses = new HashSet<>();
-        for (int i = 0; i < this.statusHistory.size(); i++) {
-            final StatusHistory statusHistory = this.statusHistory.get(i);
-            statusHistory.validate(Field.STATUS_HISTORY.name + "[" + i + "]");
-            statuses.add(statusHistory.status);
-        }
-
-        if (statuses.size() != this.statusHistory.size()) {
-            throw new ValidationException(
-                    Field.STATUS_HISTORY.name,
-                    "Shipment status history cannot contain repeated statuses."
-            );
-        }
-
         if (this.shippingType == null) {
             throw new ValidationException(Field.SHIPPING_TYPE.name, "Shipping type cannot be empty.");
         }
